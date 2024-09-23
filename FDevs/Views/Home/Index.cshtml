@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FDevs.ViewModels.HomeVM
+@{
     ViewData["Title"] = "Home";
 }
 <main>
@@ -10,34 +11,27 @@
             </ul>
         </div>
         <div class="owl-carousel owl-theme d-flex flex-nowrap">
-            <div class="item ">
-                <div class="card m-3" style="width: 16rem;">
-                    <img src="~/img/Cursos/1.png" class="card-img-top" alt="...">
-                    <div class="card-body d-flex justify-content-start row">
-                        <a href="#" class="ms-3 fs-8 btn-sm text-white tags" style="background-color:lightgreen" >Concluído</a>  @*lembra de por cor no banco de dados*@
-                        <h6 class="card-title col-12 mt-2">Lógica da programação</h5>
+            @foreach(Curso curso in Model.Cursos){
+                <div class="item ">
+                    <div class="card m-3" style="width: 16rem;">
+                        <img src="@curso.Foto" class="card-img-top" alt="...">
+                        <div class="card-body d-flex justify-content-start row">
+                            <a href="#" class="ms-3 fs-8 btn-sm text-dark text-bold tags" style="background-color:@curso.Status.Cor" >@curso.Status.Nome</a>  @*lembra de por cor no banco de dados*@
+                            <h6 class="card-title col-12 mt-2">@curso.Nome</h6>
+                        </div>
+                        <hr class="itemHr">
+                        <a href="#" class="col-12 btn startBtn">Começar</a>
                     </div>
-                    <hr class="itemHr">
-                    <a href="#" class="col-12 btn startBtn">Começar</a>
                 </div>
-            </div>
-            <div class="item">
-                <div class="card m-3" style="width: 16rem;">
-                    <img src="~/img/Cursos/2.png" class="card-img-top" alt="...">
-                    <div class="card-body d-flex justify-content-start row">
-                        <a href="#" class="ms-3 fs-8 btn-sm text-white tags" style="background-color:lightgreen" >Concluído</a>
-                        <h6 class="card-title col-12 mt-2">Banco de dados</h5>
-                    </div>
-                    <hr class="itemHr">
-                    <a href="#" class="col-12 btn startBtn">Começar</a>
-                </div>
-            </div>
+            }
         </div>
     </section>
 
     <section class = "right">
         <div class="row">
-            <span style="padding:1rem" class="ps-4">Meu progresso<hr class="itemHr"></span>
+            <div class = "align-center d-flex w-100">
+                <span class="p-4 w-100">Meu progresso<hr class="itemHr"></span>
+            </div>
             <div class="d-flex justify-content-center row m-0 p-0">
                 <span class="col-12 text-center">Inscrito em</span>
                 <p class="col-12 text-bold text-center fs-2">6</p>
@@ -51,14 +45,17 @@
     <script>
         $('.owl-carousel').owlCarousel({
             loop:false,
-            margin:10,
+            margin:35,
             nav:false,
             responsive:{
-                0:{
-                    items:2
+                700:{
+                    items:1
                 },
                 1000:{
                     items:2
+                },
+                1450:{
+                    items:3
                 }
             }
         })
@@ -117,7 +114,7 @@
 
         .itemHr{
             margin:0;
-            border:1px solid lightgray;
+            border:1px solid gray;
         }
 
         .startBtn:hover{

@@ -6,7 +6,7 @@ namespace FDevs.Models;
 public class Trilha
 {
     [Key]
-    public string UsuarioId { get; set; }
+    public int Id { get; set; }
     [Required]
     [StringLength(50, ErrorMessage="Informe um nome com menos de 50 caracteres.")]
     public string Nome { get; set; }

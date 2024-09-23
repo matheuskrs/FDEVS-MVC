@@ -10,5 +10,8 @@ public class Status
     [Required]
     [StringLength(50, ErrorMessage="Informe um nome com menos de 50 caracteres.")]
     public string Nome { get; set; }
+    [Required]
+    [StringLength(50)]
+    public string Cor { get; set; }
 }
 

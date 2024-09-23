@@ -6,7 +6,7 @@ namespace FDevs.Models;
 public class UsuarioCurso
 {
     [Key, Column(Order = 1)]
-    public int UsuarioId { get; set; }
+    public string UsuarioId { get; set; }
     public Usuario Usuario { get; set; }
 
     [Key,Column(Order = 2)]

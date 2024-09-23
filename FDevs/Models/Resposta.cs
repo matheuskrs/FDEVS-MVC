@@ -9,12 +9,12 @@ public class Resposta
     public int Id { get; set; }
     
     [Required]
-    public int UsuarioId { get; set; }
-    [ForeignKey("Usuario")]
+    public string UsuarioId { get; set; }
+    [ForeignKey("UsuarioId")]
     public Usuario Usuario { get; set; }
 
     [Required]
-    public bool QuestaoId { get; set; }
+    public int QuestaoId { get; set; }
     [ForeignKey("QuestaoId")]
     public Questao Questao { get; set; }
     

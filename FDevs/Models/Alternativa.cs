@@ -11,9 +11,11 @@ public class Alternativa
     [Required]
     [StringLength(500, ErrorMessage="Informe um enunciado com menos de 500 caracteres.")]
     public string Texto { get; set; }
+    [Required]
+    public bool Correta { get; set; }
 
     [Required]
-    public bool QuestaoId { get; set; }
+    public int QuestaoId { get; set; }
     [ForeignKey("QuestaoId")]
     public Questao Questao { get; set; }
     
