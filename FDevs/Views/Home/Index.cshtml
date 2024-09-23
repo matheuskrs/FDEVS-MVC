@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+<main>
+    <section class = "left">
+        <div class=" d-flex container justify-content-center ">
+            <ul class="row optionsRow w-100 m-0 p-0">
+                <li class = "col-3 text-center chosen">Meus cursos</li>
+                <li class = "col-3 text-center">Minhas trilhas</li>
+            </ul>
+        </div>
+        <div class="owl-carousel owl-theme d-flex flex-nowrap">
+            <div class="item ">
+                <div class="card m-3" style="width: 16rem;">
+                    <img src="~/img/Cursos/1.png" class="card-img-top" alt="...">
+                    <div class="card-body d-flex justify-content-start row">
+                        <a href="#" class="ms-3 fs-8 btn-sm text-white tags" style="background-color:lightgreen" >Concluído</a>  @*lembra de por cor no banco de dados*@
+                        <h6 class="card-title col-12 mt-2">Lógica da programação</h5>
+                    </div>
+                    <hr class="itemHr">
+                    <a href="#" class="col-12 btn startBtn">Começar</a>
+                </div>
+            </div>
+            <div class="item">
+                <div class="card m-3" style="width: 16rem;">
+                    <img src="~/img/Cursos/2.png" class="card-img-top" alt="...">
+                    <div class="card-body d-flex justify-content-start row">
+                        <a href="#" class="ms-3 fs-8 btn-sm text-white tags" style="background-color:lightgreen" >Concluído</a>
+                        <h6 class="card-title col-12 mt-2">Banco de dados</h5>
+                    </div>
+                    <hr class="itemHr">
+                    <a href="#" class="col-12 btn startBtn">Começar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class = "right">
+        <div class="row">
+            <span style="padding:1rem" class="ps-4">Meu progresso<hr class="itemHr"></span>
+            <div class="d-flex justify-content-center row m-0 p-0">
+                <span class="col-12 text-center">Inscrito em</span>
+                <p class="col-12 text-bold text-center fs-2">6</p>
+                <span class="col-12 text-center">cursos</span>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts{
+    <script>
+        $('.owl-carousel').owlCarousel({
+            loop:false,
+            margin:10,
+            nav:false,
+            responsive:{
+                0:{
+                    items:2
+                },
+                1000:{
+                    items:2
+                }
+            }
+        })
+    </script>
+}
+
+@section Styles {
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        
+        section{
+            background-color: white;
+        }
+
+        .container{
+            padding:1rem;
+        }
+
+        li{
+            flex-wrap:nowrap;
+            text-wrap:nowrap;
+        }
+
+        main{
+            margin: 1rem;
+            display: grid;
+            grid-template-columns: 70% 1fr;
+            grid-gap: 1rem;
+            cursor:default;
+        }
+
+        ul{
+            list-style: none
+        }
+
+        .optionsRow{
+            border-bottom: lightgray 1px solid;
+        }
+
+        .chosen{
+            border-bottom:#008faf 2px solid;
+            color: #008faf;
+        }
+
+        .startBtn{
+            color:red;
+            align-self:end;
+            margin:0;
+        }
+
+        .itemHr{
+            margin:0;
+            border:1px solid lightgray;
+        }
+
+        .startBtn:hover{
+            background-color: #ff9393;
+        }
+
+        .tags{
+            width:fit-content;
+        }
+    </style>
+}
