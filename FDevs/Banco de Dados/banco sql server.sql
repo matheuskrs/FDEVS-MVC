@@ -54,7 +54,8 @@ CREATE TABLE Video (
     Id INT NOT NULL IDENTITY PRIMARY KEY,
     Titulo VARCHAR(50) NOT NULL,
     URL VARCHAR(500) NOT NULL,
-    ModuloId INT NOT NULL
+    ModuloId INT NOT NULL,
+	StatusId INT NOT NULL
 );
 
 CREATE TABLE UsuarioCurso (
@@ -86,6 +87,7 @@ ALTER TABLE Modulo ADD CONSTRAINT FK_Modulo_Usuario FOREIGN KEY (UsuarioId) REFE
 ALTER TABLE UsuarioCurso ADD CONSTRAINT FK_UsuarioCurso_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(UsuarioId);
 ALTER TABLE Modulo ADD CONSTRAINT FK_Modulo_Status FOREIGN KEY (StatusId) REFERENCES Status(Id);
 ALTER TABLE Video ADD CONSTRAINT FK_Video_Modulo FOREIGN KEY (ModuloId) REFERENCES Modulo(Id);
+ALTER TABLE Video ADD CONSTRAINT FK_Video_Status FOREIGN KEY (StatusId) REFERENCES Status(Id);
 ALTER TABLE UsuarioCurso ADD CONSTRAINT FK_UsuarioCurso_Curso FOREIGN KEY (CursoId) REFERENCES Curso(Id);
 ALTER TABLE Curso ADD CONSTRAINT FK_Curso_Trilha FOREIGN KEY (TrilhaId) REFERENCES Trilha(Id);
 ALTER TABLE Alternativa ADD CONSTRAINT FK_Alternativa_Questao FOREIGN KEY (QuestaoId) REFERENCES Questao(Id);
@@ -97,7 +99,7 @@ ALTER TABLE Resposta ADD CONSTRAINT FK_Resposta_Usuario FOREIGN KEY (UsuarioId) 
 INSERT INTO Status (Nome, Cor) VALUES
 ('Em andamento', 'rgba(255, 255, 0, 1)'),  -- Amarelo com 50% de opacidade
 ('Concluído', 'rgba(0, 255, 0, 1)'),         -- Verde
-('Cancelado', 'rgba(255, 0, 0, 1)');         -- Vermelho
+('Não iniciado', 'rgba(255, 0, 0, 1)');         -- Vermelho
 
 INSERT INTO Usuario (UsuarioId, Nome, DataNascimento, Foto) VALUES
 ('user_001', 'Alice', '05-11-1995', 'foto_alice.jpg'),
@@ -105,15 +107,15 @@ INSERT INTO Usuario (UsuarioId, Nome, DataNascimento, Foto) VALUES
 ('user_003', 'Carlos', '01-10-2000', 'foto_carlos.jpg');
 
 INSERT INTO Trilha (Nome, Foto) VALUES
-('Trilha de Backend', 'foto_backend.jpg'),
-('Trilha de Frontend', 'foto_frontend.jpg'),
-('Trilha de Ciência de Dados', 'foto_ciencia_dados.jpg'),
-('Trilha de Desenvolvimento Móvel', 'foto_desenvolvimento_movel.jpg');
+('Trilha de Backend', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/CapasTrilha/1.png');
 
 INSERT INTO Curso (Nome, Foto, DataConclusao, TrilhaId, StatusId) VALUES
-('Lógica de programação', '/img/Cursos/1.png', NULL, 1, 1),
-('Banco de Dados', '/img/Cursos/2.png', NULL, 1, 2),
-('JavaScript', '/img/Cursos/3.png', NULL, 2, 2);
+('Lógica de programação', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png', NULL, 1, 1),
+('Banco de Dados', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png', NULL, 1, 2),
+('C# Iniciante', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/22.png', NULL, 1, 2),
+('ASP.Net MVC - C#', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/23.png', NULL, 1, 2),
+('Git e Github (Trilha Backend)', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/45.png', NULL, 1, 2),
+('Princípios SOLID', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/48.png', NULL, 1, 2);
 
 
 INSERT INTO Prova (Nome, CursoId, UsuarioId) VALUES
@@ -125,10 +127,10 @@ INSERT INTO Modulo (Nome, StatusId, UsuarioId, CursoId) VALUES
 ('Módulo 2: Modelagem de Dados', 1, 'user_001', 1),  -- Alice
 ('Módulo 1: Introdução ao Python', 1, 'user_002', 2);  -- Bob
 
-INSERT INTO Video (Titulo, URL, ModuloId) VALUES
-('Video 1: O que é Banco de Dados?', 'https://example.com/video1', 1),
-('Video 2: Modelagem de Dados 101', 'https://example.com/video2', 2),
-('Video 1: Introdução ao Python', 'https://example.com/video3', 3);
+INSERT INTO Video (Titulo, URL, ModuloId, StatusId) VALUES
+('Video 1: O que é Banco de Dados?', 'https://www.youtube.com/embed/fP49L1i_-HU?rel=0', 1, 3),
+('Video 2: Modelagem de Dados 101', 'https://www.youtube.com/embed/M2Af7gkbbro?si=eXG1ZdA5b61NCng8', 2, 3),
+('Video 1: Introdução ao Python', 'https://www.youtube.com/embed/RDrfZ-7WE8c?si=hd60e8up4yeyqxeE', 3, 3);
 
 INSERT INTO Questao (Texto, ProvaId) VALUES
 ('O que é um Banco de Dados?', 1),  -- Prova de Banco de Dados
@@ -151,7 +153,10 @@ INSERT INTO Resposta (UsuarioId, QuestaoId, AlternativaId) VALUES
 INSERT INTO UsuarioCurso (UsuarioId, CursoId) VALUES
 ('user_001', 1),  -- Alice está inscrita no Curso de Banco de Dados
 ('user_002', 2),  -- Bob está inscrita no Curso de Programação em Python
-('user_001', 3);  -- Alice está inscrita no Curso de JavaScript
+('user_001', 3),  -- Alice está inscrita no Curso de JavaScript
+('user_001', 4),  -- Alice está inscrita no Curso de Banco de Dados
+('user_002', 5),  -- Bob está inscrita no Curso de Programação em Python
+('user_001', 6);  -- Alice está inscrita no Curso de JavaScript
 
 SELECT 
     u.UsuarioId,

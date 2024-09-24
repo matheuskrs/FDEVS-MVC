@@ -11,8 +11,6 @@ public class Trilha
     [StringLength(50, ErrorMessage="Informe um nome com menos de 50 caracteres.")]
     public string Nome { get; set; }
     [Required]
-    public DateTime DataNascimento { get; set; }
-    [Required]
     [StringLength(500)]
     public string Foto { get; set; }
 }

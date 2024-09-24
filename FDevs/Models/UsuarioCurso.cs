@@ -9,7 +9,7 @@ public class UsuarioCurso
     public string UsuarioId { get; set; }
     public Usuario Usuario { get; set; }
 
-    [Key,Column(Order = 2)]
+    [Key, Column(Order = 2)]
     public int CursoId { get; set; }
     [ForeignKey("CursoId")]
     public Curso Curso { get; set; }

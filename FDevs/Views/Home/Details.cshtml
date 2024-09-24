@@ -1,0 +1,24 @@
+﻿@model FDevs.ViewModels.DetailsVM
+@{
+    ViewData["Title"] = "Home";
+}
+<div >
+
+    @foreach (var modulo in Model.Modulos)
+    {
+        <div class="d-flex row">
+
+
+        <span>@modulo.Nome</span>
+        @foreach (var video in Model.Videos)
+        {
+            <iframe id="player" frameborder="0" allowfullscreen="" class="my-3"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                title="Primeiro Algoritmo - Curso de Algoritmos #02 - Gustavo Guanabara"
+                src="@video.URL&amp;showinfo=0&amp;ecver=2&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ffdevs.upper.net.br&amp;widgetid=1"></iframe>
+        }
+
+        </div>
+    }
+</div>
