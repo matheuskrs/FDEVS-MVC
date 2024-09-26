@@ -27,5 +27,5 @@ public class Modulo
     public int CursoId { get; set; }
     [ForeignKey("CursoId")]
     public Curso Curso { get; set; }
-
+    public ICollection<Video> Videos { get; set; }
 }

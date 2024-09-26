@@ -123,14 +123,24 @@ INSERT INTO Prova (Nome, CursoId, UsuarioId) VALUES
 ('Prova de Programação em Python', 2, 'user_002');  -- Bob
 
 INSERT INTO Modulo (Nome, StatusId, UsuarioId, CursoId) VALUES
-('Módulo 1: Introdução ao Banco de Dados', 1, 'user_001', 1),  -- Alice
-('Módulo 2: Modelagem de Dados', 1, 'user_001', 1),  -- Alice
-('Módulo 1: Introdução ao Python', 1, 'user_002', 2);  -- Bob
+('Módulo 1 - Iniciante', 1, 'user_001', 1),  -- Alice
+('Módulo 2 - Pesquisa de satisfação', 1, 'user_001', 1),  -- Alice
+('Módulo 1 - Iniciante', 3, 'user_001', 2),
+('Módulo 2 - Intermediário', 3, 'user_001', 2),
+('Módulo 3 - Extras', 3, 'user_001', 2);  -- Bob
 
 INSERT INTO Video (Titulo, URL, ModuloId, StatusId) VALUES
-('Video 1: O que é Banco de Dados?', 'https://www.youtube.com/embed/fP49L1i_-HU?rel=0', 1, 3),
-('Video 2: Modelagem de Dados 101', 'https://www.youtube.com/embed/M2Af7gkbbro?si=eXG1ZdA5b61NCng8', 2, 3),
-('Video 1: Introdução ao Python', 'https://www.youtube.com/embed/RDrfZ-7WE8c?si=hd60e8up4yeyqxeE', 3, 3);
+('Introdução a Algoritmos', 'https://www.youtube.com/embed/8mei6uVttho?si=gn2VgTONcmRet24o', 1, 3),
+('Primeiro algoritmo', 'https://www.youtube.com/embed/M2Af7gkbbro?si=yx5Yy6dgQYy_1Y8f', 1, 3),
+('Comando de Entrada e Operadores', 'https://www.youtube.com/embed/RDrfZ-7WE8c?si=JP0LvntY7_cxuWUB', 1, 3),
+('Operadores lógicos e relacionais', 'https://www.youtube.com/embed/Ig4QZNpVZYs?si=Eaes88_HwJc28Vp2', 1, 3),
+('Introdução ao Scratch', 'https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM', 1, 3),
+('Exercícios de Algoritmo', 'https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB', 1, 3),
+('Estruturas Condicionais 1', 'https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub', 1, 2),
+('SQL Server - Instalando no seu computador', 'https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD', 3, 3),
+('Orientações', 'https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk', 3, 2),
+('Conceitos Essenciais e Modelagem', 'https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc', 3, 1),
+('Relacionamento entre tabelas ', 'https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3', 4, 1);
 
 INSERT INTO Questao (Texto, ProvaId) VALUES
 ('O que é um Banco de Dados?', 1),  -- Prova de Banco de Dados

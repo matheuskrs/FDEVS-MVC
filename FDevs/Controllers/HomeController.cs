@@ -33,7 +33,7 @@ public class HomeController : Controller
         return View(home);
     }
 
-    public IActionResult Details(int id)
+    public IActionResult Details(int id, int? videoId = null)
     {
         var curso = _context.Cursos
             .Include(c => c.Status)
@@ -43,6 +43,7 @@ public class HomeController : Controller
         var modulos = _context.Modulos
             .Include(m => m.Curso)
             .Include(m => m.Status)
+            .Include(m => m.Videos)
             .Where(m => m.CursoId == id)
             .ToList();
 
@@ -55,23 +56,40 @@ public class HomeController : Controller
         DetailsVM details = new DetailsVM
         {
             Atual = curso,
-            Anterior = _context.Cursos
-                .OrderByDescending(j => j.Id)
-                .FirstOrDefault(j => j.Id < id),
-            Proximo = _context.Cursos
-                .OrderBy(p => p.Id)
-                .FirstOrDefault(j => j.Id > id),
             Modulos = modulos,
-            Videos = videos
+            Videos = videos,
+            SelectedVideoId = videoId
         };
 
         return View(details);
     }
+
+    [HttpPost]
+    public IActionResult UpdateProgress(int id)
+    {
+        var video = _context.Videos
+            .Include(v => v.Modulo)
+            .SingleOrDefault(v => v.Id == id);
+
+        if (video != null)
+        {
+            if (video.StatusId == 3)
+            {
+                video.StatusId = 1;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Details", new { id = video.Modulo.CursoId, videoId = video.Id });
+        }
+        return RedirectToAction("Index");
+    }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+
 
 }

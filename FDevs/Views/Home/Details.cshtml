@@ -1,24 +1,188 @@
 ﻿@model FDevs.ViewModels.DetailsVM
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Treinamentos";
+    float qtdVideos = 0;
+    float qtdConcluido = 0;
 }
-<div >
 
-    @foreach (var modulo in Model.Modulos)
-    {
-        <div class="d-flex row">
-
-
-        <span>@modulo.Nome</span>
-        @foreach (var video in Model.Videos)
+<div class="content">
+    <section class="left">
+        <h2>@Model.Atual.Nome</h2>
+        @foreach (var modulo in Model.Modulos)
         {
-            <iframe id="player" frameborder="0" allowfullscreen="" class="my-3"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                title="Primeiro Algoritmo - Curso de Algoritmos #02 - Gustavo Guanabara"
-                src="@video.URL&amp;showinfo=0&amp;ecver=2&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ffdevs.upper.net.br&amp;widgetid=1"></iframe>
+            @foreach (var video in modulo.Videos)
+            {
+                qtdVideos += 1;
+                if (video.Status.Id == 2)
+                {
+                    qtdConcluido += 1;
+                }
+
+                <iframe id="player" frameborder="0" allowfullscreen="" class="my-3 video" data-video-id="@video.Id"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" title="@video.Titulo" width="100%" height="470"
+                    src="@video.URL&amp;showinfo=0&amp;ecver=2&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ffdevs.upper.net.br&amp;widgetid=1">
+                </iframe>
+            }
+        }
+    </section>
+
+    @{
+        var progressoVerde = Math.Round((qtdConcluido / qtdVideos) * 100);
+    }
+
+
+    <section class="fixed-end d-flex flex-end m-0 p-0">
+        <div class="flex-end d-flex ms-4 p-0">
+            <aside class="sidenav navbar navbar-vertical right navbar-expand-xs w-100 border-radius-xl mt-5 mb-0 ms-0"
+                id="sidenav-main" style="min-width: 400px;">
+                <hr class="horizontal light mt-0 mb-3">
+                <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+                    <div class="d-flex justify-content-center">
+                    </div>
+                    <div class="row ms-1">
+                        <span class="col-3 m-0 px-1 text-white">Andamento:</span>
+                        <div class="d-flex col-8 justify-content-start h-fit-content m-0 p-0">
+                            <div class="progress-container p-0 w-80 ">
+                                <div class="progress p-0">
+                                    <div class="bar green d-flex justify-content-center align-items-center text-bold fs-7"
+                                        style="width:@progressoVerde%;">@progressoVerde%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="navbar-nav">
+                        @foreach (var modulo in Model.Atual.Modulos)
+                        {
+                            <li class='nav-item' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
+                                aria-expanded="false" aria-controls="modulo-@modulo.Id">
+                                <a class='nav-link text-white dropdown-toggle' href="#" type="button"
+                                    id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="text-white d-flex align-items-center justify-content-center">
+                                        <span>+</span>
+                                        <i class="material-icons opacity-10">book</i>
+                                        <span class="nav-link-text ms-2">@modulo.Nome</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <ul class="list-unstyled collapse multi-collapse" id="modulo-@modulo.Id">
+                                @foreach (var video in modulo.Videos)
+                                {
+                                    <li class="nav-item">
+                                        <form action="@Url.Action("UpdateProgress", "Home", new { id = video.Id })"
+                                            method="post">
+                                            <button type="submit" class='nav-link btn text-white btn-filter w-100'>
+                                                <div class="row w-100">
+                                                    <div class="text-white col-12 d-flex align-items-center">
+                                                        <span class="nav-link-text">@video.Titulo</span>
+                                                    </div>
+                                                    <a href="#" class="ms-3 col-12 btn-sm text-dark text-bold tags"
+                                                        style="background-color:@video.Status.Cor"></a>
+                                                </div>
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </section>
+</div>
+
+@section Styles {
+    <style>
+        * {
+            margin: 0;
+            border: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            margin-right: 0 !important;
         }
 
-        </div>
-    }
-</div>
+        section {
+            width: 100%;
+            height: 470px;
+        }
+
+        .content {
+            margin: 1rem;
+            display: grid;
+            grid-template-columns: 70% 1fr;
+            grid-gap: 1rem;
+            cursor: default;
+            height: 100%;
+            width: 100%;
+        }
+
+        .right {
+            background-color: #2b323A;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .modulosContainer {
+            background-color: #E3E3E3;
+            padding: 1rem;
+            border-radius: 3px;
+            border: 1px solid #cfcfcf;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 1.5rem;
+            background-color: lightgray;
+            border-radius: 5px;
+        }
+
+        .progress {
+            display: flex;
+            height: 100%;
+            border-radius: 5px;
+            border: 1px solid black;
+        }
+
+        .bar {
+            height: 100%;
+            transition: width 1s;
+        }
+
+        .green {
+            background-color: rgba(0, 255, 0, 1);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function filter(videoId, clickedButton) {
+            document.querySelectorAll('.video').forEach(card => {
+                card.style.display = "flex";
+                if (card.getAttribute('data-video-id') !== videoId && videoId !== '') {
+                    card.style.display = "none";
+                }
+            });
+
+            document.querySelectorAll('.btn-filter').forEach(button => {
+                button.classList.remove('bg-gradient-success', 'active');
+            });
+
+            if (clickedButton) {
+                clickedButton.classList.add('bg-gradient-success', 'active');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var selectedVideoId = @Model.SelectedVideoId;
+            if (selectedVideoId) {
+                filter(selectedVideoId.toString());
+            }
+        });
+    </script>
+}

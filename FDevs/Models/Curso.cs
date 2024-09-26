@@ -27,6 +27,6 @@ public class Curso
     public int StatusId { get; set; }
     [ForeignKey("StatusId")]
     public Status Status { get; set; }
-
+    public ICollection<Modulo> Modulos { get; set; }
 }
 
