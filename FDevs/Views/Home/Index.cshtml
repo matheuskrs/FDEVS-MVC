@@ -1,23 +1,25 @@
 ﻿@model FDevs.ViewModels.HomeVM
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "FDevs 2024";
     float qtdCursos = 0;
+    float qtdVideos = 0;
+    float qtdVideosConcluidos = 0;
     float qtdAndamento = 0;
     float qtdConcluido = 0;
     float qtdNaoIniciado = 0;
 }
-@foreach (Curso curso in Model.Cursos)
+@foreach (var usuarioCurso in Model.Cursos)
 {
     qtdCursos += 1;
-    if (curso.Status.Id == 1)
+    if (usuarioCurso.Curso.Estado.Id == 1)
     {
         qtdAndamento += 1;
     }
-    else if (curso.Status.Id == 2)
+    else if (usuarioCurso.Curso.Estado.Id == 2)
     {
         qtdConcluido += 1;
     }
-    else if (curso.Status.Id == 3)
+    else if (usuarioCurso.Curso.Estado.Id == 3)
     {
         qtdNaoIniciado += 1;
     }
@@ -26,6 +28,7 @@
     var progressoVermelho = Math.Round((qtdNaoIniciado / qtdCursos) * 100);
     var progressoAmarelo = Math.Round((qtdAndamento / qtdCursos) * 100);
     var progressoVerde = Math.Round((qtdConcluido / qtdCursos) * 100);
+    var progressoModulo = 0.0;
 }
 
 <div class="d-flex justify-content-center">
@@ -43,19 +46,36 @@
                 </ul>
             </div>
             <div class="owl-carousel owl-theme d-flex flex-nowrap">
-                @foreach (Curso curso in Model.Cursos)
+                @foreach (var usuarioCurso in Model.Cursos)
                 {
+                    qtdVideos = 0;
+                    qtdVideosConcluidos = 0;
+                    @foreach(var modulo in usuarioCurso.Curso.Modulos){
+                        @foreach(var video in modulo.Videos){
+                            qtdVideos += 1;
+                            if(video.EstadoId == 2){
+                                qtdVideosConcluidos += 1;
+                            }
+                        }
+                    }
+                    progressoModulo = Math.Round((qtdVideosConcluidos / qtdVideos) * 100);
                     <div class="item curso">
                         <div class="card m-3" style="width: 15rem;">
-                            <img src="@curso.Foto" class="card-img-top" alt="...">
-
+                            <img src="@usuarioCurso.Curso.Foto" class="card-img-top" alt="...">
+                            <div class="progress-modulo-container p-0 w-100 ">
+                                <div class="progress-modulo p-0">
+                                    <div class="bar green d-flex justify-content-center align-items-center text-bold fs-6"
+                                        style="width:@progressoModulo%;"> @(progressoModulo > 0 ? $"{progressoModulo}%" : "")
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card-body d-flex justify-content-start row">
                                 <a href="#" class="ms-3 fs-8 btn-sm text-dark text-bold tags"
-                                    style="background-color:@curso.Status.Cor">@curso.Status.Nome</a>
-                                <h6 class="card-title col-12 mt-2 text-nowrap">@curso.Nome</h6>
+                                    style="background-color:@usuarioCurso.Curso.Estado.Cor">@usuarioCurso.Curso.Estado.Nome</a>
+                                <h6 class="card-title col-12 mt-2 text-nowrap">@usuarioCurso.Curso.Nome</h6>
                             </div>
                             <hr class="itemHr">
-                            <a asp-action="Details" asp-route-id="@curso.Id" class="col-12 btn startBtn">Começar </a>
+                            <a asp-action="Details" asp-route-id="@usuarioCurso.Curso.Id" class="col-12 btn startBtn">Começar </a>
                         </div>
                     </div>
                 }
@@ -220,15 +240,29 @@
             width: 100%;
             height: 1.5rem;
             background-color: lightgray;
-            border-radius: 5px;
             overflow: hidden;
         }
+
+        .progress-modulo-container {
+            width: 100%;
+            height: 1.5rem;
+            border-radius: 0 !important;
+            background-color: lightgray;
+            overflow: hidden;
+        }
+
 
         .progress {
             display: flex;
             height: 100%;
-            border-radius: 5px;
-            border: 1px solid black;
+            border: 1px solid black;      
+        }
+
+        .progress-modulo {
+            display: flex;
+            height: 100%;
+            background-color:white;
+            border-radius: 0 !important;
         }
 
         .bar {
@@ -237,7 +271,7 @@
         }
 
         .green {
-            background-color: rgba(0, 255, 0, 1);
+            background-color: rgb(36, 224, 36);
         }
 
         .yellow {

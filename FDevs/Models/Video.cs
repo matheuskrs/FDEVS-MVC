@@ -19,8 +19,8 @@ public class Video
     [ForeignKey("ModuloId")]
     public Modulo Modulo { get; set; }
     [Required]
-    public int StatusId { get; set; }
-    [ForeignKey("StatusId")]
-    public Status Status { get; set; }
+    public int EstadoId { get; set; }
+    [ForeignKey("EstadoId")]
+    public Estado Estado { get; set; }
 }
 

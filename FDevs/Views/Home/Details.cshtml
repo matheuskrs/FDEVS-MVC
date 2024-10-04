@@ -7,18 +7,17 @@
 
 <div class="content">
     <section class="left">
-        <h2>@Model.Atual.Nome</h2>
+        <h2>@Model.CursoAtual.Nome</h2>
         @foreach (var modulo in Model.Modulos)
         {
             @foreach (var video in modulo.Videos)
             {
                 qtdVideos += 1;
-                if (video.Status.Id == 2)
+                if (video.Estado.Id == 2)
                 {
                     qtdConcluido += 1;
                 }
-
-                <iframe id="player" frameborder="0" allowfullscreen="" class="my-3 video" data-video-id="@video.Id"
+                <iframe id="player-@video.Id" frameborder="0" allowfullscreen class="my-3 video" data-video-id="@video.Id"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin" title="@video.Titulo" width="100%" height="470"
                     src="@video.URL&amp;showinfo=0&amp;ecver=2&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ffdevs.upper.net.br&amp;widgetid=1">
@@ -52,7 +51,7 @@
                         </div>
                     </div>
                     <ul class="navbar-nav">
-                        @foreach (var modulo in Model.Atual.Modulos)
+                        @foreach (var modulo in Model.CursoAtual.Modulos)
                         {
                             <li class='nav-item' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
                                 aria-expanded="false" aria-controls="modulo-@modulo.Id">
@@ -77,7 +76,7 @@
                                                         <span class="nav-link-text">@video.Titulo</span>
                                                     </div>
                                                     <a href="#" class="ms-3 col-12 btn-sm text-dark text-bold tags"
-                                                        style="background-color:@video.Status.Cor"></a>
+                                                        style="background-color:@video.Estado.Cor"></a>
                                                 </div>
                                             </button>
                                         </form>
@@ -88,6 +87,38 @@
                     </ul>
                 </div>
             </aside>
+        </div>
+    </section>
+    <section class="bottom rounded">
+        <div class="container text-white">
+            <div class="row p-4">
+                <div class="col text-center">
+                    @if (Model.VideoAnterior != null && Model.VideoAtual.Modulo.Curso.Id == Model.VideoAnterior.Modulo.Curso.Id)
+                    {
+                        <form action="@Url.Action("UpdateProgress", "Home", new { id = Model.VideoAnterior.Id })"
+                            method="post">
+                            <button class="btn btn-lg btnLeft btn-outline-transparent text-start w-100" type='submit'>
+                                Aula anterior
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div class="col text-center">
+                    @if (Model.ProximoVideo != null && Model.VideoAtual.Modulo.Curso.Id == Model.ProximoVideo.Modulo.Curso.Id)
+                    {
+                        <form action="@Url.Action("UpdateProgress", "Home", new { id = Model.ProximoVideo.Id })"
+                            method="post">
+                            <button class="btn btn-lg btnRight btn-outline-transparent text-white text-end w-100"
+                                type='submit'>
+                                Próxima aula
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="title">
+            <h2 class="text-center">@Model.VideoAtual.Titulo</h2>
         </div>
     </section>
 </div>
@@ -106,7 +137,7 @@
 
         section {
             width: 100%;
-            height: 470px;
+            height: 540px;
         }
 
         .content {
@@ -125,6 +156,28 @@
             width: 100%;
             padding: 20px;
             height: 100vh;
+        }
+
+        .bottom {
+            background-color: white;
+        }
+
+        .btnLeft {
+            background-color: #E3E3E3;
+        }
+
+        .btnRight {
+            background-color: #17988f;
+        }
+
+        .btnLeft:hover,
+        .btnRight:hover {
+            background-color: #0d5752;
+            transition: 100ms;
+        }
+
+        .btnLeft:hover {
+            color: white !important;
         }
 
         .modulosContainer {
@@ -150,7 +203,6 @@
 
         .bar {
             height: 100%;
-            transition: width 1s;
         }
 
         .green {
@@ -164,25 +216,19 @@
         function filter(videoId, clickedButton) {
             document.querySelectorAll('.video').forEach(card => {
                 card.style.display = "flex";
-                if (card.getAttribute('data-video-id') !== videoId && videoId !== '') {
+                if (card.getAttribute('data-video-id') != videoId & videoId != '') {
                     card.style.display = "none";
                 }
             });
-
-            document.querySelectorAll('.btn-filter').forEach(button => {
-                button.classList.remove('bg-gradient-success', 'active');
-            });
-
-            if (clickedButton) {
-                clickedButton.classList.add('bg-gradient-success', 'active');
-            }
         }
 
         document.addEventListener("DOMContentLoaded", function () {
             var selectedVideoId = @Model.SelectedVideoId;
             if (selectedVideoId) {
-                filter(selectedVideoId.toString());
+                filter(selectedVideoId);
             }
         });
+
+
     </script>
 }

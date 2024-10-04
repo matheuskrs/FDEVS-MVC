@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace FDevs.Models;
 
-[Table("Status")]
-public class Status
+[Table("Estado")]
+public class Estado
 {
     [Key]
     public int Id { get; set; }

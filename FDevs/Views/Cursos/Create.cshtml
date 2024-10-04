@@ -1,0 +1,90 @@
+@model FDevs.Models.Curso
+@{
+    ViewData["Title"] = "Cursos";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-success shadow-dark border-radius-lg pt-4 pb-3">
+                    <h4 class="text-white text-capitalize ps-3">@ViewData["Title"]</h4>
+                    <h6 class="text-white text-capitalize ps-3">Adicionar</h6>
+                </div>
+            </div>
+
+            <div class="card-body pb-2">
+                <form asp-action="Create" class="row" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-lg-8 col-md-9">
+                            <div class="col-12 mb-3">
+                                <div class="input-group input-group-outline mb-1">
+                                    <label asp-for="Nome" for="floatingInput" class="form-label"></label>
+                                    <input asp-for="Nome" class="form-control" rows="5">
+                                </div>
+                                <span asp-validation-for="Nome" class="text-danger text-sm"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 mb-3">
+                                    <div class="input-group input-group-outline">
+                                        <label asp-for="EstadoId" class="form-label"></label>
+                                        <select asp-for="EstadoId" class="form-control"
+                                            asp-items="ViewBag.EstadoId"></select>
+                                    </div>
+                                    <span asp-validation-for="EstadoId" class="text-danger text-sm"></span>
+                                </div>
+                                <div class="col-4 mb-3">
+                                    <div class="input-group input-group-outline">
+                                        <label asp-for="TrilhaId" class="form-label"></label>
+                                        <select asp-for="TrilhaId" class="form-control"
+                                            asp-items="ViewBag.TrilhaId"></select>
+                                    </div>
+                                    <span asp-validation-for="TrilhaId" class="text-danger text-sm"></span>
+                                </div>
+                                <div class="col-4 mb-3">
+                                    <div class="input-group input-group-outline mb-1 focused is-focused">
+                                        <label asp-for="DataConclusao" for="floatingInput" class="form-label"></label>
+                                        <input asp-for="DataConclusao" type="date" class="form-control" rows="5">
+                                    </div>
+                                    <span asp-validation-for="DataConclusao" class="text-danger text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-3 d-flex justify-content-center">
+                            <img id="preview" src="~/img/Cursos/sem-foto.png" class="w-55" alt="Foto" title="Foto"
+                                onclick="changeImage()">
+                            <input type="hidden" asp-for="Foto">
+                            <input type="file" id="Foto" name="Foto" hidden
+                                accept=".jpg, .png, .webp, .jpeg, .gif, .jfif">
+                        </div>
+
+                        <div class="pb-3">
+                            <input type="submit" value="Criar" class="btn btn-success me-3" />
+                            <a asp-action="Index" class="btn btn-success">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage() {
+            document.querySelector('input[type="file"]').click();
+        }
+
+        window.addEventListener('load', function () {
+            document.querySelector("input[type='file']")
+                .addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        var img = document.getElementById("preview");
+                        img.src = URL.createObjectURL(this.files[0]);
+                    }
+                });
+        })
+    </script>
+}

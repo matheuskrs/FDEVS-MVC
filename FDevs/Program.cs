@@ -36,22 +36,35 @@
 // app.Run();
 
 //SQL
-using Microsoft.EntityFrameworkCore;
 using FDevs.Data;
+using FDevs.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Adicionar serviços ao contêiner.
 string conexao = builder.Configuration.GetConnectionString("Conexao");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(conexao)
 );
 
+// Configurar Identity com suporte a usuários e papéis.
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
+    opt.SignIn.RequireConfirmedEmail = false
+)
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
+// Registrar os serviços necessários.
+builder.Services.AddTransient<IUsuarioService, UsuarioService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuração do pipeline de requisição HTTP.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

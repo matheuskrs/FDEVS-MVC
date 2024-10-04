@@ -16,6 +16,6 @@ public class Questao
     public int ProvaId { get; set; }
     [ForeignKey("ProvaId")]
     public Prova Prova { get; set; }
-    
+    public ICollection<Alternativa> Alternativas { get; set; }
 }
 

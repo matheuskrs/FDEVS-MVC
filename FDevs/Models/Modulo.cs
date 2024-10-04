@@ -14,14 +14,9 @@ public class Modulo
     public string Nome { get; set; }
 
     [Required]
-    public string UsuarioId { get; set; }
-
-    [ForeignKey("UsuarioId")]
-    public Usuario Usuario { get; set; }
-    [Required]
-    public int StatusId { get; set; }
-    [ForeignKey("StatusId")]
-    public Status Status { get; set; }
+    public int EstadoId { get; set; }
+    [ForeignKey("EstadoId")]
+    public Estado Estado { get; set; }
 
     [Required]
     public int CursoId { get; set; }

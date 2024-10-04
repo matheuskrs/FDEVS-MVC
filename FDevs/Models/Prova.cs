@@ -16,10 +16,5 @@ public class Prova
     public int CursoId { get; set; }
     [ForeignKey("CursoId")]
     public Curso Curso { get; set; }
-    
-    [Required]
-    public string UsuarioId { get; set; }
-    [ForeignKey("UsuarioId")]
-    public Usuario Usuario { get; set; }
 }
 

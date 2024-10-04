@@ -4,9 +4,12 @@ using FDevs.Data;
 using FDevs.Models;
 using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FDevs.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -19,46 +22,72 @@ public class HomeController : Controller
     }
     public IActionResult Index()
     {
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        ViewBag.User = currentUser;
+
         HomeVM home = new()
         {
+            Cursos = _context.UsuarioCursos
+                .Include(uc => uc.Curso)
+                .ThenInclude(c => c.Estado)
+                .Include(uc => uc.Curso.Modulos)
+                .ThenInclude(m => m.Videos)
+                .Where(uc => uc.UsuarioId == currentUserId)
+                .ToList(),
+
             Usuarios = _context.Usuarios
                 .Include(c => c.Cursos)
                 .ThenInclude(uc => uc.Curso)
                 .ToList(),
             Trilhas = _context.Trilhas.ToList(),
-            Cursos = _context.Cursos
-                .Include(c => c.Status)
-                .ToList(),
         };
         return View(home);
     }
 
-    public IActionResult Details(int id, int? videoId = null)
+    public IActionResult Details(int id, int? videoId)
     {
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        ViewBag.User = currentUser;
         var curso = _context.Cursos
-            .Include(c => c.Status)
+            .Include(c => c.Estado)
             .Include(c => c.Trilha)
             .SingleOrDefault(c => c.Id == id);
 
         var modulos = _context.Modulos
             .Include(m => m.Curso)
-            .Include(m => m.Status)
+            .Include(m => m.Estado)
             .Include(m => m.Videos)
             .Where(m => m.CursoId == id)
             .ToList();
 
         var videos = _context.Videos
             .Include(v => v.Modulo)
-            .Include(v => v.Status)
+            .Include(v => v.Estado)
             .Where(v => modulos.Select(m => m.Id).Contains(v.ModuloId))
             .ToList();
+        int selectedVideoId = videoId ?? videos.FirstOrDefault().Id;
+
+        var videoAtual = videos.SingleOrDefault(v => v.Id == selectedVideoId);
 
         DetailsVM details = new DetailsVM
         {
-            Atual = curso,
+            CursoAtual = curso,
+            VideoAtual = videoAtual,
+            VideoAnterior = _context.Videos
+                .Include(a => a.Modulo)
+                .ThenInclude(m => m.Curso)
+                .OrderByDescending(v => v.Id)
+                .FirstOrDefault(v => v.Id < selectedVideoId),
+            ProximoVideo = _context.Videos
+                .Include(p => p.Modulo)
+                .ThenInclude(m => m.Curso)
+                .OrderBy(v => v.Id)
+                .FirstOrDefault(v => v.Id > selectedVideoId),
             Modulos = modulos,
             Videos = videos,
-            SelectedVideoId = videoId
+            SelectedVideoId = selectedVideoId
         };
 
         return View(details);
@@ -73,9 +102,9 @@ public class HomeController : Controller
 
         if (video != null)
         {
-            if (video.StatusId == 3)
+            if (video.EstadoId == 3)
             {
-                video.StatusId = 1;
+                video.EstadoId = 1;
                 _context.SaveChanges();
             }
             return RedirectToAction("Details", new { id = video.Modulo.CursoId, videoId = video.Id });
@@ -83,13 +112,22 @@ public class HomeController : Controller
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
+    public bool UpdateProgressToCompleted(int id)
+    {
+        var video = _context.Videos.FirstOrDefault(v => v.Id == id);
+        if (video != null)
+        {
+            video.EstadoId = 2;
+            _context.SaveChanges();
+            return true;
+        }
+        return false;
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-
-
-
 }

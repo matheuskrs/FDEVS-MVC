@@ -22,5 +22,6 @@ public class Resposta
     public int AlternativaId { get; set; }
     [ForeignKey("AlternativaId")]
     public Alternativa Alternativa { get; set; }
+    
 }
 

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using FDevs.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FDevs.Data;
 
-public class AppDbContext: DbContext
+public class AppDbContext : IdentityDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -15,16 +16,27 @@ public class AppDbContext: DbContext
     public DbSet<Prova> Provas { get; set; }
     public DbSet<Questao> Questoes { get; set; }
     public DbSet<Resposta> Respostas { get; set; }
-    public DbSet<Status> Status { get; set; }
+    public DbSet<Estado> Estados { get; set; }
     public DbSet<Trilha> Trilhas { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<UsuarioCurso> UsuarioCursos { get; set; }
     public DbSet<Video> Videos { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        AppDbSeed seed = new(modelBuilder);
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            entityType.SetTableName(entityType.DisplayName());
 
+            entityType.GetForeignKeys()
+                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade)
+                .ToList()
+                .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
+        }
+        
         #region Configuração do Muitos para Muitos - JogoGenero
         // Definindo Chave Primária
         modelBuilder.Entity<UsuarioCurso>()
