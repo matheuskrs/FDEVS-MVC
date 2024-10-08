@@ -214,7 +214,7 @@ namespace FDevs.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Foto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Foto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     DataConclusao = table.Column<DateOnly>(type: "date", nullable: true),
                     TrilhaId = table.Column<int>(type: "int", nullable: false),
                     EstadoId = table.Column<int>(type: "int", nullable: false)
@@ -428,7 +428,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "d53d523d-a3fd-47e7-8ea7-90944e08dfba", "admin@gcook.com", true, false, null, "ADMIN@GCOOK.COM", "ADMIN", "AQAAAAIAAYagAAAAEJQ04UkbTr8CreWp6wcAMPcePorkywppG6OWoGQ7BnkzaXsdleMDZrKwFPe4UA3/bQ==", null, false, "561a4b7e-5573-4731-9d7a-3ac356f0bae2", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "bdc672f5-8b09-4a5e-a36e-f903e559b5d4", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEBGoVmHj4bteUq+U2bpIEHzdWZfLTIXzNThJeFrrxjltw4Ce2hiLK2Sv3aGEnx7l3A==", null, false, "7be90142-d52e-4caf-8996-8444c0e8c2a8", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "IdentityUserRole<string>",
@@ -443,7 +443,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "Usuario",
                 columns: new[] { "UsuarioId", "DataNascimento", "Foto", "IsAdmin", "Nome" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", new DateTime(1981, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "/img/usuarios/avatar.png", false, "José Antonio Gallo Junior" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", new DateTime(1981, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "/img/usuarios/avatar.png", false, "Matheus Kauan Rodrigues de Souza" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alternativa_QuestaoId",

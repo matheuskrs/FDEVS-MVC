@@ -84,6 +84,33 @@
                                 }
                             </ul>
                         }
+                        @foreach (var prova in Model.CursoAtual.Provas)
+                        {
+                            <li class='nav-item' data-bs-toggle="collapse" href="#prova-@prova.Id" role="button"
+                                aria-expanded="false" aria-controls="prova-@prova.Id">
+                                <a class='nav-link text-white dropdown-toggle' href="#" type="button"
+                                    id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="text-white d-flex align-items-center justify-content-center">
+                                        <span>+</span>
+                                        <i class="material-icons opacity-10">book</i>
+                                        <span class="nav-link-text ms-2">@prova.Nome</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <ul class="list-unstyled collapse multi-collapse" id="prova-@prova.Id">
+                                <li class="nav-item">
+                                    <form action="Prova" method="post">
+                                        <a asp-action="Index" asp-controller="ProvasUsuario" asp-route-id="@prova.Id" asp-route-questaoid="@Model.QuestaoId" type="submit" class='nav-link btn text-white btn-filter w-100'>
+                                            <div class="row w-100">
+                                                <div class="text-white col-12 d-flex align-items-center">
+                                                    <span class="nav-link-text">@prova.Nome</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </form>
+                                </li>
+                            </ul>
+                        }
                     </ul>
                 </div>
             </aside>
@@ -93,7 +120,8 @@
         <div class="container text-white">
             <div class="row p-4">
                 <div class="col text-center">
-                    @if (Model.VideoAnterior != null && Model.VideoAtual.Modulo.Curso.Id == Model.VideoAnterior.Modulo.Curso.Id)
+                    @if (Model.VideoAnterior != null && Model.VideoAtual.Modulo.Curso.Id ==
+                    Model.VideoAnterior.Modulo.Curso.Id)
                     {
                         <form action="@Url.Action("UpdateProgress", "Home", new { id = Model.VideoAnterior.Id })"
                             method="post">
@@ -104,7 +132,8 @@
                     }
                 </div>
                 <div class="col text-center">
-                    @if (Model.ProximoVideo != null && Model.VideoAtual.Modulo.Curso.Id == Model.ProximoVideo.Modulo.Curso.Id)
+                    @if (Model.ProximoVideo != null && Model.VideoAtual.Modulo.Curso.Id ==
+                    Model.ProximoVideo.Modulo.Curso.Id)
                     {
                         <form action="@Url.Action("UpdateProgress", "Home", new { id = Model.ProximoVideo.Id })"
                             method="post">

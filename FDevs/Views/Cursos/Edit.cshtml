@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div class="card-body pb-2">
-                <form asp-action="EditConfirmed" method="post" class="row">
+                <form asp-action="EditConfirmed" method="post" class="row" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="Id" />
                     <div class="row">
@@ -22,7 +22,7 @@
                             <div class="col-12 mb-3">
                                 <div class="input-group input-group-outline mb-1">
                                     <label asp-for="Nome" for="floatingInput" class="form-label"></label>
-                                    <input asp-for="Nome" class="form-control" rows="5" readonly>
+                                    <input asp-for="Nome" class="form-control" rows="5">
                                 </div>
                                 <span asp-validation-for="Nome" class="text-danger text-sm"></span>
                             </div>
@@ -31,7 +31,7 @@
                                     <div class="input-group input-group-outline">
                                         <label asp-for="EstadoId" class="form-label"></label>
                                         <select asp-for="EstadoId" class="form-control"
-                                            asp-items="ViewBag.EstadoId" disabled></select>
+                                            asp-items="ViewBag.EstadoId"></select>
                                     </div>
                                     <span asp-validation-for="EstadoId" class="text-danger text-sm"></span>
                                 </div>
@@ -39,22 +39,22 @@
                                     <div class="input-group input-group-outline">
                                         <label asp-for="TrilhaId" class="form-label"></label>
                                         <select asp-for="TrilhaId" class="form-control"
-                                            asp-items="ViewBag.TrilhaId" disabled></select>
+                                            asp-items="ViewBag.TrilhaId"></select>
                                     </div>
                                     <span asp-validation-for="TrilhaId" class="text-danger text-sm"></span>
                                 </div>
                                 <div class="col-4 mb-3">
                                     <div class="input-group input-group-outline mb-1 focused is-focused">
                                         <label asp-for="DataConclusao" for="floatingInput" class="form-label"></label>
-                                        <input asp-for="DataConclusao" class="form-control" rows="5" readonly>
+                                        <input asp-for="DataConclusao" type="date" class="form-control" rows="5">
                                     </div>
                                     <span asp-validation-for="DataConclusao" class="text-danger text-sm"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-3 d-flex justify-content-center">
-                            <img id="preview" src="~/img/sem-foto.png" class="w-55" alt="Foto" title="Foto">
-                            <input type="hidden" asp-for="Foto">
+                            <img id="preview" src='@(Model.Foto ?? Url.Content("~/img/sem-foto.jpg"))' class="w-55" alt="Foto" title="Foto"
+                                onclick="changeImage()">
                             <input type="file" id="Arquivo" name="Arquivo" hidden
                                 accept=".jpg, .png, .webp, .jpeg, .gif, .jfif">
                         </div>
@@ -68,3 +68,21 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function changeImage() {
+            document.querySelector('input[type="file"]').click();
+        }
+
+        window.addEventListener('load', function () {
+            document.querySelector("input[type='file']")
+                .addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        var img = document.getElementById("preview");
+                        img.src = URL.createObjectURL(this.files[0]);
+                    }
+                });
+        })
+    </script>
+}

@@ -35,8 +35,8 @@ public class AppDbSeed
         List<IdentityUser> users = new() {
             new IdentityUser(){
                 Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
-                Email = "admin@gcook.com",
-                NormalizedEmail = "ADMIN@GCOOK.COM",
+                Email = "admin@fdevs.com",
+                NormalizedEmail = "ADMIN@FDEVS.COM",
                 UserName = "Admin",
                 NormalizedUserName = "ADMIN",
                 LockoutEnabled = false,
@@ -46,14 +46,14 @@ public class AppDbSeed
         foreach (var user in users)
         {
             PasswordHasher<IdentityUser> pass = new();
-            user.PasswordHash = pass.HashPassword(user, "@Etec123");
+            user.PasswordHash = pass.HashPassword(user, "@Admin123");
         }
         builder.Entity<IdentityUser>().HasData(users);
 
         List<Usuario> usuarios = new(){
             new Usuario(){
                 UsuarioId = users[0].Id,
-                Nome = "José Antonio Gallo Junior",
+                Nome = "Matheus Kauan Rodrigues de Souza",
                 DataNascimento = DateTime.Parse("05/08/1981"),
                 Foto = "/img/usuarios/avatar.png"
             }

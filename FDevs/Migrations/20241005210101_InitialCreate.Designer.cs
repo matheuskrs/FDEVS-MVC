@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDevs.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241004033803_InitialCreate")]
+    [Migration("20241005210101_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -66,7 +66,6 @@ namespace FDevs.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Foto")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -271,7 +270,7 @@ namespace FDevs.Migrations
                             DataNascimento = new DateTime(1981, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Foto = "/img/usuarios/avatar.png",
                             IsAdmin = false,
-                            Nome = "José Antonio Gallo Junior"
+                            Nome = "Matheus Kauan Rodrigues de Souza"
                         });
                 });
 
@@ -466,15 +465,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d53d523d-a3fd-47e7-8ea7-90944e08dfba",
-                            Email = "admin@gcook.com",
+                            ConcurrencyStamp = "bdc672f5-8b09-4a5e-a36e-f903e559b5d4",
+                            Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@GCOOK.COM",
+                            NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJQ04UkbTr8CreWp6wcAMPcePorkywppG6OWoGQ7BnkzaXsdleMDZrKwFPe4UA3/bQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBGoVmHj4bteUq+U2bpIEHzdWZfLTIXzNThJeFrrxjltw4Ce2hiLK2Sv3aGEnx7l3A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "561a4b7e-5573-4731-9d7a-3ac356f0bae2",
+                            SecurityStamp = "7be90142-d52e-4caf-8996-8444c0e8c2a8",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

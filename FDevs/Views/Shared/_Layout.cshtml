@@ -78,7 +78,7 @@
                         </div>
                     </a>
                 </li>
-                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "FDevs 2024" ? "show" : "")"
+                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "FDevs 2024" || ViewData["Title"].ToString() == "Meu perfil" ? "show" : "")"
                     id="treinamento">
                     <li class="nav-item">
                         <a class='nav-link text-white @(ViewData["Title"].ToString() == "FDevs 2024" ? "active bg-gradient-success" : "") '
@@ -89,8 +89,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Perfil" ? "active bg-gradient-success" : "") '
-                            asp-controller="Perfil" asp-action="Index">
+                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Meu perfil" ? "active bg-gradient-success" : "") '
+                            asp-controller="Perfil" asp-route-id="@ViewBag.User.UsuarioId" asp-action="Edit">
                             <div class="text-white ps-2 d-flex align-items-center justify-content-center">
                                 <span class="nav-link-text ms-2">Meu perfil</span>
                             </div>
@@ -138,7 +138,7 @@
                             </a>
                         </li>
                         <li class="nav-item d-flex align-items-center">
-                            <a asp-controller="Admin" asp-action="Profile"
+                            <a asp-controller="Perfil" asp-action="Edit"
                                 class="nav-link text-body font-weight-bold px-0">
                                 <img class="img-fluid rounded-circle mx-1 mb-1" src="@(ViewBag.User.Foto != null ? ViewBag.User.Foto : "~/img/Usuarios/no-icon.png")"
                                     width="28" height="28">

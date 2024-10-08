@@ -1,0 +1,63 @@
+@model FDevs.Models.Questao
+@{
+    ViewData["Title"] = "Questões";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-success shadow-dark border-radius-lg pt-4 pb-3">
+                    <h4 class="text-white text-capitalize ps-3">@ViewData["Title"]</h4>
+                    <h6 class="text-white text-capitalize ps-3">Adicionar</h6>
+                </div>
+            </div>
+
+            <div class="card-body pb-2">
+                <form asp-action="Create" class="row" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-8 mb-3">
+                            <div class="input-group input-group-outline mb-1">
+                                <label asp-for="Texto" for="floatingInput" class="form-label"></label>
+                                <input asp-for="Texto" class="form-control" rows="5">
+                            </div>
+                            <span asp-validation-for="Texto" class="text-danger text-sm"></span>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                <label asp-for="ProvaId" class="form-label"></label>
+                                <select asp-for="ProvaId" class="form-control" asp-items="ViewBag.ProvaId">
+                                </select>
+                            </div>
+                            <span asp-validation-for="ProvaId" class="text-danger text-sm"></span>
+                        </div>
+                        <div class="pb-3">
+                            <input type="submit" value="Criar" class="btn btn-success me-3" />
+                            <a asp-action="Index" class="btn btn-success">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage() {
+            document.querySelector('input[type="file"]').click();
+        }
+
+        window.addEventListener('load', function () {
+            document.querySelector("input[type='file']")
+                .addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        var img = document.getElementById("preview");
+                        img.src = URL.createObjectURL(this.files[0]);
+                    }
+                });
+        })
+    </script>
+}

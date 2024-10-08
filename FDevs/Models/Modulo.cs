@@ -14,11 +14,13 @@ public class Modulo
     public string Nome { get; set; }
 
     [Required]
+    [Display(Name = "Estado de conclusão")]
     public int EstadoId { get; set; }
     [ForeignKey("EstadoId")]
     public Estado Estado { get; set; }
 
     [Required]
+    [Display(Name = "Curso")]
     public int CursoId { get; set; }
     [ForeignKey("CursoId")]
     public Curso Curso { get; set; }

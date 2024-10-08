@@ -13,9 +13,12 @@ public class Questao
     public string Texto { get; set; }
 
     [Required]
+    [Display(Name="Nome da Prova")]
     public int ProvaId { get; set; }
     [ForeignKey("ProvaId")]
     public Prova Prova { get; set; }
+
     public ICollection<Alternativa> Alternativas { get; set; }
+    public ICollection<Resposta> Respostas { get; set; }
 }
 

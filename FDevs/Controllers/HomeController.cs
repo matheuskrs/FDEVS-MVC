@@ -53,6 +53,8 @@ public class HomeController : Controller
         var curso = _context.Cursos
             .Include(c => c.Estado)
             .Include(c => c.Trilha)
+            .Include(c => c.Provas)
+            .ThenInclude(p => p.Questoes)
             .SingleOrDefault(c => c.Id == id);
 
         var modulos = _context.Modulos
@@ -68,8 +70,10 @@ public class HomeController : Controller
             .Where(v => modulos.Select(m => m.Id).Contains(v.ModuloId))
             .ToList();
         int selectedVideoId = videoId ?? videos.FirstOrDefault().Id;
-
         var videoAtual = videos.SingleOrDefault(v => v.Id == selectedVideoId);
+
+        var prova = curso.Provas.SingleOrDefault();
+        var questaoAtualId = prova.Questoes.FirstOrDefault().Id;
 
         DetailsVM details = new DetailsVM
         {
@@ -87,7 +91,8 @@ public class HomeController : Controller
                 .FirstOrDefault(v => v.Id > selectedVideoId),
             Modulos = modulos,
             Videos = videos,
-            SelectedVideoId = selectedVideoId
+            SelectedVideoId = selectedVideoId,
+            QuestaoId = questaoAtualId
         };
 
         return View(details);
@@ -98,7 +103,22 @@ public class HomeController : Controller
     {
         var video = _context.Videos
             .Include(v => v.Modulo)
+            .ThenInclude(m => m.Curso)
             .SingleOrDefault(v => v.Id == id);
+
+        var modulo = video.Modulo;
+        var videosDoModulo = _context.Videos.Where(v => v.ModuloId == modulo.Id).ToList();
+
+        if (videosDoModulo.All(v => v.EstadoId == 1 || v.EstadoId == 2))
+        {
+            modulo.EstadoId = 1;
+            var curso = modulo.Curso;
+            var modulosDoCurso = _context.Modulos.Where(m => m.CursoId == curso.Id).ToList();
+            if (modulosDoCurso.All(m => m.EstadoId == 1 || m.EstadoId == 2))
+            {
+                curso.EstadoId = 1;
+            }
+        }
 
         if (video != null)
         {
@@ -115,7 +135,8 @@ public class HomeController : Controller
     [HttpPost]
     public bool UpdateProgressToCompleted(int id)
     {
-        var video = _context.Videos.FirstOrDefault(v => v.Id == id);
+        var video = _context.Videos.Include(v => v.Modulo).FirstOrDefault(v => v.Id == id);
+
         if (video != null)
         {
             video.EstadoId = 2;

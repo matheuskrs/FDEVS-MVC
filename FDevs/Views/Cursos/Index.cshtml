@@ -21,6 +21,9 @@
 						<thead>
 							<tr>
 								<th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+									Trilha do Curso
+								</th>
+								<th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
 									@Html.DisplayNameFor(model => model.Nome)
 								</th>
 								<th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -32,6 +35,9 @@
 							@foreach (var item in Model)
 							{
 								<tr>
+									<td class="text-dark text-sm">
+										@Html.DisplayFor(modelItem => item.Trilha.Nome)
+									</td>
 									<td class="text-dark text-sm">
 										@Html.DisplayFor(modelItem => item.Nome)
 									</td>

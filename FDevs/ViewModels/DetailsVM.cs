@@ -11,4 +11,5 @@ public class DetailsVM
     public List<Video> Videos { get; set; }
     public List<Modulo> Modulos { get; set; }
     public int SelectedVideoId { get; set; }
+    public int QuestaoId { get; set; }
 }
