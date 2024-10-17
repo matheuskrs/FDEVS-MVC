@@ -21,23 +21,17 @@ public class UsuarioCursosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var usuarioCursos = _context.UsuarioCursos
+        var usuarioCursos = await _context.UsuarioCursos
             .Include(uc => uc.Usuario)
             .Include(uc => uc.Curso)
-            .ToList();
+            .ToListAsync();
         return View(usuarioCursos);
     }
 
     public async Task<IActionResult> Details(string usuarioId, int cursoId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos.ToList(), "Id", "Nome");
         ViewData["UsuarioId"] = new SelectList(_context.Usuarios.ToList(), "UsuarioId", "Nome");
         var usuarioCurso = await _context.UsuarioCursos
@@ -51,15 +45,12 @@ public class UsuarioCursosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos.ToList(), "Id", "Nome");
         ViewData["UsuarioId"] = new SelectList(_context.Usuarios.ToList(), "UsuarioId", "Nome");
-        ViewBag.Usuarios = _context.Usuarios.ToList();
-        ViewBag.Cursos = _context.Cursos.ToList();
+        ViewBag.Usuarios = await _context.Usuarios.ToListAsync();
+        ViewBag.Cursos = await _context.Cursos.ToListAsync();
         return View();
     }
 
@@ -74,25 +65,17 @@ public class UsuarioCursosController : Controller
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        ViewBag.Usuarios = _context.Usuarios.ToList();
-        ViewBag.Cursos = _context.Cursos.ToList();
         return View(usuarioCurso);
     }
 
     public async Task<IActionResult> Edit(string usuarioId, int cursoId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos.ToList(), "Id", "Nome");
         ViewData["UsuarioId"] = new SelectList(_context.Usuarios.ToList(), "UsuarioId", "Nome");
         var usuarioCurso = await _context.UsuarioCursos
             .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
         if (usuarioCurso == null)
             return NotFound();
-
-        ViewBag.Usuarios = _context.Usuarios.ToList();
-        ViewBag.Cursos = _context.Cursos.ToList();
         return View(usuarioCurso);
     }
 
@@ -110,16 +93,11 @@ public class UsuarioCursosController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        ViewBag.Usuarios = _context.Usuarios.ToList();
-        ViewBag.Cursos = _context.Cursos.ToList();
         return View(usuarioCurso);
     }
 
     public async Task<IActionResult> Delete(string usuarioId, int cursoId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos.ToList(), "Id", "Nome");
         ViewData["UsuarioId"] = new SelectList(_context.Usuarios.ToList(), "UsuarioId", "Nome");
         var usuarioCurso = await _context.UsuarioCursos
@@ -136,7 +114,10 @@ public class UsuarioCursosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(string usuarioId, int cursoId)
     {
-        var usuarioCurso = await _context.UsuarioCursos.SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
+        var usuarioCurso = await _context.UsuarioCursos
+            .Include(uc => uc.Usuario)
+            .Include(uc => uc.Curso)
+            .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
         if (usuarioCurso == null)
             return NotFound();
 

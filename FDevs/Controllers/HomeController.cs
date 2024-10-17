@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using FDevs.Services;
 
 namespace FDevs.Controllers;
 
@@ -14,64 +15,65 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDbContext _context;
+    private readonly IUsuarioService _userService;
 
-    public HomeController(ILogger<HomeController> logger, AppDbContext context)
+    public HomeController(ILogger<HomeController> logger, AppDbContext context, IUsuarioService userService)
     {
         _logger = logger;
         _context = context;
+        _userService = userService;
     }
-    public IActionResult Index()
+    
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        var currentUser = await _userService.GetUsuarioLogado();
+        var currentUserId = currentUser.UsuarioId;
         ViewBag.User = currentUser;
 
         HomeVM home = new()
         {
-            Cursos = _context.UsuarioCursos
+            Cursos = await _context.UsuarioCursos
                 .Include(uc => uc.Curso)
                 .ThenInclude(c => c.Estado)
                 .Include(uc => uc.Curso.Modulos)
                 .ThenInclude(m => m.Videos)
                 .Where(uc => uc.UsuarioId == currentUserId)
-                .ToList(),
+                .ToListAsync(),
 
-            Usuarios = _context.Usuarios
+            Usuarios = await _context.Usuarios
                 .Include(c => c.Cursos)
                 .ThenInclude(uc => uc.Curso)
-                .ToList(),
-            Trilhas = _context.Trilhas.ToList(),
+                .ToListAsync(),
+            Trilhas = await _context.Trilhas.ToListAsync(),
+
         };
         return View(home);
     }
 
-    public IActionResult Details(int id, int? videoId)
+    public async Task<IActionResult> Details(int id, int? videoId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var curso = _context.Cursos
+        var curso = await _context.Cursos
             .Include(c => c.Estado)
             .Include(c => c.Trilha)
             .Include(c => c.Provas)
             .ThenInclude(p => p.Questoes)
-            .SingleOrDefault(c => c.Id == id);
+            .SingleOrDefaultAsync(c => c.Id == id);
 
-        var modulos = _context.Modulos
+        var modulos = await _context.Modulos
             .Include(m => m.Curso)
             .Include(m => m.Estado)
             .Include(m => m.Videos)
             .Where(m => m.CursoId == id)
-            .ToList();
+            .ToListAsync();
 
-        var videos = _context.Videos
+        var videos = await _context.Videos
             .Include(v => v.Modulo)
             .Include(v => v.Estado)
             .Where(v => modulos.Select(m => m.Id).Contains(v.ModuloId))
-            .ToList();
+            .ToListAsync();
+
         int selectedVideoId = videoId ?? videos.FirstOrDefault().Id;
         var videoAtual = videos.SingleOrDefault(v => v.Id == selectedVideoId);
-
         var prova = curso.Provas.SingleOrDefault();
         var questaoAtualId = prova.Questoes.FirstOrDefault().Id;
 
@@ -79,16 +81,16 @@ public class HomeController : Controller
         {
             CursoAtual = curso,
             VideoAtual = videoAtual,
-            VideoAnterior = _context.Videos
+            VideoAnterior = await _context.Videos
                 .Include(a => a.Modulo)
                 .ThenInclude(m => m.Curso)
                 .OrderByDescending(v => v.Id)
-                .FirstOrDefault(v => v.Id < selectedVideoId),
-            ProximoVideo = _context.Videos
+                .FirstOrDefaultAsync(v => v.Id < selectedVideoId),
+            ProximoVideo = await _context.Videos
                 .Include(p => p.Modulo)
                 .ThenInclude(m => m.Curso)
                 .OrderBy(v => v.Id)
-                .FirstOrDefault(v => v.Id > selectedVideoId),
+                .FirstOrDefaultAsync(v => v.Id > selectedVideoId),
             Modulos = modulos,
             Videos = videos,
             SelectedVideoId = selectedVideoId,
@@ -99,21 +101,21 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult UpdateProgress(int id)
+    public async Task<IActionResult> UpdateProgress(int id)
     {
-        var video = _context.Videos
+        var video = await _context.Videos
             .Include(v => v.Modulo)
             .ThenInclude(m => m.Curso)
-            .SingleOrDefault(v => v.Id == id);
+            .SingleOrDefaultAsync(v => v.Id == id);
 
         var modulo = video.Modulo;
-        var videosDoModulo = _context.Videos.Where(v => v.ModuloId == modulo.Id).ToList();
+        var videosDoModulo = await _context.Videos.Where(v => v.ModuloId == modulo.Id).ToListAsync();
 
         if (videosDoModulo.All(v => v.EstadoId == 1 || v.EstadoId == 2))
         {
             modulo.EstadoId = 1;
             var curso = modulo.Curso;
-            var modulosDoCurso = _context.Modulos.Where(m => m.CursoId == curso.Id).ToList();
+            var modulosDoCurso = await _context.Modulos.Where(m => m.CursoId == curso.Id).ToListAsync();
             if (modulosDoCurso.All(m => m.EstadoId == 1 || m.EstadoId == 2))
             {
                 curso.EstadoId = 1;
@@ -125,7 +127,7 @@ public class HomeController : Controller
             if (video.EstadoId == 3)
             {
                 video.EstadoId = 1;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             return RedirectToAction("Details", new { id = video.Modulo.CursoId, videoId = video.Id });
         }
@@ -133,14 +135,14 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public bool UpdateProgressToCompleted(int id)
+    public async Task<bool> UpdateProgressToCompleted(int id)
     {
-        var video = _context.Videos.Include(v => v.Modulo).FirstOrDefault(v => v.Id == id);
+        var video = await _context.Videos.Include(v => v.Modulo).FirstOrDefaultAsync(v => v.Id == id);
 
         if (video != null)
         {
             video.EstadoId = 2;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
         return false;

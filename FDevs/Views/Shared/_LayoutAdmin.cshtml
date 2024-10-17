@@ -1,3 +1,8 @@
+@inject FDevs.Services.IUsuarioService userService
+@{
+    var usuario = await userService.GetUsuarioLogado();
+}
+
 <!DOCTYPE html>
 <html lang="pt-br" class="min-vh-100">
 
@@ -102,7 +107,7 @@
                     </li>
                 </ul>
 
-                <li class='nav-item @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" ? "show" : "")'
+                <li class='nav-item @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" || ViewData["Title"].ToString() == "Respostas" ? "show" : "")'
                     data-bs-toggle="collapse" href="#avaliacoes" role="button" aria-expanded="false"
                     aria-controls="avaliacoes">
                     <a class='nav-link text-white dropdown-toggle' href="#" type="button" id="dropdownMenuButton2"
@@ -113,7 +118,7 @@
                         </div>
                     </a>
                 </li>
-                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" ? "show" : "")"
+                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" || ViewData["Title"].ToString() == "Respostas" ? "show" : "")"
                     id="avaliacoes">
                     <li class="nav-item">
                         <a class='nav-link text-white @(ViewData["Title"].ToString() == "Prova" ? "active bg-gradient-success" : "") '
@@ -136,6 +141,14 @@
                             asp-controller="Alternativas" asp-action="Index">
                             <div class="text-white ps-2 d-flex align-items-center justify-content-center">
                                 <span class="nav-link-text ms-2">Alternativas</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Respostas" ? "active bg-gradient-success" : "") '
+                            asp-controller="Respostas" asp-action="Index">
+                            <div class="text-white ps-2 d-flex align-items-center justify-content-center">
+                                <span class="nav-link-text ms-2">Respostas dos Usuários</span>
                             </div>
                         </a>
                     </li>
@@ -198,26 +211,46 @@
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                     </div>
-                    <ul class="navbar-nav  justify-content-end">
-                        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                            <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                                <div class="sidenav-toggler-inner">
-                                    <i class="sidenav-toggler-line"></i>
-                                    <i class="sidenav-toggler-line"></i>
-                                    <i class="sidenav-toggler-line"></i>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="nav-item d-flex align-items-center">
-                            <a asp-controller="Perfil" asp-action="Edit"
-                                class="nav-link text-body font-weight-bold px-0">
-                                <img class="img-fluid rounded-circle mx-1 mb-1"
-                                    src="@(ViewBag.User.Foto != null ? ViewBag.User.Foto : "~/img/Usuarios/no-icon.png")"
-                                    width="28" height="28">
-                                <span class="d-sm-inline d-none">@ViewBag.User.Nome</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="collapse navbar-collapse " id="navbar">
+                        <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                        </div>
+                        <div class="nav-item dropdown me-2">
+                            <button class="nav-link text-white dropdown-toggle border-0" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <img src='@(usuario.Foto ?? Url.Content("~/img/usuarios/no-photo.png"))' width="40"
+                                    height="40" class="object-fit-cover rounded-5">
+                                <span class="d-sm-inline d-none text-dark fw-bold">@usuario.Nome</span>
+                            </button>
+                            <ul class="dropdown-menu" style="position:absolute!important; width:250px">
+                                @if (usuario.IsAdmin)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Home">
+                                            <i class="bi bi-house"></i> Acessar Área Pública
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Admin">
+                                            <i class="bi bi-receipt"></i> Acessar Área Administrativa
+                                        </a>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Perfil" asp-action="Edit"
+                                        asp-route-id="@usuario.UsuarioId">
+                                        <i class="bi bi-person-bounding-box"></i> Meu Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <form method="POST" asp-action="Logout" asp-controller="Account">
+                                        <button type="submit" class="dropdown-item aling-middle">
+                                            <i class="bi bi-door-closed"></i> Sair
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>

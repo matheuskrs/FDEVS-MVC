@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,27 +20,23 @@ public class AlternativasController : Controller
         _logger = logger;
         _context = context;
         _host = host;
+
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
-        var alternativas = _context.Alternativas
+        var alternativas = await _context.Alternativas
             .Include(a => a.Questao)
             .ThenInclude(q => q.Prova)
-            .ToList();
+            .ToListAsync();
         return View(alternativas);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
+
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
         var alternativa = await _context.Alternativas.SingleOrDefaultAsync(q => q.Id == id);
         return View(alternativa);
@@ -48,9 +45,6 @@ public class AlternativasController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
         return View();
     }
@@ -74,9 +68,6 @@ public class AlternativasController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
         if (_context.Alternativas == null)
         {
@@ -105,9 +96,6 @@ public class AlternativasController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
         var alternativa = await _context.Alternativas.SingleOrDefaultAsync(a => a.Id == id);
         if (alternativa == null)

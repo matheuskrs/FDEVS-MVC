@@ -23,20 +23,14 @@ public class ProvasController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var provas = _context.Provas.Include(p => p.Curso).ToList();
+        var provas = await _context.Provas.Include(p => p.Curso).ToListAsync();
         return View(provas);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var prova = await _context.Provas.Include(p => p.Curso).SingleOrDefaultAsync(p => p.Id == id);
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         return View(prova);
@@ -45,9 +39,6 @@ public class ProvasController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         return View();
     }
@@ -71,9 +62,6 @@ public class ProvasController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         if (_context.Provas == null)
         {
@@ -102,9 +90,6 @@ public class ProvasController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
         if (prova == null)

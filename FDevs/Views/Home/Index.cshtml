@@ -94,20 +94,22 @@
                     <span class="col-12 text-center mb-3">cursos</span>
                 </div>
             </div>
-            <div class="d-flex justify-content-center h-50 align-items-center">
-                <div class="progress-container p-0 w-90 ">
-                    <div class="progress p-0">
-                        <div class="bar green d-flex justify-content-center align-items-center text-bold fs-6"
-                            style="width:@progressoVerde%;"> @(progressoVerde > 0 ? $"{progressoVerde}%" : "")</div>
-                        <div class="bar yellow d-flex justify-content-center align-items-center text-bold fs-6"
-                            style="width:@progressoAmarelo%;">@(progressoAmarelo > 0 ? $"{progressoAmarelo}%" : "")
-                        </div>
-                        <div class="bar red d-flex justify-content-center align-items-center text-bold fs-6"
-                            style="width:@progressoVermelho%;">@(progressoVermelho > 0 ? $"{progressoVermelho}%" : "")
+            @if(qtdCursos > 0){
+                <div class="d-flex justify-content-center h-50 align-items-center">
+                    <div class="progress-container p-0 w-90 ">
+                        <div class="progress p-0">
+                            <div class="bar green d-flex justify-content-center align-items-center text-bold fs-6"
+                                style="width:@progressoVerde%;"> @(progressoVerde > 0 ? $"{progressoVerde}%" : "")</div>
+                            <div class="bar yellow d-flex justify-content-center align-items-center text-bold fs-6"
+                                style="width:@progressoAmarelo%;">@(progressoAmarelo > 0 ? $"{progressoAmarelo}%" : "")
+                            </div>
+                            <div class="bar red d-flex justify-content-center align-items-center text-bold fs-6"
+                                style="width:@progressoVermelho%;">@(progressoVermelho > 0 ? $"{progressoVermelho}%" : "")
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         </section>
         <section class="bottom" id="trilhas">
             <div class="row">
@@ -178,7 +180,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         section {
             background-color: white;

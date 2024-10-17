@@ -27,7 +27,7 @@ public class RegistroVM
     public string Senha { get; set; }
 
     [DataType(DataType.Password)]
-    [Display(Name = "Confirmar Senha de Acesso", Prompt = "Confirme sua Senha de Acesso")]
+    [Display(Name = "Confirmar Senha", Prompt = "Confirme sua Senha de Acesso")]
     [Compare("Senha", ErrorMessage = "As Senhas não Conferem.")]
     public string ConfirmacaoSenha { get; set; }
 

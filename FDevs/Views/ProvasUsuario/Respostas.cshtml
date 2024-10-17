@@ -1,0 +1,73 @@
+@model FDevs.ViewModels.ProvaVM
+@{
+    ViewData["Title"] = "Respostas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="testContainer">
+    <div class="testTitle mb-0 p-2">
+        <h2 class="text-dark">@Model.Prova.Nome</h2>
+        <h3 class="text-dark tw-bold fs-4">Curso: @Model.Prova.Curso.Nome</h3>
+    </div>
+    <section class="answersContainer mt-0">
+        @foreach (var resposta in Model.Respostas)
+        {
+
+            <h5 class="text-dark tw-bold">@resposta.Questao.Texto</h5>
+            @foreach (var alternativa in resposta.Questao.Alternativas)
+            {
+                @if (resposta.AlternativaId == alternativa.Id)
+                {
+                    <p class="d-flex align-items-center ms-1 text-dark">
+                        <i
+                            class="material-icons opacity-10 @(resposta.Alternativa.Correta ? "text-success" : "text-danger")">circle</i>@alternativa.Texto
+                    </p>
+                }
+                else
+                {
+                    <p class="ms-4">@alternativa.Texto</p>
+                }
+
+            }
+
+        }
+        <div class="d-flex justify-content-center">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-light">VOLTAR</a>
+        </div>
+    </section>
+</div>
+
+
+
+@section Styles {
+    <style>
+        * {
+            user-select: none;
+        }
+
+        .answersContainer {
+            background-color: white;
+            border-radius: 5px;
+            padding: 1rem;
+        }
+
+        .testTitle {
+            background-color: #c4c4c4;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .testContainer {
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 10px;
+        }
+
+        .btn {
+            border:1px solid gainsboro !important;
+            width:100px;
+        }
+
+        .btn:hover{
+            color:red !important;
+        }
+    </style>
+}

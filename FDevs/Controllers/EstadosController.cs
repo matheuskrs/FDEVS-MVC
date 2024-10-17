@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,20 +23,14 @@ public class EstadosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var estados = _context.Estados.ToList();
+        var estados = await _context.Estados.ToListAsync();
         return View(estados);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
         return View(estado);
     }
@@ -43,9 +38,6 @@ public class EstadosController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         return View();
     }
 
@@ -68,9 +60,6 @@ public class EstadosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         if (_context.Estados == null)
         {
             return NotFound();
@@ -98,9 +87,6 @@ public class EstadosController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
         if (estado == null)
         {

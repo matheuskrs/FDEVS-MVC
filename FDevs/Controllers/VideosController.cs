@@ -23,25 +23,19 @@ public class VideosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var videos = _context.Videos
-        .Include(v => v.Modulo)
-        .ThenInclude(m => m.Curso)
-        .OrderBy(v => v.Modulo.Curso.Nome)
-        .ToList();
+        var videos = await _context.Videos
+            .Include(v => v.Modulo)
+            .ThenInclude(m => m.Curso)
+            .OrderBy(v => v.Modulo.Curso.Nome)
+            .ToListAsync();
 
         return View(videos);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
@@ -49,21 +43,18 @@ public class VideosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var videos = _context.Videos
+        var videos = await _context.Videos
             .Include(v => v.Modulo)
             .ThenInclude(m => m.Curso)
             .OrderBy(v => v.Modulo.Curso.Nome)
-            .ToList();
+            .ToListAsync();
 
-        var modulos = _context.Modulos
+        var modulos = await _context.Modulos
             .Include(m => m.Curso)
             .OrderBy(m => m.Curso.Nome)
-            .ToList();
+            .ToListAsync();
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
         return View();
@@ -84,14 +75,11 @@ public class VideosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var videos = _context.Videos
+        var videos = await _context.Videos
             .Include(v => v.Modulo)
             .ThenInclude(m => m.Curso)
             .OrderBy(v => v.Modulo.Curso.Nome)
-            .ToList();
+            .ToListAsync();
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
         if (_context.Videos == null)
@@ -121,9 +109,6 @@ public class VideosController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
         var video = await _context.Videos.SingleOrDefaultAsync(m => m.Id == id);

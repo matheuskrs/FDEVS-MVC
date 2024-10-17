@@ -22,20 +22,14 @@ public class TrilhasController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var trilhas = _context.Trilhas.ToList();
+        var trilhas = await _context.Trilhas.ToListAsync();
         return View(trilhas);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
         return View(trilha);
     }
@@ -43,9 +37,6 @@ public class TrilhasController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         return View();
     }
 
@@ -80,9 +71,6 @@ public class TrilhasController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         if (_context.Trilhas == null)
         {
             return NotFound();
@@ -128,9 +116,6 @@ public class TrilhasController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
         if (trilha == null)
         {

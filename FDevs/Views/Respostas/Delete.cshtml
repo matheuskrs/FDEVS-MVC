@@ -1,0 +1,52 @@
+@model FDevs.Models.Resposta
+@{
+    ViewData["Title"] = "Respostas";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col mx-auto">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-success shadow-secondary border-radius-lg pt-4 pb-3">
+                    <h5 class="text-white text-capitalize ps-3">@ViewData["Title"]</h5>
+                    <h6 class="text-white text-capitalize ps-3">Excluir</h6>
+                </div>
+            </div>
+            <div class="card-body pb-2">
+                <div class="row">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                <label asp-for="UsuarioId" class="form-label"></label>
+                                <select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId" disabled></select>
+                            </div>
+                            <span asp-validation-for="UsuarioId" class="text-danger text-sm"></span>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                <label asp-for="QuestaoId" class="form-label"></label>
+                                <select asp-for="QuestaoId" class="form-control" asp-items="ViewBag.QuestaoId" disabled></select>
+                            </div>
+                            <span asp-validation-for="QuestaoId" class="text-danger text-sm"></span>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="input-group input-group-outline">
+                                <label asp-for="AlternativaId" class="form-label"></label>
+                                <select asp-for="AlternativaId" class="form-control"
+                                    asp-items="ViewBag.AlternativaId" disabled></select>
+                            </div>
+                            <span asp-validation-for="AlternativaId" class="text-danger text-sm"></span>
+                        </div>
+                    </div>
+                    <form asp-action="Delete" class="mt-3">
+                        <h5 class="text-danger mb-2">Confirma a exclusão desta resposta?</h5>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="Excluir" class="btn btn-danger me-3" />
+                        <a asp-action="Index" class="btn btn-info">Voltar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

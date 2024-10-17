@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,19 @@ public class PerfilController : Controller
     private readonly ILogger<PerfilController> _logger;
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _host;
+    private readonly IUsuarioService _userService;
 
-    public PerfilController(ILogger<PerfilController> logger, AppDbContext context, IWebHostEnvironment host)
+    public PerfilController(ILogger<PerfilController> logger, AppDbContext context, IWebHostEnvironment host, IUsuarioService userService)
     {
         _logger = logger;
         _context = context;
         _host = host;
+        _userService = userService;
     }
 
     public async Task<IActionResult> Edit(string id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        var currentUser = await _userService.GetUsuarioLogado();
         ViewBag.User = currentUser;
 
         if (_context.Usuarios == null)
@@ -33,14 +35,14 @@ public class PerfilController : Controller
         var usuario = await _context.Usuarios.SingleOrDefaultAsync(c => c.UsuarioId == id);
         return View(usuario);
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> EditConfirmed(string id, Usuario usuario, IFormFile Arquivo)
+    public async Task<IActionResult> EditConfirmed(Usuario usuario, IFormFile Arquivo)
     {
 
+        var usuarioExistente = await _userService.GetUsuarioLogado();
         if (ModelState.IsValid)
         {
-
             if (Arquivo != null)
             {
                 string fileName = usuario.UsuarioId + Path.GetExtension(Arquivo.FileName);
@@ -56,10 +58,15 @@ public class PerfilController : Controller
                 }
                 usuario.Foto = "\\img\\Usuarios\\" + fileName;
             }
+            else
+            {
+                usuario.Foto = usuarioExistente.Foto;
+            }
             _context.Update(usuario);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
+
         return View(usuario);
     }
 

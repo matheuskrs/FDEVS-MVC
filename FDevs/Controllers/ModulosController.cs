@@ -23,20 +23,14 @@ public class ModulosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var modulos = _context.Modulos.Include(m => m.Curso).ToList();
+        var modulos = await _context.Modulos.Include(m => m.Curso).ToListAsync();
         return View(modulos);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var modulo = await _context.Modulos.SingleOrDefaultAsync(m => m.Id == id);
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
@@ -46,9 +40,6 @@ public class ModulosController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         return View();
@@ -69,9 +60,6 @@ public class ModulosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         if (_context.Modulos == null)
@@ -102,9 +90,6 @@ public class ModulosController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
         var modulo = await _context.Modulos.SingleOrDefaultAsync(m => m.Id == id);

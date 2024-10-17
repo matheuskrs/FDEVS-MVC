@@ -13,6 +13,7 @@ public class Prova
     public string Nome { get; set; }
 
     [Required]
+    [Display(Name = "Curso")]
     public int CursoId { get; set; }
     [ForeignKey("CursoId")]
     public Curso Curso { get; set; }

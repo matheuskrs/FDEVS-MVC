@@ -20,6 +20,7 @@ public class AppDbContext : IdentityDbContext
     public DbSet<Trilha> Trilhas { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<UsuarioCurso> UsuarioCursos { get; set; }
+    public DbSet<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
     public DbSet<Video> Videos { get; set; }
     
 
@@ -37,11 +38,16 @@ public class AppDbContext : IdentityDbContext
                 .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
         }
         
-        #region Configuração do Muitos para Muitos - JogoGenero
-        // Definindo Chave Primária
-        modelBuilder.Entity<UsuarioCurso>()
-            .HasKey(uc => new { uc.UsuarioId, uc.CursoId });
+        #region Configuração do Muitos para Muitos - UsuarioCurso
+            // Definindo Chave Primária
+            modelBuilder.Entity<UsuarioCurso>()
+                .HasKey(uc => new { uc.UsuarioId, uc.CursoId });
+        #endregion
 
+        #region Configuração do Muitos para Muitos - UsuarioEstadoVideo
+            // Definindo Chave Primária
+            modelBuilder.Entity<UsuarioEstadoVideo>()
+                .HasKey(uv => new { uv.UsuarioId, uv.EstadoId, uv.VideoId });
         #endregion
 
     }

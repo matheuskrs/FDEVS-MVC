@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-3 d-flex justify-content-center">
-                            <img id="preview" src="@(ViewBag.User.Foto != null ? ViewBag.User.Foto : "~/img/Usuarios/no-icon.png")" class="w-55" alt="Foto" title="Foto"
+                            <img id="preview" src="@(ViewBag.User.Foto != null ? ViewBag.User.Foto : "~/img/Usuarios/no-icon.png")" class="w-55 rounded" alt="Foto" title="Foto"
                                 onclick="changeImage()">
                             <input type="file" id="Arquivo" name="Arquivo" hidden
                                 accept=".jpg, .png, .webp, .jpeg, .gif, .jfif">
@@ -69,3 +69,4 @@
         })
     </script>
 }
+

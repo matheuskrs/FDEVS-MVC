@@ -1,6 +1,6 @@
 ﻿@model FDevs.ViewModels.DetailsVM
 @{
-    ViewData["Title"] = "Treinamentos";
+    ViewData["Title"] = Model.VideoAtual.Modulo.Nome;
     float qtdVideos = 0;
     float qtdConcluido = 0;
 }
@@ -31,14 +31,11 @@
     }
 
 
-    <section class="fixed-end d-flex flex-end m-0 p-0">
-        <div class="flex-end d-flex ms-4 p-0">
+    <section class="fixed-end d-flex justify-content-end m-0 p-0">
             <aside class="sidenav navbar navbar-vertical right navbar-expand-xs w-100 border-radius-xl mt-5 mb-0 ms-0"
                 id="sidenav-main" style="min-width: 400px;">
                 <hr class="horizontal light mt-0 mb-3">
-                <div class="collapse navbar-collapse" id="sidenav-collapse-main">
-                    <div class="d-flex justify-content-center">
-                    </div>
+                <div class="collapse navbar-collapse navOverflow" id="sidenav-collapse-main">
                     <div class="row ms-1">
                         <span class="col-3 m-0 px-1 text-white">Andamento:</span>
                         <div class="d-flex col-8 justify-content-start h-fit-content m-0 p-0">
@@ -50,10 +47,10 @@
                             </div>
                         </div>
                     </div>
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav ">
                         @foreach (var modulo in Model.CursoAtual.Modulos)
                         {
-                            <li class='nav-item' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
+                            <li class='nav-item ' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
                                 aria-expanded="false" aria-controls="modulo-@modulo.Id">
                                 <a class='nav-link text-white dropdown-toggle' href="#" type="button"
                                     id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -64,7 +61,8 @@
                                     </div>
                                 </a>
                             </li>
-                            <ul class="list-unstyled collapse multi-collapse" id="modulo-@modulo.Id">
+                            <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == modulo.Nome ? "show" : "")"
+                                id="modulo-@modulo.Id">
                                 @foreach (var video in modulo.Videos)
                                 {
                                     <li class="nav-item">
@@ -100,7 +98,9 @@
                             <ul class="list-unstyled collapse multi-collapse" id="prova-@prova.Id">
                                 <li class="nav-item">
                                     <form action="Prova" method="post">
-                                        <a asp-action="Index" asp-controller="ProvasUsuario" asp-route-id="@prova.Id" asp-route-questaoid="@Model.QuestaoId" type="submit" class='nav-link btn text-white btn-filter w-100'>
+                                        <a asp-action="Index" asp-controller="ProvasUsuario" asp-route-id="@prova.Id"
+                                            asp-route-questaoid="@Model.QuestaoId" type="submit"
+                                            class='nav-link btn text-white btn-filter w-100'>
                                             <div class="row w-100">
                                                 <div class="text-white col-12 d-flex align-items-center">
                                                     <span class="nav-link-text">@prova.Nome</span>
@@ -114,7 +114,6 @@
                     </ul>
                 </div>
             </aside>
-        </div>
     </section>
     <section class="bottom rounded">
         <div class="container text-white">
@@ -159,14 +158,16 @@
             border: 0;
             padding: 0;
             box-sizing: border-box;
-            overflow-x: hidden;
-            overflow-y: hidden;
             margin-right: 0 !important;
+        }
+
+        ul,
+        li {
+            overflow-x: hidden;
         }
 
         section {
             width: 100%;
-            height: 540px;
         }
 
         .content {
@@ -174,7 +175,6 @@
             display: grid;
             grid-template-columns: 70% 1fr;
             grid-gap: 1rem;
-            cursor: default;
             height: 100%;
             width: 100%;
         }
@@ -209,6 +209,7 @@
             color: white !important;
         }
 
+
         .modulosContainer {
             background-color: #E3E3E3;
             padding: 1rem;
@@ -236,6 +237,25 @@
 
         .green {
             background-color: rgba(0, 255, 0, 1);
+        }
+
+        ul,
+        .navbar-nav,
+        .collapse {
+            min-height: 100% !important;
+        }
+
+        .navbar .dropdown-menu {
+            z-index: 1050 !important;
+        }
+
+        .fixed-end .sidenav{
+            z-index: 500 !important;
+            overflow-y: hidden;
+        }
+
+        .navOverflow{
+            overflow-y:hidden !important;
         }
     </style>
 }

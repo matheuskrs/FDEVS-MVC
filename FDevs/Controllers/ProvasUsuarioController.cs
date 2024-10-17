@@ -3,48 +3,90 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using FDevs.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers;
-
+[Authorize]
 public class ProvasUsuarioController : Controller
 {
     private readonly ILogger<ProvasUsuarioController> _logger;
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _host;
+    private readonly IUsuarioService _userService;
 
-    public ProvasUsuarioController(ILogger<ProvasUsuarioController> logger, AppDbContext context, IWebHostEnvironment host)
+    public ProvasUsuarioController(ILogger<ProvasUsuarioController> logger, AppDbContext context, IWebHostEnvironment host, IUsuarioService userService)
     {
         _logger = logger;
         _context = context;
         _host = host;
+        _userService = userService;
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Respostas(int id)
+    {
+        var currentUser = await _userService.GetUsuarioLogado();
+        ViewBag.User = currentUser;
+        var prova = await _context.Provas
+            .Include(p => p.Curso)
+            .Include(p => p.Questoes)
+            .ThenInclude(q => q.Alternativas)
+            .SingleOrDefaultAsync(p => p.Id == id);
+
+        var respostas = await _context.Respostas
+            .Where(r => r.UsuarioId == currentUser.UsuarioId)
+            .Where(r => r.Questao.ProvaId == id)
+            .Include(r => r.Questao)
+            .Include(r => r.Alternativa)
+            .ToListAsync();
+
+        var questoes = await _context.Questoes.ToListAsync();
+
+        var provaVM = new ProvaVM
+        {
+            Prova = prova,
+            Respostas = respostas,
+            Questoes = questoes
+        };
+        return View(provaVM);
+    }
+
 
     [HttpGet]
     public async Task<IActionResult> Index(int id, int? questaoId)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        var currentUser = await _userService.GetUsuarioLogado();
         ViewBag.User = currentUser;
-
-        var cursos = _context.Cursos.ToList();
 
         var prova = await _context.Provas
             .Include(p => p.Curso)
             .Include(p => p.Questoes)
-            .ThenInclude(p => p.Alternativas)
+            .ThenInclude(q => q.Alternativas)
             .SingleOrDefaultAsync(p => p.Id == id);
 
+        var totalQuestoes = prova.Questoes.Count();
+        var respostasUsuario = await _context.Respostas
+            .Where(r => r.UsuarioId == currentUser.UsuarioId && r.Questao.ProvaId == id)
+            .ToListAsync();
+
+        if (respostasUsuario.Count() == totalQuestoes)
+        {
+            return RedirectToAction("Respostas", new { id });
+        }
+
         var questaoAtualId = questaoId ?? prova.Questoes.FirstOrDefault()?.Id;
-        var questaoAtual = _context.Questoes
+
+        var questaoAtual = await _context.Questoes
             .Include(q => q.Alternativas)
             .Include(q => q.Respostas)
-            .FirstOrDefault(q => q.Id == questaoAtualId);
+            .FirstOrDefaultAsync(q => q.Id == questaoAtualId);
+
         var alternativas = questaoAtual.Alternativas.ToList();
-        var respostas = _context.Respostas.ToList();
-        // Buscar a próxima questão
+
         var proximaQuestao = prova.Questoes
           .OrderBy(q => q.Id)
           .Where(q => q.ProvaId == questaoAtual.ProvaId)
@@ -54,6 +96,7 @@ public class ProvasUsuarioController : Controller
             .Where(q => q.ProvaId == questaoAtual.ProvaId)
             .OrderByDescending(q => q.Id)
             .FirstOrDefault(q => q.Id < questaoAtualId);
+
         var provaVM = new ProvaVM
         {
             QuestaoId = questaoAtualId,
@@ -61,38 +104,61 @@ public class ProvasUsuarioController : Controller
             Alternativas = alternativas,
             ProximaQuestao = proximaQuestao,
             QuestaoAnterior = questaoAnterior,
-            QuestaoAtual = questaoAtual
+            QuestaoAtual = questaoAtual,
+            Prova = prova
         };
         return View(provaVM);
     }
 
     [HttpPost]
-    public IActionResult Create(Resposta resposta)
+    public async Task<IActionResult> Create(Resposta resposta)
     {
         var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
+        var currentUser = await _userService.GetUsuarioLogado();
         ViewBag.User = currentUser;
-        resposta.UsuarioId = ViewBag.User.UsuarioId;
-        resposta.QuestaoId = resposta.QuestaoId;
-        _context.Respostas.Add(resposta);
-        var proximaQuestao = _context.Questoes
-            .Where(q => q.Id > resposta.QuestaoId)
-            .OrderBy(q => q.Id)
-            .FirstOrDefault();
-        var questaoAtual = _context.Questoes
+
+        var questaoAtual = await _context.Questoes
             .Include(q => q.Alternativas)
             .Include(q => q.Respostas)
-            .FirstOrDefault(q => q.Id == resposta.QuestaoId);
-        resposta.Questao = questaoAtual;
-        _context.SaveChanges();
-        if (proximaQuestao != null)
+            .FirstOrDefaultAsync(q => q.Id == resposta.QuestaoId);
+
+
+
+        var respostaExistente = await _context.Respostas
+            .FirstOrDefaultAsync(r => r.UsuarioId == resposta.UsuarioId && r.QuestaoId == resposta.QuestaoId);
+
+        if (ModelState.IsValid)
         {
-            return RedirectToAction("Index", new { provaId = resposta.Questao.ProvaId, questaoId = proximaQuestao.Id });
+            if (respostaExistente != null)
+            {
+                respostaExistente.AlternativaId = resposta.AlternativaId;
+                _context.Respostas.Update(respostaExistente);
+                resposta.Questao = questaoAtual;
+            }
+            else
+            {
+                _context.Respostas.Add(resposta);
+                resposta.Questao = questaoAtual;
+            }
+
+            if (resposta.Alternativa == null)
+            {
+                return RedirectToAction("Index", "ProvasUsuario", new { id = resposta.Questao.ProvaId, questaoId = questaoAtual.Id });
+            }
+
+            var proximaQuestao = await _context.Questoes
+                .Where(q => q.Id > resposta.QuestaoId)
+                .Where(q => q.ProvaId == resposta.Questao.ProvaId)
+                .OrderBy(q => q.Id)
+                .FirstOrDefaultAsync();
+
+            await _context.SaveChangesAsync();
+            if (proximaQuestao != null)
+            {
+                return RedirectToAction("Index", "ProvasUsuario", new { id = resposta.Questao.ProvaId, questaoId = proximaQuestao.Id });
+            }
         }
-        else
-        {
-            return RedirectToAction("Index");
-        }
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

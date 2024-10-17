@@ -1,7 +1,7 @@
 @model FDevs.ViewModels.ProvaVM
 @{
     ViewData["Title"] = "FDevs - 2024";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 
@@ -16,12 +16,12 @@
             </div>
 
             <div class="card-body pb-2">
-                <form asp-action="Create" class="row" enctype="multipart/form-data">
+                <form asp-action="Create" class="row">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="row">
                         <h5>@Model.QuestaoAtual.Texto</h5>
                         <input type="hidden" asp-for="Resposta.UsuarioId" value="@ViewBag.User.UsuarioId" />
-                        <input type="hidden" asp-for="@Model.Resposta.QuestaoId" value="@Model.QuestaoAtual.Id" />
+                        <input type="hidden" asp-for="Resposta.QuestaoId" value="@Model.QuestaoAtual.Id" />
                         <ul>
                             <div class="row">
                                 @foreach (var alternativa in Model.QuestaoAtual.Alternativas)
@@ -37,12 +37,15 @@
                                 }
                             </div>
                         </ul>
+                        <span asp-validation-for="Resposta.AlternativaId" class="text-danger text-sm"></span>
                         <div class="row">
                             <div class="col text-start">
                                 @if (Model.QuestaoAnterior != null)
                                 {
                                     <div class="pb-3">
-                                        <input type="submit" value="Questão anterior" class="btn btn-success me-3" />
+                                        <a asp-action="Index" asp-route-id="@Model.Prova.Id"
+                                            asp-route-questaoid="@Model.QuestaoAnterior.Id"
+                                            class="btn btn-success me-3 text-white">Questão anterior</a>
                                     </div>
                                 }
                             </div>
@@ -51,6 +54,10 @@
                                 {
                                     <div class="pb-3">
                                         <input type="submit" value="Próxima questão" class="btn btn-success me-3" />
+                                    </div>
+                                }@if(Model.ProximaQuestao == null){
+                                    <div class="pb-3">
+                                        <input type="submit" value="Finalizar Prova" class="btn btn-success me-3" />
                                     </div>
                                 }
                             </div>

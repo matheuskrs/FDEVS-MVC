@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,6 +16,7 @@ public class CursosController : Controller
     private readonly AppDbContext _context;
     private readonly IWebHostEnvironment _host;
 
+
     public CursosController(ILogger<CursosController> logger, AppDbContext context, IWebHostEnvironment host)
     {
         _logger = logger;
@@ -23,22 +25,16 @@ public class CursosController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
-        var cursos = _context.Cursos
+        var cursos = await _context.Cursos
             .Include(c => c.Trilha)
-            .ToList();
+            .ToListAsync();
         return View(cursos);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         var curso = await _context.Cursos.SingleOrDefaultAsync(c => c.Id == id);
@@ -48,9 +44,6 @@ public class CursosController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         return View();
@@ -87,9 +80,6 @@ public class CursosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         if (_context.Cursos == null)
@@ -139,9 +129,6 @@ public class CursosController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var curso = await _context.Cursos.SingleOrDefaultAsync(c => c.Id == id);
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,24 +21,19 @@ public class QuestoesController : Controller
         _logger = logger;
         _context = context;
         _host = host;
+
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
-        var questoes = _context.Questoes.Include(q => q.Prova).ToList();
+        var questoes = await _context.Questoes.Include(q => q.Prova).ToListAsync();
         return View(questoes);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
         var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
         return View(questao);
@@ -46,9 +42,7 @@ public class QuestoesController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
+
         ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
         return View();
     }
@@ -73,9 +67,6 @@ public class QuestoesController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
         if (_context.Questoes == null)
         {
@@ -104,9 +95,6 @@ public class QuestoesController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         ViewData["ProvaId"] = new SelectList(_context.Cursos, "Id", "Nome");
         var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
         if (questao == null)
@@ -120,9 +108,6 @@ public class QuestoesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var currentUser = _context.Usuarios.FirstOrDefault(x => x.UsuarioId == currentUserId);
-        ViewBag.User = currentUser;
         var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
         if (questao == null)
             return NotFound();
