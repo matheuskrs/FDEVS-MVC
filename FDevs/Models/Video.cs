@@ -20,10 +20,6 @@ public class Video
     public int ModuloId { get; set; }
     [ForeignKey("ModuloId")]
     public Modulo Modulo { get; set; }
-    [Required]
-    [Display(Name = "Estado de conclusão")]
-    public int EstadoId { get; set; }
-    [ForeignKey("EstadoId")]
-    public Estado Estado { get; set; }
+    public ICollection<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
 }
 

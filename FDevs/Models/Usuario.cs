@@ -20,8 +20,10 @@ public class Usuario
 
     [StringLength(300)]
     public string Foto { get; set; }
-    public bool IsAdmin { get; set; } 
+    public bool IsAdmin { get; set; }
     public ICollection<UsuarioCurso> Cursos { get; set; }
     public ICollection<Modulo> Modulos { get; set; }
     public ICollection<Resposta> Respostas { get; set; }
+    public ICollection<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
+    public ICollection<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
 }

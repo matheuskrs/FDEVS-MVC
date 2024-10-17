@@ -61,6 +61,51 @@ public class UsuarioCursosController : Controller
     {
         if (ModelState.IsValid)
         {
+            var videos = await _context.Videos
+                .Include(v => v.Modulo)
+                .ThenInclude(v => v.Curso)
+                .Where(v => v.Modulo.CursoId == usuarioCurso.CursoId)
+                .ToListAsync();
+
+            var modulos = await _context.Modulos
+                .Include(m => m.Curso)
+                .Include(m => m.UsuarioEstadoModulos)
+                .Where(m => m.CursoId == usuarioCurso.CursoId)
+                .ToListAsync();
+
+            var curso = await _context.Cursos
+                .Include(c => c.UsuarioEstadoCursos)
+                .FirstOrDefaultAsync(c => c.Id == usuarioCurso.CursoId);
+
+            foreach (var video in videos)
+            {
+                var usuarioEstadoVideo = new UsuarioEstadoVideo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    VideoId = video.Id,
+                    EstadoId = 3
+                };
+                _context.Add(usuarioEstadoVideo);
+            }
+
+            foreach (var modulo in modulos)
+            {
+                var usuarioEstadoModulo = new UsuarioEstadoModulo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    ModuloId = modulo.Id,
+                    EstadoId = 3
+                };
+                _context.Add(usuarioEstadoModulo);
+            }
+
+            var usuarioEstadoCurso = new UsuarioEstadoCurso
+            {
+                UsuarioId = usuarioCurso.UsuarioId,
+                CursoId = curso.Id,
+                EstadoId = 3
+            };
+            _context.Add(usuarioEstadoCurso);
             _context.Add(usuarioCurso);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -88,6 +133,59 @@ public class UsuarioCursosController : Controller
 
         if (ModelState.IsValid)
         {
+            var videos = await _context.Videos
+                .Include(v => v.Modulo)
+                .ThenInclude(v => v.Curso)
+                .Where(v => v.Modulo.CursoId == usuarioCurso.CursoId)
+                .ToListAsync();
+
+            var modulos = await _context.Modulos
+                .Include(m => m.Curso)
+                .Include(m => m.UsuarioEstadoModulos)
+                .Where(m => m.CursoId == usuarioCurso.CursoId)
+                .ToListAsync();
+
+            var curso = await _context.Cursos
+                .Include(c => c.UsuarioEstadoCursos)
+                .FirstOrDefaultAsync(c => c.Id == usuarioCurso.CursoId);
+
+            foreach (var video in videos)
+            {
+                var usuarioEstadoVideo = await _context.UsuarioEstadoVideos
+                    .FirstOrDefaultAsync(uem => uem.VideoId == video.Id && uem.UsuarioId == usuarioId);
+                _context.Remove(usuarioEstadoVideo);
+                var novoUsuarioEstadoVideo = new UsuarioEstadoVideo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    VideoId = video.Id,
+                    EstadoId = 3
+                };
+                _context.Add(novoUsuarioEstadoVideo);
+            }
+
+            foreach (var modulo in modulos)
+            {
+                var usuarioEstadoModulo = await _context.UsuarioEstadoModulos
+                    .FirstOrDefaultAsync(uem => uem.ModuloId == modulo.Id && uem.UsuarioId == usuarioId);
+                _context.Remove(usuarioEstadoModulo);
+                var novoUsuarioEstadoModulo = new UsuarioEstadoModulo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    ModuloId = modulo.Id,
+                    EstadoId = 3
+                };
+                _context.Add(novoUsuarioEstadoModulo);
+            }
+
+            var usuarioEstadoCurso = await _context.UsuarioEstadoCursos
+                .FirstOrDefaultAsync(uec => uec.CursoId == curso.Id && uec.UsuarioId == usuarioId);
+            var novoUsuarioEstadoCurso = new UsuarioEstadoCurso
+            {
+                UsuarioId = usuarioCurso.UsuarioId,
+                CursoId = curso.Id,
+                EstadoId = 3
+            };
+            _context.Add(novoUsuarioEstadoCurso);
             _context.Update(usuarioCurso);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -120,6 +218,41 @@ public class UsuarioCursosController : Controller
             .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
         if (usuarioCurso == null)
             return NotFound();
+
+        var videos = await _context.Videos
+            .Include(v => v.Modulo)
+            .ThenInclude(v => v.Curso)
+            .Where(v => v.Modulo.CursoId == usuarioCurso.CursoId)
+            .ToListAsync();
+
+        var modulos = await _context.Modulos
+            .Include(m => m.Curso)
+            .Include(m => m.UsuarioEstadoModulos)
+            .Where(m => m.CursoId == usuarioCurso.CursoId)
+            .ToListAsync();
+
+        var curso = await _context.Cursos
+            .Include(c => c.UsuarioEstadoCursos)
+            .FirstOrDefaultAsync(c => c.Id == usuarioCurso.CursoId);
+
+        foreach (var video in videos)
+        {
+            var usuarioEstadoVideo = await _context.UsuarioEstadoVideos
+                .FirstOrDefaultAsync(uem => uem.VideoId == video.Id && uem.UsuarioId == usuarioId);
+            _context.Remove(usuarioEstadoVideo);
+        }
+
+        foreach (var modulo in modulos)
+        {
+            var usuarioEstadoModulo = await _context.UsuarioEstadoModulos
+                .FirstOrDefaultAsync(uem => uem.ModuloId == modulo.Id && uem.UsuarioId == usuarioId);
+            _context.Remove(usuarioEstadoModulo);
+        }
+
+        var usuarioEstadoCurso = await _context.UsuarioEstadoCursos
+            .FirstOrDefaultAsync(uec => uec.CursoId == curso.Id && uec.UsuarioId == usuarioId);
+
+        _context.Remove(usuarioEstadoCurso);
 
         _context.Remove(usuarioCurso);
         await _context.SaveChangesAsync();

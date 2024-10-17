@@ -216,18 +216,11 @@ namespace FDevs.Migrations
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Foto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     DataConclusao = table.Column<DateOnly>(type: "date", nullable: true),
-                    TrilhaId = table.Column<int>(type: "int", nullable: false),
-                    EstadoId = table.Column<int>(type: "int", nullable: false)
+                    TrilhaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Curso", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Curso_Estado_EstadoId",
-                        column: x => x.EstadoId,
-                        principalTable: "Estado",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Curso_Trilha_TrilhaId",
                         column: x => x.TrilhaId,
@@ -243,7 +236,6 @@ namespace FDevs.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EstadoId = table.Column<int>(type: "int", nullable: false),
                     CursoId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
@@ -254,12 +246,6 @@ namespace FDevs.Migrations
                         name: "FK_Modulo_Curso_CursoId",
                         column: x => x.CursoId,
                         principalTable: "Curso",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Modulo_Estado_EstadoId",
-                        column: x => x.EstadoId,
-                        principalTable: "Estado",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -314,6 +300,68 @@ namespace FDevs.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UsuarioEstadoCurso",
+                columns: table => new
+                {
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EstadoId = table.Column<int>(type: "int", nullable: false),
+                    CursoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioEstadoCurso", x => new { x.UsuarioId, x.EstadoId, x.CursoId });
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoCurso_Curso_CursoId",
+                        column: x => x.CursoId,
+                        principalTable: "Curso",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoCurso_Estado_EstadoId",
+                        column: x => x.EstadoId,
+                        principalTable: "Estado",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoCurso_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "UsuarioId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsuarioEstadoModulo",
+                columns: table => new
+                {
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EstadoId = table.Column<int>(type: "int", nullable: false),
+                    ModuloId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioEstadoModulo", x => new { x.UsuarioId, x.EstadoId, x.ModuloId });
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoModulo_Estado_EstadoId",
+                        column: x => x.EstadoId,
+                        principalTable: "Estado",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoModulo_Modulo_ModuloId",
+                        column: x => x.ModuloId,
+                        principalTable: "Modulo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoModulo_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "UsuarioId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Video",
                 columns: table => new
                 {
@@ -321,18 +369,11 @@ namespace FDevs.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Titulo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     URL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ModuloId = table.Column<int>(type: "int", nullable: false),
-                    EstadoId = table.Column<int>(type: "int", nullable: false)
+                    ModuloId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Video", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Video_Estado_EstadoId",
-                        column: x => x.EstadoId,
-                        principalTable: "Estado",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Video_Modulo_ModuloId",
                         column: x => x.ModuloId,
@@ -357,6 +398,37 @@ namespace FDevs.Migrations
                         name: "FK_Questao_Prova_ProvaId",
                         column: x => x.ProvaId,
                         principalTable: "Prova",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UsuarioEstadoVideo",
+                columns: table => new
+                {
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EstadoId = table.Column<int>(type: "int", nullable: false),
+                    VideoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioEstadoVideo", x => new { x.UsuarioId, x.EstadoId, x.VideoId });
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoVideo_Estado_EstadoId",
+                        column: x => x.EstadoId,
+                        principalTable: "Estado",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoVideo_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "UsuarioId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UsuarioEstadoVideo_Video_VideoId",
+                        column: x => x.VideoId,
+                        principalTable: "Video",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -428,7 +500,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "bdc672f5-8b09-4a5e-a36e-f903e559b5d4", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEBGoVmHj4bteUq+U2bpIEHzdWZfLTIXzNThJeFrrxjltw4Ce2hiLK2Sv3aGEnx7l3A==", null, false, "7be90142-d52e-4caf-8996-8444c0e8c2a8", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "91315c54-6a41-4784-b154-9cf88decea88", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHmkcL7/lqwKjg9xeqKTURExbcVaEMnobYCmtQKsiwrAhRL7gQ7lkAKFlIxfOMsq+A==", null, false, "8be22dbe-9803-49b2-9f5a-13749892b4a8", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "IdentityUserRole<string>",
@@ -449,11 +521,6 @@ namespace FDevs.Migrations
                 name: "IX_Alternativa_QuestaoId",
                 table: "Alternativa",
                 column: "QuestaoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Curso_EstadoId",
-                table: "Curso",
-                column: "EstadoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Curso_TrilhaId",
@@ -505,11 +572,6 @@ namespace FDevs.Migrations
                 column: "CursoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Modulo_EstadoId",
-                table: "Modulo",
-                column: "EstadoId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Modulo_UsuarioId",
                 table: "Modulo",
                 column: "UsuarioId");
@@ -545,9 +607,34 @@ namespace FDevs.Migrations
                 column: "CursoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Video_EstadoId",
-                table: "Video",
+                name: "IX_UsuarioEstadoCurso_CursoId",
+                table: "UsuarioEstadoCurso",
+                column: "CursoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioEstadoCurso_EstadoId",
+                table: "UsuarioEstadoCurso",
                 column: "EstadoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioEstadoModulo_EstadoId",
+                table: "UsuarioEstadoModulo",
+                column: "EstadoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioEstadoModulo_ModuloId",
+                table: "UsuarioEstadoModulo",
+                column: "ModuloId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioEstadoVideo_EstadoId",
+                table: "UsuarioEstadoVideo",
+                column: "EstadoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioEstadoVideo_VideoId",
+                table: "UsuarioEstadoVideo",
+                column: "VideoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Video_ModuloId",
@@ -580,7 +667,13 @@ namespace FDevs.Migrations
                 name: "UsuarioCurso");
 
             migrationBuilder.DropTable(
-                name: "Video");
+                name: "UsuarioEstadoCurso");
+
+            migrationBuilder.DropTable(
+                name: "UsuarioEstadoModulo");
+
+            migrationBuilder.DropTable(
+                name: "UsuarioEstadoVideo");
 
             migrationBuilder.DropTable(
                 name: "IdentityRole");
@@ -589,25 +682,28 @@ namespace FDevs.Migrations
                 name: "Alternativa");
 
             migrationBuilder.DropTable(
-                name: "Modulo");
+                name: "Estado");
+
+            migrationBuilder.DropTable(
+                name: "Video");
 
             migrationBuilder.DropTable(
                 name: "Questao");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "Modulo");
 
             migrationBuilder.DropTable(
                 name: "Prova");
 
             migrationBuilder.DropTable(
-                name: "IdentityUser");
+                name: "Usuario");
 
             migrationBuilder.DropTable(
                 name: "Curso");
 
             migrationBuilder.DropTable(
-                name: "Estado");
+                name: "IdentityUser");
 
             migrationBuilder.DropTable(
                 name: "Trilha");

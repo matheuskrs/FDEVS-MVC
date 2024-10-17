@@ -35,7 +35,6 @@ public class CursosController : Controller
 
     public async Task<IActionResult> Details(int id)
     {
-        ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         var curso = await _context.Cursos.SingleOrDefaultAsync(c => c.Id == id);
         return View(curso);
@@ -44,7 +43,6 @@ public class CursosController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         return View();
     }
@@ -80,7 +78,6 @@ public class CursosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         if (_context.Cursos == null)
         {
@@ -92,7 +89,6 @@ public class CursosController : Controller
 
     public async Task<IActionResult> EditConfirmed(int id, Curso curso, IFormFile Arquivo)
     {
-        ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome", curso.EstadoId);
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome", curso.TrilhaId);
         if (id != curso.Id)
         {
@@ -130,7 +126,6 @@ public class CursosController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var curso = await _context.Cursos.SingleOrDefaultAsync(c => c.Id == id);
-        ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
         if (curso == null)
         {

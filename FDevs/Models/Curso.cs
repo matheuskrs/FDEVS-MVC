@@ -23,14 +23,15 @@ public class Curso
     [ForeignKey("TrilhaId")]
     public Trilha Trilha { get; set; }
 
-    [Required(ErrorMessage = "Informe o estado de conclusão inicial do curso.")]
-    [Display(Name = "Estado de conclusão")]
-    public int EstadoId { get; set; }
-    [ForeignKey("EstadoId")]
-    public Estado Estado { get; set; }
+    // [Required(ErrorMessage = "Informe o estado de conclusão inicial do curso.")]
+    // [Display(Name = "Estado de conclusão")]
+    // public int EstadoId { get; set; }
+    // [ForeignKey("EstadoId")]
+    // public Estado Estado { get; set; }
 
     public ICollection<Modulo> Modulos { get; set; }
     public ICollection<Prova> Provas { get; set; }
+    public ICollection<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
 
 }
 

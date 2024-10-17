@@ -59,9 +59,6 @@ namespace FDevs.Migrations
                     b.Property<DateOnly?>("DataConclusao")
                         .HasColumnType("date");
 
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Foto")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -75,8 +72,6 @@ namespace FDevs.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EstadoId");
 
                     b.HasIndex("TrilhaId");
 
@@ -117,9 +112,6 @@ namespace FDevs.Migrations
                     b.Property<int>("CursoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -131,8 +123,6 @@ namespace FDevs.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CursoId");
-
-                    b.HasIndex("EstadoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -288,6 +278,75 @@ namespace FDevs.Migrations
                     b.ToTable("UsuarioCurso");
                 });
 
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoCurso", b =>
+                {
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("EstadoId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("UsuarioId", "EstadoId", "CursoId");
+
+                    b.HasIndex("CursoId");
+
+                    b.HasIndex("EstadoId");
+
+                    b.ToTable("UsuarioEstadoCurso");
+                });
+
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoModulo", b =>
+                {
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("EstadoId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("ModuloId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("UsuarioId", "EstadoId", "ModuloId");
+
+                    b.HasIndex("EstadoId");
+
+                    b.HasIndex("ModuloId");
+
+                    b.ToTable("UsuarioEstadoModulo");
+                });
+
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoVideo", b =>
+                {
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("EstadoId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("VideoId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("UsuarioId", "EstadoId", "VideoId");
+
+                    b.HasIndex("EstadoId");
+
+                    b.HasIndex("VideoId");
+
+                    b.ToTable("UsuarioEstadoVideo");
+                });
+
             modelBuilder.Entity("FDevs.Models.Video", b =>
                 {
                     b.Property<int>("Id")
@@ -295,9 +354,6 @@ namespace FDevs.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
 
                     b.Property<int>("ModuloId")
                         .HasColumnType("int");
@@ -313,8 +369,6 @@ namespace FDevs.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EstadoId");
 
                     b.HasIndex("ModuloId");
 
@@ -462,15 +516,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bdc672f5-8b09-4a5e-a36e-f903e559b5d4",
+                            ConcurrencyStamp = "91315c54-6a41-4784-b154-9cf88decea88",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBGoVmHj4bteUq+U2bpIEHzdWZfLTIXzNThJeFrrxjltw4Ce2hiLK2Sv3aGEnx7l3A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHmkcL7/lqwKjg9xeqKTURExbcVaEMnobYCmtQKsiwrAhRL7gQ7lkAKFlIxfOMsq+A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7be90142-d52e-4caf-8996-8444c0e8c2a8",
+                            SecurityStamp = "8be22dbe-9803-49b2-9f5a-13749892b4a8",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
@@ -587,19 +641,11 @@ namespace FDevs.Migrations
 
             modelBuilder.Entity("FDevs.Models.Curso", b =>
                 {
-                    b.HasOne("FDevs.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FDevs.Models.Trilha", "Trilha")
                         .WithMany()
                         .HasForeignKey("TrilhaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Estado");
 
                     b.Navigation("Trilha");
                 });
@@ -612,19 +658,11 @@ namespace FDevs.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FDevs.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FDevs.Models.Usuario", null)
                         .WithMany("Modulos")
                         .HasForeignKey("UsuarioId");
 
                     b.Navigation("Curso");
-
-                    b.Navigation("Estado");
                 });
 
             modelBuilder.Entity("FDevs.Models.Prova", b =>
@@ -641,7 +679,7 @@ namespace FDevs.Migrations
             modelBuilder.Entity("FDevs.Models.Questao", b =>
                 {
                     b.HasOne("FDevs.Models.Prova", "Prova")
-                        .WithMany()
+                        .WithMany("Questoes")
                         .HasForeignKey("ProvaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -658,7 +696,7 @@ namespace FDevs.Migrations
                         .IsRequired();
 
                     b.HasOne("FDevs.Models.Questao", "Questao")
-                        .WithMany()
+                        .WithMany("Respostas")
                         .HasForeignKey("QuestaoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -706,7 +744,34 @@ namespace FDevs.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("FDevs.Models.Video", b =>
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoCurso", b =>
+                {
+                    b.HasOne("FDevs.Models.Curso", "Curso")
+                        .WithMany("UsuarioEstadoCursos")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FDevs.Models.Estado", "Estado")
+                        .WithMany("UsuarioEstadoCursos")
+                        .HasForeignKey("EstadoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FDevs.Models.Usuario", "Usuario")
+                        .WithMany("UsuarioEstadoCursos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+
+                    b.Navigation("Estado");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoModulo", b =>
                 {
                     b.HasOne("FDevs.Models.Estado", "Estado")
                         .WithMany()
@@ -715,12 +780,58 @@ namespace FDevs.Migrations
                         .IsRequired();
 
                     b.HasOne("FDevs.Models.Modulo", "Modulo")
-                        .WithMany("Videos")
+                        .WithMany("UsuarioEstadoModulos")
                         .HasForeignKey("ModuloId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FDevs.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Estado");
+
+                    b.Navigation("Modulo");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("FDevs.Models.UsuarioEstadoVideo", b =>
+                {
+                    b.HasOne("FDevs.Models.Estado", "Estado")
+                        .WithMany("UsuarioEstadoVideos")
+                        .HasForeignKey("EstadoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FDevs.Models.Usuario", "Usuario")
+                        .WithMany("UsuarioEstadoVideos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FDevs.Models.Video", "Video")
+                        .WithMany("UsuarioEstadoVideos")
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Estado");
+
+                    b.Navigation("Usuario");
+
+                    b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("FDevs.Models.Video", b =>
+                {
+                    b.HasOne("FDevs.Models.Modulo", "Modulo")
+                        .WithMany("Videos")
+                        .HasForeignKey("ModuloId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Modulo");
                 });
@@ -781,16 +892,34 @@ namespace FDevs.Migrations
                     b.Navigation("Modulos");
 
                     b.Navigation("Provas");
+
+                    b.Navigation("UsuarioEstadoCursos");
+                });
+
+            modelBuilder.Entity("FDevs.Models.Estado", b =>
+                {
+                    b.Navigation("UsuarioEstadoCursos");
+
+                    b.Navigation("UsuarioEstadoVideos");
                 });
 
             modelBuilder.Entity("FDevs.Models.Modulo", b =>
                 {
+                    b.Navigation("UsuarioEstadoModulos");
+
                     b.Navigation("Videos");
+                });
+
+            modelBuilder.Entity("FDevs.Models.Prova", b =>
+                {
+                    b.Navigation("Questoes");
                 });
 
             modelBuilder.Entity("FDevs.Models.Questao", b =>
                 {
                     b.Navigation("Alternativas");
+
+                    b.Navigation("Respostas");
                 });
 
             modelBuilder.Entity("FDevs.Models.Usuario", b =>
@@ -800,6 +929,15 @@ namespace FDevs.Migrations
                     b.Navigation("Modulos");
 
                     b.Navigation("Respostas");
+
+                    b.Navigation("UsuarioEstadoCursos");
+
+                    b.Navigation("UsuarioEstadoVideos");
+                });
+
+            modelBuilder.Entity("FDevs.Models.Video", b =>
+                {
+                    b.Navigation("UsuarioEstadoVideos");
                 });
 #pragma warning restore 612, 618
         }

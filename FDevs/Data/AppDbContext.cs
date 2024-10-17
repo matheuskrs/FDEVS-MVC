@@ -21,6 +21,8 @@ public class AppDbContext : IdentityDbContext
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<UsuarioCurso> UsuarioCursos { get; set; }
     public DbSet<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
+    public DbSet<UsuarioEstadoModulo> UsuarioEstadoModulos { get; set; }
+    public DbSet<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
     public DbSet<Video> Videos { get; set; }
     
 
@@ -47,7 +49,19 @@ public class AppDbContext : IdentityDbContext
         #region Configuração do Muitos para Muitos - UsuarioEstadoVideo
             // Definindo Chave Primária
             modelBuilder.Entity<UsuarioEstadoVideo>()
-                .HasKey(uv => new { uv.UsuarioId, uv.EstadoId, uv.VideoId });
+                .HasKey(uev => new { uev.UsuarioId, uev.EstadoId, uev.VideoId });
+        #endregion
+
+        #region Configuração do Muitos para Muitos - UsuarioEstadoModulo
+            // Definindo Chave Primária
+            modelBuilder.Entity<UsuarioEstadoModulo>()
+                .HasKey(uec => new { uec.UsuarioId, uec.EstadoId, uec.ModuloId });
+        #endregion
+
+        #region Configuração do Muitos para Muitos - UsuarioEstadoCurso
+            // Definindo Chave Primária
+            modelBuilder.Entity<UsuarioEstadoCurso>()
+                .HasKey(uec => new { uec.UsuarioId, uec.EstadoId, uec.CursoId });
         #endregion
 
     }
