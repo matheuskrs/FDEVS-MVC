@@ -292,7 +292,6 @@ ALTER TABLE UsuarioProva ADD CONSTRAINT FK_UsuarioProva_Usuario FOREIGN KEY (Usu
 ALTER TABLE UsuarioProva ADD CONSTRAINT FK_UsuarioProva_Prova FOREIGN KEY (ProvaId) REFERENCES Prova(Id);
 ALTER TABLE Resposta ADD CONSTRAINT FK_Resposta_Usuario FOREIGN KEY (UsuarioId) REFERENCES Usuario(UsuarioId);
 
-
 INSERT INTO Estado(Nome, Cor) VALUES
 ('Em andamento', 'rgba(255, 255, 0, 1)'),  -- Amarelo 
 ('Concluído', 'rgba(0, 255, 0, 1)'),         -- Verde
@@ -301,40 +300,40 @@ INSERT INTO Estado(Nome, Cor) VALUES
 INSERT INTO Trilha (Nome, Foto) VALUES
 ('Trilha de Backend', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/CapasTrilha/1.png');
 
-INSERT INTO Curso (Nome, Foto, DataConclusao, TrilhaId, EstadoId) VALUES 
-('Lógica de programação', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png', NULL, 1, 1),
-('Banco de Dados', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png', NULL, 1, 2),
-('C# Iniciante', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/22.png', NULL, 1, 2),
-('ASP.Net MVC - C#', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/23.png', NULL, 1, 2),
-('Git e Github (Trilha Backend)', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/45.png', NULL, 1, 2),
-('Princípios SOLID', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/48.png', NULL, 1, 2);
+INSERT INTO Curso (Nome, Foto, DataConclusao, TrilhaId) VALUES 
+('Lógica de programação', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png', NULL, 1),
+('Banco de Dados', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png', NULL, 1),
+('C# Iniciante', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/22.png', NULL, 1),
+('ASP.Net MVC - C#', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/23.png', NULL, 1),
+('Git e Github (Trilha Backend)', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/45.png', NULL, 1),
+('Princípios SOLID', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/48.png', NULL, 1);
 
 INSERT INTO Prova (Nome, CursoId) VALUES
 ('Prova de Banco de Dados', 1),  -- Alice
 ('Prova de Programação em Python', 2);  -- Bob
 
-INSERT INTO Modulo (Nome, EstadoId, CursoId) VALUES
-('Módulo 1 - Iniciante', 3,  1),
-('Módulo 2 - Pesquisa de satisfação', 3, 1),
-('Módulo 1 - Iniciante', 2, 2),
-('Módulo 2 - Intermediário', 2, 2),
-('Módulo 3 - Extras', 2, 2);
+INSERT INTO Modulo (Nome, CursoId) VALUES
+('Módulo 1 - Iniciante',  1),
+('Módulo 2 - Pesquisa de satisfação', 1),
+('Módulo 1 - Iniciante', 2),
+('Módulo 2 - Intermediário', 2),
+('Módulo 3 - Extras', 2);
 
 
 select*from Usuario;
 
-INSERT INTO Video (Titulo, URL, ModuloId, EstadoId) VALUES 
-('Introdução a Algoritmos', 'https://www.youtube.com/embed/8mei6uVttho?si=gn2VgTONcmRet24o', 1, 2),
-('Primeiro algoritmo', 'https://www.youtube.com/embed/M2Af7gkbbro?si=yx5Yy6dgQYy_1Y8f', 1, 3),
-('Comando de Entrada e Operadores', 'https://www.youtube.com/embed/RDrfZ-7WE8c?si=JP0LvntY7_cxuWUB', 1, 3),
-('Operadores lógicos e relacionais', 'https://www.youtube.com/embed/Ig4QZNpVZYs?si=Eaes88_HwJc28Vp2', 1, 3),
-('Introdução ao Scratch', 'https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM', 1, 3),
-('Exercícios de Algoritmo', 'https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB', 1, 3),
-('Estruturas Condicionais 1', 'https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub', 1, 2),
-('SQL Server - Instalando no seu computador', 'https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD', 3, 2),
-('Orientações', 'https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk', 3, 2),
-('Conceitos Essenciais e Modelagem', 'https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc', 3, 2),
-('Relacionamento entre tabelas ', 'https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3', 4, 2);
+INSERT INTO Video (Titulo, URL, ModuloId) VALUES 
+('Introdução a Algoritmos', 'https://www.youtube.com/embed/8mei6uVttho?si=gn2VgTONcmRet24o', 1),
+('Primeiro algoritmo', 'https://www.youtube.com/embed/M2Af7gkbbro?si=yx5Yy6dgQYy_1Y8f', 1),
+('Comando de Entrada e Operadores', 'https://www.youtube.com/embed/RDrfZ-7WE8c?si=JP0LvntY7_cxuWUB', 1),
+('Operadores lógicos e relacionais', 'https://www.youtube.com/embed/Ig4QZNpVZYs?si=Eaes88_HwJc28Vp2', 1),
+('Introdução ao Scratch', 'https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM', 1),
+('Exercícios de Algoritmo', 'https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB', 1),
+('Estruturas Condicionais 1', 'https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub', 1),
+('SQL Server - Instalando no seu computador', 'https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD', 3),
+('Orientações', 'https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk', 3),
+('Conceitos Essenciais e Modelagem', 'https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc', 3),
+('Relacionamento entre tabelas ', 'https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3', 4);
 
 INSERT INTO Questao (Texto, ProvaId) VALUES
 ('O que é um Banco de Dados?', 1),  -- Prova de Banco de Dados
@@ -354,6 +353,34 @@ INSERT INTO Resposta (UsuarioId, QuestaoId, AlternativaId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 3),
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 5); 
 
+INSERT INTO UsuarioEstadoVideo (UsuarioId, EstadoId, VideoId) VALUES
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 1), 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 2), 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 3),  
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 4), 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 5),  
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 6), 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 7),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 8),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 9),  
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 10), 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 11); 
+
+INSERT INTO UsuarioEstadoModulo (UsuarioId, ModuloId, EstadoId) VALUES
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1, 2),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 3),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 2),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 4, 2),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 5, 2); 
+
+INSERT INTO UsuarioEstadoCurso (UsuarioId, EstadoId, CursoId) VALUES 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1, 1),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 2),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 3),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 4),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 5),
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 6);
+
 INSERT INTO UsuarioCurso (UsuarioId, CursoId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1),
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2),
@@ -361,6 +388,7 @@ INSERT INTO UsuarioCurso (UsuarioId, CursoId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 4),
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 5),
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 6);
+
 
 
 
