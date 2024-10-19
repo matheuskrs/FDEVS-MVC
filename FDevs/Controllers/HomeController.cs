@@ -55,7 +55,8 @@ public class HomeController : Controller
                 .Include(uec => uec.Estado)
                 .Include(uec => uec.Curso)
                 .Where(uec => uec.UsuarioId == currentUserId)
-                .ToListAsync()
+                .ToListAsync(),
+            Estados = await _context.Estados.ToListAsync() 
 
         };
         return View(home);

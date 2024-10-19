@@ -12,7 +12,7 @@
 {
     qtdCursos += 1;
     var estadoCurso = Model.UsuarioEstadoCursos
-        .SingleOrDefault(uec => uec.CursoId == usuarioCurso.Curso.Id);
+    .SingleOrDefault(uec => uec.CursoId == usuarioCurso.Curso.Id);
     if (estadoCurso.EstadoId == 1)
     {
         qtdAndamento += 1;
@@ -52,9 +52,9 @@
                 {
                     qtdVideos = 0;
                     qtdVideosConcluidos = 0;
-                     var estadoCurso = Model.UsuarioEstadoCursos
-                        .Where(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId)
-                        .FirstOrDefault();
+                    var estadoCurso = Model.UsuarioEstadoCursos
+                    .Where(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId)
+                    .FirstOrDefault();
                     @foreach (var modulo in usuarioCurso.Curso.Modulos)
                     {
                         @foreach (var video in modulo.Videos)
@@ -62,7 +62,7 @@
                             qtdVideos += 1;
                             var usuarioEstadoVideo = Model.UsuarioEstadoVideos
                             .FirstOrDefault(uev => uev.VideoId == video.Id && uev.UsuarioId == ViewBag.User.UsuarioId);
-                            if (usuarioEstadoVideo.EstadoId == 1)
+                            if (usuarioEstadoVideo.EstadoId == 2)
                             {
                                 qtdVideosConcluidos += 1;
                             }
@@ -75,14 +75,19 @@
                             <div class="progress-modulo-container p-0 w-100 ">
                                 <div class="progress-modulo p-0">
                                     <div class="bar d-flex justify-content-center align-items-center text-bold fs-6"
-                                        style="width:@progressoCurso%; background-color:@estadoCurso.Estado.Cor"> <span class="p-1">@(progressoCurso > 0 ? $"{progressoCurso}" : "0%")</span>
+                                        style="width:@progressoCurso%; background-color:#17988f"> <span
+                                            class="text-white">@(progressoCurso > 0 ? $"{progressoCurso}" : "")</span>
                                     </div>
+                                    @if (!(progressoCurso > 0))
+                                    {
+                                        <span class="ps-1 text-bold">0%</span>
+                                    }
                                 </div>
                             </div>
                             <div class="card-body d-flex justify-content-start row">
-                                <a href="#" class="ms-3 fs-8 btn-sm text-dark text-bold tags"
-                                    style="background-color:@estadoCurso.Estado.Cor">@estadoCurso.Estado.Nome</a>
-                                <h6 class="card-title col-12 mt-2 text-nowrap">@usuarioCurso.Curso.Nome</h6>
+                                <span class="ms-2 fs-7 btn-sm text-dark text-bold tags"
+                                    style="background-color:@estadoCurso.Estado.Cor">@estadoCurso.Estado.Nome</span>
+                                <h6 class="card-title mt-2 text-nowrap">@usuarioCurso.Curso.Nome</h6>
                             </div>
                             <hr class="itemHr">
                             <a asp-action="Details" asp-route-id="@usuarioCurso.Curso.Id"
@@ -105,9 +110,9 @@
                     <span class="col-12 text-center mb-3">cursos</span>
                 </div>
             </div>
-            @if (qtdCursos > 0)
-            {
-                <div class="d-flex justify-content-center h-50 align-items-center">
+            <div class="d-flex justify-content-center h-50 align-items-center">
+                @if (qtdCursos > 0)
+                {
                     <div class="progress-container p-0 w-90 ">
                         <div class="progress p-0">
                             <div class="bar green d-flex justify-content-center align-items-center text-bold fs-6"
@@ -120,8 +125,17 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
+            <div class="stateContainer d-flex justify-content-center">
+                @foreach (var estado in Model.Estados)
+                {
+                    <span class="stateText fw-bold mx-1 align-items-center d-flex">
+                        <i class='bx bxs-checkbox-minus fs-3 m-0 ' style="color:@estado.Cor"></i>
+                        @estado.Nome
+                    </span>
+                }
+            </div>
         </section>
         <section class="bottom" id="trilhas">
             <div class="row">
@@ -198,6 +212,7 @@
             box-shadow: 0.1rem 0.1em 2rem rgba(0, 0, 0, 0.3);
             border: 1px solid lightgray;
             border-radius: 3px;
+            min-height: 300px;
         }
 
         .container {
@@ -248,6 +263,16 @@
         .tags {
             width: fit-content;
         }
+
+        .stateIcon {
+            border: 1px solid black;
+        }
+
+        .stateText {
+            font-size: 10px;
+            text-wrap: nowrap;
+        }
+
 
         .progress-container {
             width: 100%;

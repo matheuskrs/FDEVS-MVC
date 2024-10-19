@@ -500,7 +500,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "91315c54-6a41-4784-b154-9cf88decea88", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHmkcL7/lqwKjg9xeqKTURExbcVaEMnobYCmtQKsiwrAhRL7gQ7lkAKFlIxfOMsq+A==", null, false, "8be22dbe-9803-49b2-9f5a-13749892b4a8", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "26cdb81b-6c1e-4e2e-ac80-2f4811229819", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHio4Iyk+bmBYNnSTA7lbiMr54XnK0Vlfsmkxy+kdd9NzLpDw+0wQ450q/fOkDvF7g==", null, false, "7188878c-9688-4b65-9305-cb302f3004cf", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "IdentityUserRole<string>",

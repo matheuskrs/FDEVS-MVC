@@ -10,4 +10,5 @@ public class HomeVM
     public List<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
     public List<UsuarioEstadoModulo> UsuarioEstadoModulos { get; set; }
     public List<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
+    public List<Estado> Estados { get; set; }
 }

@@ -47,6 +47,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
         integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="~/css/site.css" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -131,8 +132,8 @@
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                     </div>
                     <div class="nav-item dropdown me-2">
-                        <button class="nav-link text-white dropdown-toggle border-0 " type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <button class="nav-link text-white dropdown-toggle border-0 " type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <img src='@(usuario.Foto ?? Url.Content("~/img/usuarios/no-photo.png"))' width="40"
                                 height="40" class="object-fit-cover rounded-circle">
                             <span class="d-sm-inline d-none text-dark fw-bold">@usuario.Nome</span>
@@ -152,7 +153,8 @@
                                 </li>
                             }
                             <li>
-                                <a class="dropdown-item" asp-controller="Perfil" asp-action="Edit" asp-route-id="@usuario.UsuarioId">
+                                <a class="dropdown-item" asp-controller="Perfil" asp-action="Edit"
+                                    asp-route-id="@usuario.UsuarioId">
                                     <i class="bi bi-person-bounding-box"></i> Meu Perfil
                                 </a>
                             </li>

@@ -66,7 +66,26 @@ public class VideosController : Controller
     {
         if (ModelState.IsValid)
         {
+            var modulo = await _context.Modulos.FindAsync(video.ModuloId);
+
             _context.Add(video);
+            await _context.SaveChangesAsync();
+            var usuariosCurso = await _context.UsuarioCursos
+                .Include(uc => uc.Curso)
+                .ThenInclude(c => c.Modulos)
+                .Where(uc => uc.CursoId == video.Modulo.CursoId)
+                .ToListAsync();
+            foreach (var usuarioCurso in usuariosCurso)
+            {
+                var usuarioEstadoVideo = new UsuarioEstadoVideo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    VideoId = video.Id,
+                    EstadoId = 3
+                };
+                _context.Add(usuarioEstadoVideo);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -126,7 +145,14 @@ public class VideosController : Controller
         var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
         if (video == null)
             return NotFound();
+        var usuariosEstadoVideo = await _context.UsuarioEstadoVideos
+            .Where(uev => uev.VideoId == video.Id)
+            .ToListAsync();
 
+        foreach (var estado in usuariosEstadoVideo)
+        {
+            _context.Remove(estado);
+        }
         _context.Remove(video);
         await _context.SaveChangesAsync();
 

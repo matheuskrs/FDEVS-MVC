@@ -25,14 +25,13 @@ public class PerfilController : Controller
 
     public async Task<IActionResult> Edit(string id)
     {
-        var currentUser = await _userService.GetUsuarioLogado();
-        ViewBag.User = currentUser;
 
         if (_context.Usuarios == null)
         {
             return NotFound();
         }
         var usuario = await _context.Usuarios.SingleOrDefaultAsync(c => c.UsuarioId == id);
+        ViewBag.User = usuario;
         return View(usuario);
     }
 
@@ -40,7 +39,7 @@ public class PerfilController : Controller
     public async Task<IActionResult> EditConfirmed(Usuario usuario, IFormFile Arquivo)
     {
 
-        var usuarioExistente = await _userService.GetUsuarioLogado();
+        var usuarioExistente = await _context.Usuarios.AsNoTracking().SingleOrDefaultAsync(c => c.UsuarioId == usuario.UsuarioId);;
         if (ModelState.IsValid)
         {
             if (Arquivo != null)
@@ -58,8 +57,7 @@ public class PerfilController : Controller
                 }
                 usuario.Foto = "\\img\\Usuarios\\" + fileName;
             }
-            else
-            {
+            else{
                 usuario.Foto = usuarioExistente.Foto;
             }
             _context.Update(usuario);

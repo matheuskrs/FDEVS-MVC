@@ -51,7 +51,23 @@ public class ModulosController : Controller
     {
         if (ModelState.IsValid)
         {
+            var usuariosCurso = await _context.UsuarioCursos
+                .Where(uc => uc.CursoId == modulo.CursoId)
+                .ToListAsync();
+                
             _context.Add(modulo);
+            await _context.SaveChangesAsync();
+
+            foreach (var usuarioCurso in usuariosCurso)
+            {
+                var usuarioEstadoModulo = new UsuarioEstadoModulo
+                {
+                    UsuarioId = usuarioCurso.UsuarioId,
+                    ModuloId = modulo.Id,
+                    EstadoId = 3
+                };
+                _context.Add(usuarioEstadoModulo);
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -104,9 +120,32 @@ public class ModulosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var modulo = await _context.Modulos.SingleOrDefaultAsync(m => m.Id == id);
+        var modulo = await _context.Modulos
+            .Include(m => m.Videos)
+            .SingleOrDefaultAsync(m => m.Id == id);
         if (modulo == null)
             return NotFound();
+
+        foreach (var video in modulo.Videos)
+        {
+            var usuariosEstadoVideo = await _context.UsuarioEstadoVideos
+                .Where(uev => uev.VideoId == video.Id)
+                .ToListAsync();
+
+            foreach (var estado in usuariosEstadoVideo)
+            {
+                _context.Remove(estado);
+            }
+        }
+
+        var usuariosEstadoModulo = await _context.UsuarioEstadoModulos
+            .Where(uem => uem.ModuloId == modulo.Id)
+            .ToListAsync();
+
+        foreach (var estado in usuariosEstadoModulo)
+        {
+            _context.Remove(estado);
+        }
 
         _context.Remove(modulo);
         await _context.SaveChangesAsync();

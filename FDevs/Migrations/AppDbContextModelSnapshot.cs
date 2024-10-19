@@ -516,15 +516,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "91315c54-6a41-4784-b154-9cf88decea88",
+                            ConcurrencyStamp = "26cdb81b-6c1e-4e2e-ac80-2f4811229819",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHmkcL7/lqwKjg9xeqKTURExbcVaEMnobYCmtQKsiwrAhRL7gQ7lkAKFlIxfOMsq+A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHio4Iyk+bmBYNnSTA7lbiMr54XnK0Vlfsmkxy+kdd9NzLpDw+0wQ450q/fOkDvF7g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8be22dbe-9803-49b2-9f5a-13749892b4a8",
+                            SecurityStamp = "7188878c-9688-4b65-9305-cb302f3004cf",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

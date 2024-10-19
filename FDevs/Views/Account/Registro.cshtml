@@ -72,14 +72,20 @@
 }
 else
 {
-    <div class="container">
-        <div class="text-center text-dark mb-4">
-            <p class="h5 mb-5">Acesse o email informado para concluir o processo de criação!</p>
-            <a asp-action="Login" asp-controller="Account" class="btn btn-danger text-dark">Ir para o Login</a>
-            <a asp-action="Index" asp-controller="Home" class="btn btn-primary text-dark">Voltar a página inicial</a>
+
+    <section class="left d-flex align-items-center justify-content-center">
+        <div class="registerBox">
+            <div class="text-center text-dark mb-4">
+                <p class="h5 mb-4">Conta criada com sucesso!</p>
+                <a asp-action="Login" asp-controller="Account" class="btn btn-danger text-white">Ir para o Login</a>
+            </div>
         </div>
-    </div>
+    </section>
+    <section class="right w-100">
+        <img src="~/img/Login/background.png" class="w-100" alt="">
+    </section>
 }
+
 
 @section Scripts {
     <script type="text/javascript">
