@@ -6,4 +6,4 @@ Usuário: admin@fdevs.com
 Senha: @Admin123
 
 # Acessar a Área Administrativa
-<img src="wwwroot/img/ReadMe/AdminReadme.png" alt="Área Administrativa" width="500">
+<img src="FDevs/wwwroot/img/ReadMe/AdminReadme.png" alt="Área Administrativa" width="500">
