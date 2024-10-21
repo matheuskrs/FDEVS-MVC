@@ -18,33 +18,24 @@
                     <div class="col-12 mb-3">
                         <div class="input-group input-group-outline mb-1">
                             <label asp-for="Titulo" for="floatingInput" class="form-label"></label>
-                            <input asp-for="Titulo" class="form-control" rows="5" readonly>
+                            <input asp-for="Titulo" class="form-control" rows="5" disabled>
                         </div>
                         <span asp-validation-for="Titulo" class="text-danger text-sm"></span>
                     </div>
-                    <div class="col-12 mb-3">
+                    <div class="col-8 mb-3">
                         <div class="input-group input-group-outline mb-1">
                             <label asp-for="URL" for="floatingInput" class="form-label"></label>
                             <input asp-for="URL" class="form-control" rows="5" readonly>
                         </div>
                         <span asp-validation-for="URL" class="text-danger text-sm"></span>
                     </div>
-                    <div class="row">
-                        <div class="col-8 mb-3">
-                            <div class="input-group input-group-outline">
-                                <label asp-for="ModuloId" class="form-label"></label>
-                                <select asp-for="ModuloId" class="form-control" asp-items="ViewBag.ModuloId" disabled>
-                                </select>
-                            </div>
-                            <span asp-validation-for="ModuloId" class="text-danger text-sm"></span>
+                    <div class="col-4 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="ModuloId" class="form-label"></label>
+                            <select asp-for="ModuloId" class="form-control" asp-items="ViewBag.ModuloId" disabled>
+                            </select>
                         </div>
-                        @* <div class="col-4 mb-3">
-                            <div class="input-group input-group-outline">
-                                <label asp-for="EstadoId" class="form-label"></label>
-                                <select asp-for="EstadoId" class="form-control" asp-items="ViewBag.EstadoId" disabled></select>
-                            </div>
-                            <span asp-validation-for="EstadoId" class="text-danger text-sm"></span>
-                        </div> *@
+                        <span asp-validation-for="ModuloId" class="text-danger text-sm"></span>
                     </div>
                 </div>
                 <form asp-action="Delete" class="mt-3">

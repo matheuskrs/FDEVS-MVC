@@ -34,29 +34,19 @@ public class HomeController : Controller
         {
             Cursos = await _context.UsuarioCursos
                 .Include(uc => uc.Curso)
-                .ThenInclude(uc => uc.UsuarioEstadoCursos)
-                .Include(uc => uc.Curso.Modulos)
+                .ThenInclude(c => c.Modulos)
                 .ThenInclude(m => m.Videos)
                 .Where(uc => uc.UsuarioId == currentUserId)
                 .ToListAsync(),
 
-            Usuarios = await _context.Usuarios
-                .Include(c => c.Cursos)
-                .ThenInclude(uc => uc.Curso)
-                .ToListAsync(),
             Trilhas = await _context.Trilhas.ToListAsync(),
             UsuarioEstadoVideos = await _context.UsuarioEstadoVideos
-                .Include(uev => uev.Usuario)
-                .Include(uev => uev.Estado)
-                .Include(uev => uev.Video)
-                .ToListAsync(),
-            UsuarioEstadoCursos = await _context.UsuarioEstadoCursos
-                .Include(uec => uec.Usuario)
-                .Include(uec => uec.Estado)
-                .Include(uec => uec.Curso)
                 .Where(uec => uec.UsuarioId == currentUserId)
                 .ToListAsync(),
-            Estados = await _context.Estados.ToListAsync() 
+            UsuarioEstadoCursos = await _context.UsuarioEstadoCursos
+                .Where(uec => uec.UsuarioId == currentUserId)
+                .ToListAsync(),
+            Estados = await _context.Estados.ToListAsync()
 
         };
         return View(home);
@@ -69,29 +59,22 @@ public class HomeController : Controller
         ViewBag.User = currentUser;
 
         var curso = await _context.Cursos
-            .Include(c => c.UsuarioEstadoCursos)
-            .Include(c => c.Trilha)
             .Include(c => c.Provas)
-            .ThenInclude(p => p.Questoes)
             .SingleOrDefaultAsync(c => c.Id == id);
 
         var modulos = await _context.Modulos
-            .Include(m => m.Curso)
-            .Include(m => m.UsuarioEstadoModulos)
             .Include(m => m.Videos)
             .Where(m => m.CursoId == id)
             .ToListAsync();
 
         var videos = await _context.Videos
-            .Include(v => v.Modulo)
-            .Include(v => v.UsuarioEstadoVideos)
             .Where(v => modulos.Select(m => m.Id).Contains(v.ModuloId))
             .ToListAsync();
 
         int selectedVideoId = videoId ?? videos.FirstOrDefault().Id;
         var videoAtual = videos.SingleOrDefault(v => v.Id == selectedVideoId);
         var prova = curso.Provas.SingleOrDefault();
-        var questaoAtualId = prova.Questoes.FirstOrDefault().Id;
+        int? questaoAtualId = prova?.Questoes?.FirstOrDefault()?.Id;
 
         DetailsVM details = new DetailsVM
         {
@@ -100,7 +83,6 @@ public class HomeController : Controller
             VideoAnterior = await _context.Videos
                 .Include(a => a.Modulo)
                 .ThenInclude(m => m.Curso)
-                .Include(a => a.UsuarioEstadoVideos)
                 .OrderByDescending(a => a.Id)
                 .FirstOrDefaultAsync(a => a.Id < selectedVideoId),
             ProximoVideo = await _context.Videos
@@ -113,7 +95,6 @@ public class HomeController : Controller
             SelectedVideoId = selectedVideoId,
             QuestaoId = questaoAtualId,
             UsuarioEstadoVideos = await _context.UsuarioEstadoVideos
-                .Include(uec => uec.Usuario)
                 .Include(uec => uec.Estado)
                 .Include(uec => uec.Video)
                 .ToListAsync()
@@ -127,7 +108,6 @@ public class HomeController : Controller
     {
         var video = await _context.Videos
             .Include(v => v.Modulo)
-            .ThenInclude(m => m.Curso)
             .SingleOrDefaultAsync(v => v.Id == id);
 
         var usuario = await _userService.GetUsuarioLogado();
@@ -155,13 +135,14 @@ public class HomeController : Controller
         var modulo = video.Modulo;
         var videosDoModulo = await _context.Videos
             .Where(v => v.ModuloId == modulo.Id)
-            .Include(v =>v.Modulo)
+            .Include(v => v.Modulo)
             .ThenInclude(m => m.Curso)
-            .Include(v => v.UsuarioEstadoVideos)
             .ToListAsync();
 
-        var algumVideoEmAndamento = videosDoModulo.Any(v => _context.UsuarioEstadoVideos
-                .SingleOrDefault(uev => uev.VideoId == v.Id && uev.UsuarioId == usuarioId).EstadoId == 1);
+        var algumVideoEmAndamento = videosDoModulo
+                .Any(v => _context.UsuarioEstadoVideos
+                        .SingleOrDefault(uev => uev.VideoId == v.Id && uev.UsuarioId == usuarioId).EstadoId == 1
+                    );
 
         var usuarioEstadoModulo = await _context.UsuarioEstadoModulos
             .FirstOrDefaultAsync(uem => uem.ModuloId == modulo.Id && uem.UsuarioId == usuarioId);
@@ -185,9 +166,6 @@ public class HomeController : Controller
         var curso = modulo.Curso;
         var modulosDoCurso = await _context.Modulos
             .Where(m => m.CursoId == curso.Id)
-            .Include(m => m.Curso)
-            .ThenInclude(c => c.UsuarioEstadoCursos)
-            .Include(m => m.UsuarioEstadoModulos)
             .ToListAsync();
 
         var algumModuloEmAndamento = modulosDoCurso.Any(m => _context.UsuarioEstadoModulos

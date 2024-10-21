@@ -367,8 +367,8 @@ namespace FDevs.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    URL = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Titulo = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(700)", maxLength: 700, nullable: false),
                     ModuloId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -488,6 +488,16 @@ namespace FDevs.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Estado",
+                columns: new[] { "Id", "Cor", "Nome" },
+                values: new object[,]
+                {
+                    { 1, "rgba(255, 255, 0, 1)", "Em andamento" },
+                    { 2, "rgba(0, 255, 0, 1)", "Concluído" },
+                    { 3, "rgba(255, 0, 0, 1)", "Não iniciado" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "IdentityRole",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
@@ -500,7 +510,21 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "26cdb81b-6c1e-4e2e-ac80-2f4811229819", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHio4Iyk+bmBYNnSTA7lbiMr54XnK0Vlfsmkxy+kdd9NzLpDw+0wQ450q/fOkDvF7g==", null, false, "7188878c-9688-4b65-9305-cb302f3004cf", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "a19761e2-06e4-456a-b8bb-9c4f73d34ff2", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEFigYpaSxszUiD7u9KZeCu9AG2+9yue40NKvU8HqGB2TyV/UIWJu/O1IEhpbVrJwnw==", null, false, "60a3e801-06c2-41d2-9289-3e1bab1e8126", false, "Admin" });
+
+            migrationBuilder.InsertData(
+                table: "Trilha",
+                columns: new[] { "Id", "Foto", "Nome" },
+                values: new object[] { 1, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/CapasTrilha/1.png", "Trilha de Backend" });
+
+            migrationBuilder.InsertData(
+                table: "Curso",
+                columns: new[] { "Id", "DataConclusao", "Foto", "Nome", "TrilhaId" },
+                values: new object[,]
+                {
+                    { 1, null, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png", "Lógica de programação", 1 },
+                    { 2, null, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png", "Banco de Dados", 1 }
+                });
 
             migrationBuilder.InsertData(
                 table: "IdentityUserRole<string>",
@@ -516,6 +540,126 @@ namespace FDevs.Migrations
                 table: "Usuario",
                 columns: new[] { "UsuarioId", "DataNascimento", "Foto", "IsAdmin", "Nome" },
                 values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", new DateTime(1981, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "/img/usuarios/avatar.png", false, "Matheus Kauan Rodrigues de Souza" });
+
+            migrationBuilder.InsertData(
+                table: "Modulo",
+                columns: new[] { "Id", "CursoId", "Nome", "UsuarioId" },
+                values: new object[,]
+                {
+                    { 1, 1, "Módulo 1 - Iniciante", null },
+                    { 2, 1, "Módulo 2 - Intermediário", null },
+                    { 3, 2, "Módulo 1 - Iniciante", null },
+                    { 4, 2, "Módulo 2 - Intermediário", null },
+                    { 5, 2, "Módulo 3 - Extras", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Prova",
+                columns: new[] { "Id", "CursoId", "Nome" },
+                values: new object[,]
+                {
+                    { 1, 1, "Prova de Lógica da Programação" },
+                    { 2, 2, "Prova de Banco de Dados" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsuarioCurso",
+                columns: new[] { "CursoId", "UsuarioId" },
+                values: new object[,]
+                {
+                    { 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsuarioEstadoCurso",
+                columns: new[] { "CursoId", "EstadoId", "UsuarioId" },
+                values: new object[,]
+                {
+                    { 1, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Questao",
+                columns: new[] { "Id", "ProvaId", "Texto" },
+                values: new object[,]
+                {
+                    { 1, 1, "O que é uma função na programação?" },
+                    { 2, 1, "Qual a diferença entre um loop while e um loop for?" },
+                    { 3, 2, "O que é um banco de dados?" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsuarioEstadoModulo",
+                columns: new[] { "EstadoId", "ModuloId", "UsuarioId" },
+                values: new object[,]
+                {
+                    { 2, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 4, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 5, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 3, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Video",
+                columns: new[] { "Id", "ModuloId", "Titulo", "URL" },
+                values: new object[,]
+                {
+                    { 1, 1, "Introdução a Algoritmos", "https://www.youtube.com/embed/8mei6uVttho?si=gn2VgTONcmRet24o" },
+                    { 2, 1, "Primeiro algoritmo", "https://www.youtube.com/embed/M2Af7gkbbro?si=yx5Yy6dgQYy_1Y8f" },
+                    { 3, 1, "Comando de Entrada e Operadores", "https://www.youtube.com/embed/RDrfZ-7WE8c?si=JP0LvntY7_cxuWUB" },
+                    { 4, 1, "Operadores lógicos e relacionais", "https://www.youtube.com/embed/Ig4QZNpVZYs?si=Eaes88_HwJc28Vp2" },
+                    { 5, 1, "Introdução ao Scratch", "https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM" },
+                    { 6, 1, "Exercícios de Algoritmo", "https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB" },
+                    { 7, 1, "Estruturas Condicionais 1", "https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub" },
+                    { 8, 3, "SQL Server - Instalando no seu computador", "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD" },
+                    { 9, 3, "Orientações", "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk" },
+                    { 10, 3, "Conceitos Essenciais e Modelagem", "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc" },
+                    { 11, 4, "Relacionamento entre tabelas", "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Alternativa",
+                columns: new[] { "Id", "Correta", "QuestaoId", "Texto" },
+                values: new object[,]
+                {
+                    { 1, true, 1, "É um meio de armazenar dados" },
+                    { 2, false, 1, "É um bloco de código que pode ser chamado várias vezes" },
+                    { 3, false, 2, "Um é repetido infinitamente, e o outro até que um valor seja verdadeiro" },
+                    { 4, true, 2, "O loop while se repete até que um valor seja verdadeiro, e o loop for até que a iteração seja concluída uma certa quantidade de vezes." },
+                    { 5, false, 3, "É uma sequência de comandos" },
+                    { 6, true, 3, "É uma estrutura de armazenamento de dados" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UsuarioEstadoVideo",
+                columns: new[] { "EstadoId", "UsuarioId", "VideoId" },
+                values: new object[,]
+                {
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 1 },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 7 },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 8 },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 9 },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 10 },
+                    { 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 11 },
+                    { 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 2 },
+                    { 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 3 },
+                    { 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 4 },
+                    { 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 5 },
+                    { 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 6 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Resposta",
+                columns: new[] { "Id", "AlternativaId", "QuestaoId", "UsuarioId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 3, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 3, 5, 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alternativa_QuestaoId",

@@ -51,10 +51,11 @@ public class RespostasController : Controller
         {
             return NotFound();
         }
+        var resposta = await _context.Respostas
+            .SingleOrDefaultAsync(r => r.Id == id);
         ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "Nome");
         ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
-        ViewData["AlternativaId"] = new SelectList(_context.Alternativas, "Id", "Texto");
-        var resposta = await _context.Respostas.SingleOrDefaultAsync(r => r.Id == id);
+        ViewData["AlternativaId"] = new SelectList(_context.Alternativas.Where(a => a.QuestaoId == resposta.QuestaoId), "Id", "Texto");
         return View(resposta);
     }
 
@@ -71,8 +72,7 @@ public class RespostasController : Controller
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        return View(resposta);
+        return View("Edit", resposta);
     }
 
     public async Task<IActionResult> Delete(int id)

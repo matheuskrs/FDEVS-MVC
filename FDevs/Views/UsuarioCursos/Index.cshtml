@@ -42,9 +42,6 @@
 										@Html.DisplayFor(modelItem => item.Curso.Nome)
 									</td>
 									<td class="align-middle text-center">
-										<a asp-action="Edit" asp-route-usuarioId="@item.UsuarioId" asp-route-cursoId="@item.CursoId" title="Alterar" class="icons-datatable">
-											<i class="material-icons">edit</i>
-										</a>
 										<a asp-action="Details" asp-route-usuarioId="@item.UsuarioId" asp-route-cursoId="@item.CursoId" title="Detalhes" class="icons-datatable">
 											<i class="material-icons">search</i>
 										</a>

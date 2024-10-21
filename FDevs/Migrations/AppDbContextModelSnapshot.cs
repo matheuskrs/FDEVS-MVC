@@ -46,6 +46,50 @@ namespace FDevs.Migrations
                     b.HasIndex("QuestaoId");
 
                     b.ToTable("Alternativa");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Correta = true,
+                            QuestaoId = 1,
+                            Texto = "É um meio de armazenar dados"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Correta = false,
+                            QuestaoId = 1,
+                            Texto = "É um bloco de código que pode ser chamado várias vezes"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Correta = false,
+                            QuestaoId = 2,
+                            Texto = "Um é repetido infinitamente, e o outro até que um valor seja verdadeiro"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Correta = true,
+                            QuestaoId = 2,
+                            Texto = "O loop while se repete até que um valor seja verdadeiro, e o loop for até que a iteração seja concluída uma certa quantidade de vezes."
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Correta = false,
+                            QuestaoId = 3,
+                            Texto = "É uma sequência de comandos"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Correta = true,
+                            QuestaoId = 3,
+                            Texto = "É uma estrutura de armazenamento de dados"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Curso", b =>
@@ -76,6 +120,22 @@ namespace FDevs.Migrations
                     b.HasIndex("TrilhaId");
 
                     b.ToTable("Curso");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Foto = "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png",
+                            Nome = "Lógica de programação",
+                            TrilhaId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Foto = "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png",
+                            Nome = "Banco de Dados",
+                            TrilhaId = 1
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Estado", b =>
@@ -99,6 +159,26 @@ namespace FDevs.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Estado");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Cor = "rgba(255, 255, 0, 1)",
+                            Nome = "Em andamento"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Cor = "rgba(0, 255, 0, 1)",
+                            Nome = "Concluído"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Cor = "rgba(255, 0, 0, 1)",
+                            Nome = "Não iniciado"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Modulo", b =>
@@ -127,6 +207,38 @@ namespace FDevs.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Modulo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CursoId = 1,
+                            Nome = "Módulo 1 - Iniciante"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CursoId = 1,
+                            Nome = "Módulo 2 - Intermediário"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CursoId = 2,
+                            Nome = "Módulo 1 - Iniciante"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CursoId = 2,
+                            Nome = "Módulo 2 - Intermediário"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CursoId = 2,
+                            Nome = "Módulo 3 - Extras"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Prova", b =>
@@ -150,6 +262,20 @@ namespace FDevs.Migrations
                     b.HasIndex("CursoId");
 
                     b.ToTable("Prova");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CursoId = 1,
+                            Nome = "Prova de Lógica da Programação"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CursoId = 2,
+                            Nome = "Prova de Banco de Dados"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Questao", b =>
@@ -173,6 +299,26 @@ namespace FDevs.Migrations
                     b.HasIndex("ProvaId");
 
                     b.ToTable("Questao");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ProvaId = 1,
+                            Texto = "O que é uma função na programação?"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ProvaId = 1,
+                            Texto = "Qual a diferença entre um loop while e um loop for?"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ProvaId = 2,
+                            Texto = "O que é um banco de dados?"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Resposta", b =>
@@ -202,6 +348,29 @@ namespace FDevs.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Resposta");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AlternativaId = 1,
+                            QuestaoId = 1,
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AlternativaId = 3,
+                            QuestaoId = 2,
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AlternativaId = 5,
+                            QuestaoId = 3,
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Trilha", b =>
@@ -224,6 +393,14 @@ namespace FDevs.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Trilha");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Foto = "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/CapasTrilha/1.png",
+                            Nome = "Trilha de Backend"
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Usuario", b =>
@@ -276,6 +453,18 @@ namespace FDevs.Migrations
                     b.HasIndex("CursoId");
 
                     b.ToTable("UsuarioCurso");
+
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            CursoId = 1
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            CursoId = 2
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.UsuarioEstadoCurso", b =>
@@ -299,6 +488,20 @@ namespace FDevs.Migrations
                     b.HasIndex("EstadoId");
 
                     b.ToTable("UsuarioEstadoCurso");
+
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 1,
+                            CursoId = 1
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            CursoId = 2
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.UsuarioEstadoModulo", b =>
@@ -322,6 +525,38 @@ namespace FDevs.Migrations
                     b.HasIndex("ModuloId");
 
                     b.ToTable("UsuarioEstadoModulo");
+
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            ModuloId = 1
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            ModuloId = 2
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            ModuloId = 3
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            ModuloId = 4
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            ModuloId = 5
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.UsuarioEstadoVideo", b =>
@@ -345,6 +580,74 @@ namespace FDevs.Migrations
                     b.HasIndex("VideoId");
 
                     b.ToTable("UsuarioEstadoVideo");
+
+                    b.HasData(
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 1
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            VideoId = 2
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            VideoId = 3
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            VideoId = 4
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            VideoId = 5
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 3,
+                            VideoId = 6
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 7
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 8
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 9
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 10
+                        },
+                        new
+                        {
+                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
+                            EstadoId = 2,
+                            VideoId = 11
+                        });
                 });
 
             modelBuilder.Entity("FDevs.Models.Video", b =>
@@ -360,19 +663,98 @@ namespace FDevs.Migrations
 
                     b.Property<string>("Titulo")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("URL")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(700)
+                        .HasColumnType("nvarchar(700)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ModuloId");
 
                     b.ToTable("Video");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ModuloId = 1,
+                            Titulo = "Introdução a Algoritmos",
+                            URL = "https://www.youtube.com/embed/8mei6uVttho?si=gn2VgTONcmRet24o"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ModuloId = 1,
+                            Titulo = "Primeiro algoritmo",
+                            URL = "https://www.youtube.com/embed/M2Af7gkbbro?si=yx5Yy6dgQYy_1Y8f"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ModuloId = 1,
+                            Titulo = "Comando de Entrada e Operadores",
+                            URL = "https://www.youtube.com/embed/RDrfZ-7WE8c?si=JP0LvntY7_cxuWUB"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ModuloId = 1,
+                            Titulo = "Operadores lógicos e relacionais",
+                            URL = "https://www.youtube.com/embed/Ig4QZNpVZYs?si=Eaes88_HwJc28Vp2"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ModuloId = 1,
+                            Titulo = "Introdução ao Scratch",
+                            URL = "https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ModuloId = 1,
+                            Titulo = "Exercícios de Algoritmo",
+                            URL = "https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ModuloId = 1,
+                            Titulo = "Estruturas Condicionais 1",
+                            URL = "https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ModuloId = 3,
+                            Titulo = "SQL Server - Instalando no seu computador",
+                            URL = "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ModuloId = 3,
+                            Titulo = "Orientações",
+                            URL = "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ModuloId = 3,
+                            Titulo = "Conceitos Essenciais e Modelagem",
+                            URL = "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ModuloId = 4,
+                            Titulo = "Relacionamento entre tabelas",
+                            URL = "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -516,15 +898,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "26cdb81b-6c1e-4e2e-ac80-2f4811229819",
+                            ConcurrencyStamp = "a19761e2-06e4-456a-b8bb-9c4f73d34ff2",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHio4Iyk+bmBYNnSTA7lbiMr54XnK0Vlfsmkxy+kdd9NzLpDw+0wQ450q/fOkDvF7g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFigYpaSxszUiD7u9KZeCu9AG2+9yue40NKvU8HqGB2TyV/UIWJu/O1IEhpbVrJwnw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7188878c-9688-4b65-9305-cb302f3004cf",
+                            SecurityStamp = "60a3e801-06c2-41d2-9289-3e1bab1e8126",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

@@ -302,19 +302,15 @@ INSERT INTO Trilha (Nome, Foto) VALUES
 
 INSERT INTO Curso (Nome, Foto, DataConclusao, TrilhaId) VALUES 
 ('Lógica de programação', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png', NULL, 1),
-('Banco de Dados', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png', NULL, 1),
-('C# Iniciante', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/22.png', NULL, 1),
-('ASP.Net MVC - C#', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/23.png', NULL, 1),
-('Git e Github (Trilha Backend)', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/45.png', NULL, 1),
-('Princípios SOLID', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/48.png', NULL, 1);
+('Banco de Dados', 'https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png', NULL, 1);
 
 INSERT INTO Prova (Nome, CursoId) VALUES
-('Prova de Banco de Dados', 1),  -- Alice
-('Prova de Programação em Python', 2);  -- Bob
+('Prova de Lógica da Programação', 1),  -- Alice
+('Prova de Banco de Dados', 2);  -- Bob
 
 INSERT INTO Modulo (Nome, CursoId) VALUES
 ('Módulo 1 - Iniciante',  1),
-('Módulo 2 - Pesquisa de satisfação', 1),
+('Módulo 2 - Intermediário', 1),
 ('Módulo 1 - Iniciante', 2),
 ('Módulo 2 - Intermediário', 2),
 ('Módulo 3 - Extras', 2);
@@ -336,22 +332,22 @@ INSERT INTO Video (Titulo, URL, ModuloId) VALUES
 ('Relacionamento entre tabelas ', 'https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3', 4);
 
 INSERT INTO Questao (Texto, ProvaId) VALUES
-('O que é um Banco de Dados?', 1),  -- Prova de Banco de Dados
-('Qual a diferença entre SQL e NoSQL?', 1),  -- Prova de Banco de Dados
-('O que é uma função em Python?', 2);  -- Prova de Programação em Python
+('O que é uma função na programação?', 1),  -- Prova de Lógica da programação
+('Qual a diferença entre um loop while e um loop for?', 1),  -- Prova de Lógica da programação
+('O que é um banco de dados?', 2);  -- Prova de Banco de dados
 
 INSERT INTO Alternativa (Texto, Correta, QuestaoId) VALUES
-('Um sistema que armazena dados', 1, 1),  -- Questão 1
-('Uma ferramenta de programação', 0, 1),  -- Questão 1
-('É uma linguagem de consulta', 1, 2),  -- Questão 2
-('É uma linguagem de programação', 0, 2),  -- Questão 2
-('Uma sequência de comandos', 1, 3),  -- Questão 3
-('Uma estrutura de dados', 0, 3);  -- Questão 3
+('É um meio de armazenar dados', 1, 1),  -- Questão 1
+('É um bloco de código que pode ser chamado várias vezes', 0, 1),  -- Questão 1
+('Um é repetido infinitamente, e o outro até que um valor seja verdadeiro', 0, 2),  -- Questão 2
+('O loop while se repete até que um valor seja verdadeiro, e o loop for até que a iteração seja concluída uma certa quantidade de vezes.', 1, 2),  -- Questão 2
+('É uma sequência de comandos para criar uma lógica', 0, 3),  -- Questão 3
+('É uma estrutura de armazenamento de dados', 1, 3);  -- Questão 3
 
 INSERT INTO Resposta (UsuarioId, QuestaoId, AlternativaId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1, 1),
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 3),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 5); 
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3, 5); 
 
 INSERT INTO UsuarioEstadoVideo (UsuarioId, EstadoId, VideoId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 1), 
@@ -375,19 +371,11 @@ INSERT INTO UsuarioEstadoModulo (UsuarioId, ModuloId, EstadoId) VALUES
 
 INSERT INTO UsuarioEstadoCurso (UsuarioId, EstadoId, CursoId) VALUES 
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1, 1),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 2),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 3),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 4),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 5),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 6);
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2, 2);
 
 INSERT INTO UsuarioCurso (UsuarioId, CursoId) VALUES
 ('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 1),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 3),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 4),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 5),
-('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 6);
+('ddf093a6-6cb5-4ff7-9a64-83da34aee005', 2);
 
 
 

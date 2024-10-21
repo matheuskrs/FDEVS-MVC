@@ -36,7 +36,6 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-200" class="min-vh-100">
-
     <aside
         class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark"
         id="sidenav-main">
@@ -107,7 +106,7 @@
                     </li>
                 </ul>
 
-                <li class='nav-item @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" || ViewData["Title"].ToString() == "Respostas" ? "show" : "")'
+                <li class='nav-item @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" ? "show" : "")'
                     data-bs-toggle="collapse" href="#avaliacoes" role="button" aria-expanded="false"
                     aria-controls="avaliacoes">
                     <a class='nav-link text-white dropdown-toggle' href="#" type="button" id="dropdownMenuButton2"
@@ -118,7 +117,7 @@
                         </div>
                     </a>
                 </li>
-                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" || ViewData["Title"].ToString() == "Respostas" ? "show" : "")"
+                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Prova" || ViewData["Title"].ToString() == "Questões" || ViewData["Title"].ToString() == "Alternativas" ? "show" : "")"
                     id="avaliacoes">
                     <li class="nav-item">
                         <a class='nav-link text-white @(ViewData["Title"].ToString() == "Prova" ? "active bg-gradient-success" : "") '
@@ -144,14 +143,7 @@
                             </div>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Respostas" ? "active bg-gradient-success" : "") '
-                            asp-controller="Respostas" asp-action="Index">
-                            <div class="text-white ps-2 d-flex align-items-center justify-content-center">
-                                <span class="nav-link-text ms-2">Respostas dos Usuários</span>
-                            </div>
-                        </a>
-                    </li>
+
                 </ul>
 
                 <li class='nav-item' data-bs-toggle="collapse" href="#OutrosCadastros" role="button"
@@ -164,7 +156,7 @@
                         </div>
                     </a>
                 </li>
-                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Estado de conclusão" || ViewData["Title"].ToString() == "Cursos dos usuários" ? "show" : "")"
+                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Estado de conclusão" ? "show" : "")"
                     id="OutrosCadastros">
                     <li class="nav-item">
                         <a class='nav-link text-white @(ViewData["Title"].ToString() == "Estado de conclusão" ? "active bg-gradient-success" : "") '
@@ -174,11 +166,41 @@
                             </div>
                         </a>
                     </li>
+
+                </ul>
+                <li class='nav-item' data-bs-toggle="collapse" href="#Usuarios" role="button" aria-expanded="false"
+                    aria-controls="Usuarios">
+                    <a class='nav-link text-white dropdown-toggle' href="#" type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="text-white d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">person</i>
+                            <span class="nav-link-text ms-2">Usuários</span>
+                        </div>
+                    </a>
+                </li>
+                <ul class="list-unstyled collapse multi-collapse @(ViewData["Title"].ToString() == "Acertos" || ViewData["Title"].ToString() == "Cursos dos usuários" || ViewData["Title"].ToString() == "Respostas" ? "show" : "")"
+                    id="Usuarios">
                     <li class="nav-item">
                         <a class='nav-link text-white @(ViewData["Title"].ToString() == "Cursos dos usuários" ? "active bg-gradient-success" : "") '
                             asp-controller="UsuarioCursos" asp-action="Index">
                             <div class="text-white ps-2 d-flex align-items-center justify-content-center">
                                 <span class="nav-link-text ms-2">Associar usuário a curso</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Respostas" ? "active bg-gradient-success" : "") '
+                            asp-controller="Respostas" asp-action="Index">
+                            <div class="text-white ps-2 d-flex align-items-center justify-content-center">
+                                <span class="nav-link-text ms-2">Respostas dos Usuários</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class='nav-link text-white @(ViewData["Title"].ToString() == "Acertos" ? "active bg-gradient-success" : "") '
+                            asp-controller="Acertos" asp-action="Index">
+                            <div class="text-white ps-2 d-flex align-items-center justify-content-center">
+                                <span class="nav-link-text ms-2">Acertos dos usuários</span>
                             </div>
                         </a>
                     </li>
@@ -215,8 +237,8 @@
                         <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                         </div>
                         <div class="nav-item dropdown me-2">
-                            <button class="nav-link text-white dropdown-toggle border-0" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                            <button class="nav-link text-white dropdown-toggle border-0" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src='@(usuario.Foto ?? Url.Content("~/img/usuarios/no-photo.png"))' width="40"
                                     height="40" class="object-fit-cover rounded-circle">
                                 <span class="d-sm-inline d-none text-dark fw-bold">@usuario.Nome</span>

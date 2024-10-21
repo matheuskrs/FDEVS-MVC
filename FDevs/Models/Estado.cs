@@ -7,10 +7,10 @@ public class Estado
 {
     [Key]
     public int Id { get; set; }
-    [Required]
+    [Required(ErrorMessage="O nome é obrigatório.")]
     [StringLength(50, ErrorMessage = "Informe um nome com menos de 50 caracteres.")]
     public string Nome { get; set; }
-    [Required]
+    [Required(ErrorMessage="É obrigatório informar uma cor para o estado.")]
     [StringLength(50)]
     public string Cor { get; set; }
     public ICollection<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }

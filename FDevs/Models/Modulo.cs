@@ -9,7 +9,7 @@ public class Modulo
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage="O nome é obrigatório.")]
     [StringLength(50, ErrorMessage = "Informe um nome com menos de 50 caracteres.")]
     public string Nome { get; set; }
 

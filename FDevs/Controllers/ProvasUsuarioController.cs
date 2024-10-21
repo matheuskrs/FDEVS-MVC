@@ -122,10 +122,25 @@ public class ProvasUsuarioController : Controller
             .Include(q => q.Respostas)
             .FirstOrDefaultAsync(q => q.Id == resposta.QuestaoId);
 
-
-
         var respostaExistente = await _context.Respostas
             .FirstOrDefaultAsync(r => r.UsuarioId == resposta.UsuarioId && r.QuestaoId == resposta.QuestaoId);
+
+        var prova = await _context.Provas
+            .Include(p => p.Curso)
+            .Include(p => p.Questoes)
+            .ThenInclude(q => q.Alternativas)
+            .SingleOrDefaultAsync(p => p.Id == questaoAtual.ProvaId);
+
+        var totalQuestoes = prova.Questoes.Count();
+        var respostasUsuario = await _context.Respostas
+            .Where(r => r.UsuarioId == currentUser.UsuarioId && r.Questao.ProvaId == questaoAtual.ProvaId)
+            .ToListAsync();
+
+        if (respostasUsuario.Count() == totalQuestoes)
+        {
+            return RedirectToAction("Respostas", new { questaoAtual.ProvaId });
+        }
+
 
         if (ModelState.IsValid)
         {

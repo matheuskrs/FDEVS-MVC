@@ -9,13 +9,13 @@ public class Alternativa
     [Key]
     public int Id { get; set; }
     
-    [Required]
+    [Required(ErrorMessage="Informe um texto para a alternativa.")]
     [StringLength(500, ErrorMessage="Informe um enunciado com menos de 500 caracteres.")]
     public string Texto { get; set; }
-    [Required]
+    [Required(ErrorMessage = "Informe se a alternativa é a correta ou não.")]
     public bool Correta { get; set; }
 
-    [Required]
+    [Required(ErrorMessage="Informe qual a questão da alternativa.")]
     [DisplayName("Questão")]
     public int QuestaoId { get; set; }
     [ForeignKey("QuestaoId")]

@@ -76,7 +76,7 @@
                                 <div class="progress-modulo p-0">
                                     <div class="bar d-flex justify-content-center align-items-center text-bold fs-6"
                                         style="width:@progressoCurso%; background-color:#17988f"> <span
-                                            class="text-white">@(progressoCurso > 0 ? $"{progressoCurso}" : "")</span>
+                                            class="text-white">@(progressoCurso > 0 ? $"{progressoCurso}%" : "")</span>
                                     </div>
                                     @if (!(progressoCurso > 0))
                                     {
@@ -120,7 +120,7 @@
                             <div class="bar yellow d-flex justify-content-center align-items-center text-bold fs-6"
                                 style="width:@progressoAmarelo%;">@(progressoAmarelo > 0 ? $"{progressoAmarelo}%" : "")
                             </div>
-                            <div class="bar red d-flex justify-content-center align-items-center text-bold fs-6"
+                            <div class="bar red d-flex justify-content-center align-items-center text-bold fs-6 text-white"
                                 style="width:@progressoVermelho%;">@(progressoVermelho > 0 ? $"{progressoVermelho}%" : "")
                             </div>
                         </div>
