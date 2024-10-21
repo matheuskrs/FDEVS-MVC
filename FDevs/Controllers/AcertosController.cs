@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using FDevs.Data;
-using FDevs.Models;
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

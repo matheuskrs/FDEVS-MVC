@@ -1,5 +1,3 @@
-
-
 using System.Security.Claims;
 using FDevs.Data;
 using FDevs.Models;

@@ -4,7 +4,6 @@ using FDevs.Data;
 using FDevs.Models;
 using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using FDevs.Services;
 
