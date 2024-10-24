@@ -65,6 +65,7 @@ public class CursosController : Controller
             }
             _context.Add(curso);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O curso {curso.Nome} foi criado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -87,6 +88,7 @@ public class CursosController : Controller
 
     public async Task<IActionResult> EditConfirmed(int id, Curso curso, IFormFile Arquivo)
     {
+        var cursoExistente = await _context.Cursos.AsNoTracking().SingleOrDefaultAsync(c => c.Id == curso.Id); ;
         ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome", curso.TrilhaId);
         if (id != curso.Id)
         {
@@ -111,10 +113,13 @@ public class CursosController : Controller
                 }
                 curso.Foto = "\\img\\Cursos\\" + fileName;
             }
+            else
+            {
+                curso.Foto = cursoExistente.Foto;
+            }
             _context.Update(curso);
             await _context.SaveChangesAsync();
-
-
+            TempData["Success"] = $"O curso {curso.Nome} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

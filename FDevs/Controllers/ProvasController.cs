@@ -50,6 +50,7 @@ public class ProvasController : Controller
         {
             _context.Add(prova);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A prova {prova.Nome} foi criada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -81,6 +82,7 @@ public class ProvasController : Controller
         {
             _context.Update(prova);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A Prova {prova.Nome} foi alterada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

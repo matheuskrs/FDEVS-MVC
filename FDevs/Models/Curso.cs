@@ -15,8 +15,6 @@ public class Curso
     [StringLength(500)]
     public string Foto { get; set; }
 
-    public DateOnly? DataConclusao { get; set; }
-
     [Required(ErrorMessage = "Informe uma trilha para o curso.")]
     [Display(Name = "Trilha")]
     public int TrilhaId { get; set; }

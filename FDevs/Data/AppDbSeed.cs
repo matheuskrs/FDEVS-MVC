@@ -157,8 +157,8 @@ public class AppDbSeed
         #region Populate Alternativa
         List<Alternativa> alternativas = new()
         {
-            new Alternativa { Id = 1, Texto = "É um meio de armazenar dados", Correta = true, QuestaoId = 1 },
-            new Alternativa { Id = 2, Texto = "É um bloco de código que pode ser chamado várias vezes", Correta = false, QuestaoId = 1 },
+            new Alternativa { Id = 1, Texto = "É um meio de armazenar dados", Correta = false, QuestaoId = 1 },
+            new Alternativa { Id = 2, Texto = "É um bloco de código que pode ser chamado várias vezes", Correta = true, QuestaoId = 1 },
             new Alternativa { Id = 3, Texto = "Um é repetido infinitamente, e o outro até que um valor seja verdadeiro", Correta = false, QuestaoId = 2 },
             new Alternativa { Id = 4, Texto = "O loop while se repete até que um valor seja verdadeiro, e o loop for até que a iteração seja concluída uma certa quantidade de vezes.", Correta = true, QuestaoId = 2 },
             new Alternativa { Id = 5, Texto = "É uma sequência de comandos", Correta = false, QuestaoId = 3 },
@@ -171,7 +171,7 @@ public class AppDbSeed
         List<Resposta> respostas = new()
         {
             new Resposta { Id = 1, UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", QuestaoId = 1, AlternativaId = 1 },
-            new Resposta { Id = 2, UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", QuestaoId = 2, AlternativaId = 3 },
+            new Resposta { Id = 2, UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", QuestaoId = 2, AlternativaId = 4 },
             new Resposta { Id = 3, UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", QuestaoId = 3, AlternativaId = 5 }
         };
         builder.Entity<Resposta>().HasData(respostas);

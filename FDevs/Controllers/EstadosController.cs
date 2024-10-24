@@ -47,6 +47,7 @@ public class EstadosController : Controller
         {
             _context.Add(estado);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O estado {estado.Nome} foi criado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -77,6 +78,7 @@ public class EstadosController : Controller
         {
             _context.Update(estado);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O estado {estado.Nome} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

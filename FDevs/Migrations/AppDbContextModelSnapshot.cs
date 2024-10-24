@@ -51,14 +51,14 @@ namespace FDevs.Migrations
                         new
                         {
                             Id = 1,
-                            Correta = true,
+                            Correta = false,
                             QuestaoId = 1,
                             Texto = "É um meio de armazenar dados"
                         },
                         new
                         {
                             Id = 2,
-                            Correta = false,
+                            Correta = true,
                             QuestaoId = 1,
                             Texto = "É um bloco de código que pode ser chamado várias vezes"
                         },
@@ -99,9 +99,6 @@ namespace FDevs.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly?>("DataConclusao")
-                        .HasColumnType("date");
 
                     b.Property<string>("Foto")
                         .HasMaxLength(500)
@@ -360,7 +357,7 @@ namespace FDevs.Migrations
                         new
                         {
                             Id = 2,
-                            AlternativaId = 3,
+                            AlternativaId = 4,
                             QuestaoId = 2,
                             UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005"
                         },
@@ -898,15 +895,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a19761e2-06e4-456a-b8bb-9c4f73d34ff2",
+                            ConcurrencyStamp = "c225f9b5-806e-4cc3-adef-57dc53762e32",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFigYpaSxszUiD7u9KZeCu9AG2+9yue40NKvU8HqGB2TyV/UIWJu/O1IEhpbVrJwnw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFkCvQPj+LIDHQdB1rmG0oxDXkhqhWM+1+w3fXH2ndCfFYE/OW1vrD5mZnF7teTKKQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "60a3e801-06c2-41d2-9289-3e1bab1e8126",
+                            SecurityStamp = "0367575a-460f-4ef1-8648-9cfb5a767208",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

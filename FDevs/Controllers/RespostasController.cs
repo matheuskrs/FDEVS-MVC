@@ -68,6 +68,13 @@ public class RespostasController : Controller
         {
             _context.Update(resposta);
             await _context.SaveChangesAsync();
+            resposta = await _context.Respostas
+                .Include(r => r.Usuario)
+                .SingleOrDefaultAsync(
+                    r => r.UsuarioId == resposta.UsuarioId &&
+                    r.QuestaoId == resposta.QuestaoId
+                );
+            TempData["Success"] = $"A resposta de {resposta.Usuario.Nome} foi alterada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         return View("Edit", resposta);

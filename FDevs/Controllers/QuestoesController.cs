@@ -54,6 +54,7 @@ public class QuestoesController : Controller
         {
             _context.Add(questao);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A questão {questao.Texto} foi criada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -85,6 +86,7 @@ public class QuestoesController : Controller
         {
             _context.Update(questao);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A questão foi alterada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

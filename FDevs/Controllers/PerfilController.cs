@@ -38,7 +38,7 @@ public class PerfilController : Controller
     public async Task<IActionResult> EditConfirmed(Usuario usuario, IFormFile Arquivo)
     {
 
-        var usuarioExistente = await _context.Usuarios.AsNoTracking().SingleOrDefaultAsync(c => c.UsuarioId == usuario.UsuarioId);;
+        var usuarioExistente = await _context.Usuarios.AsNoTracking().SingleOrDefaultAsync(c => c.UsuarioId == usuario.UsuarioId); ;
         if (ModelState.IsValid)
         {
             if (Arquivo != null)
@@ -56,7 +56,8 @@ public class PerfilController : Controller
                 }
                 usuario.Foto = "\\img\\Usuarios\\" + fileName;
             }
-            else{
+            else
+            {
                 usuario.Foto = usuarioExistente.Foto;
             }
             _context.Update(usuario);

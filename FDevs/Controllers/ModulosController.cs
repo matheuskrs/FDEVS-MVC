@@ -53,7 +53,7 @@ public class ModulosController : Controller
             var usuariosCurso = await _context.UsuarioCursos
                 .Where(uc => uc.CursoId == modulo.CursoId)
                 .ToListAsync();
-                
+
             _context.Add(modulo);
             await _context.SaveChangesAsync();
 
@@ -68,6 +68,7 @@ public class ModulosController : Controller
                 _context.Add(usuarioEstadoModulo);
             }
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O modulo {modulo.Nome} foi criado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         return View(modulo);
@@ -97,6 +98,7 @@ public class ModulosController : Controller
         {
             _context.Update(modulo);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O modulo {modulo.Nome} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -148,7 +150,6 @@ public class ModulosController : Controller
 
         _context.Remove(modulo);
         await _context.SaveChangesAsync();
-
         TempData["Success"] = $"O módulo '{modulo.Nome}' foi excluído com sucesso!";
         return RedirectToAction(nameof(Index));
     }

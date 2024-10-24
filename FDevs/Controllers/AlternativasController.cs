@@ -18,7 +18,6 @@ public class AlternativasController : Controller
         _logger = logger;
         _context = context;
         _host = host;
-
     }
 
     [HttpGet]
@@ -55,6 +54,7 @@ public class AlternativasController : Controller
         {
             _context.Add(alternativa);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A alternativa {alternativa.Texto} foi criada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -86,6 +86,7 @@ public class AlternativasController : Controller
         {
             _context.Update(alternativa);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A alternativa foi alterada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

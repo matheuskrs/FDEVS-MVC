@@ -63,21 +63,20 @@ public class UsuarioCursosController : Controller
             var videos = await _context.Videos
                 .Include(v => v.Modulo)
                 .ThenInclude(v => v.Curso)
-                .AsNoTracking()
                 .Where(v => v.Modulo.CursoId == usuarioCurso.CursoId)
                 .ToListAsync();
 
             var modulos = await _context.Modulos
                 .Include(m => m.Curso)
                 .Include(m => m.UsuarioEstadoModulos)
-                .AsNoTracking()
                 .Where(m => m.CursoId == usuarioCurso.CursoId)
                 .ToListAsync();
 
             var curso = await _context.Cursos
                 .Include(c => c.UsuarioEstadoCursos)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == usuarioCurso.CursoId);
+
+
 
             foreach (var video in videos)
             {
@@ -110,6 +109,11 @@ public class UsuarioCursosController : Controller
             _context.Add(usuarioEstadoCurso);
             _context.Add(usuarioCurso);
             await _context.SaveChangesAsync();
+            usuarioCurso = await _context.UsuarioCursos
+                .Include(uc => uc.Usuario)
+                .Include(uc => uc.Curso)
+                .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioCurso.UsuarioId && uc.CursoId == usuarioCurso.CursoId);
+            TempData["Success"] = $"A relação entre {usuarioCurso.Usuario.Nome} e {usuarioCurso.Curso.Nome} foi criada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         return View(usuarioCurso);

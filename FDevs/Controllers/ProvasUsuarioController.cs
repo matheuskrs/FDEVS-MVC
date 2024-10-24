@@ -145,12 +145,13 @@ public class ProvasUsuarioController : Controller
             if (respostaExistente != null)
             {
                 respostaExistente.AlternativaId = resposta.AlternativaId;
-                _context.Respostas.Update(respostaExistente);
+                _context.Update(respostaExistente);
+                resposta.Alternativa = await _context.Alternativas.FirstOrDefaultAsync(r => r.Id == resposta.AlternativaId);
                 resposta.Questao = questaoAtual;
             }
             else
             {
-                _context.Respostas.Add(resposta);
+                _context.Add(resposta);
                 resposta.Questao = questaoAtual;
             }
 
@@ -166,6 +167,7 @@ public class ProvasUsuarioController : Controller
                 .FirstOrDefaultAsync();
 
             await _context.SaveChangesAsync();
+            
             if (proximaQuestao != null)
             {
                 return RedirectToAction("Index", "ProvasUsuario", new { id = resposta.Questao.ProvaId, questaoId = proximaQuestao.Id });

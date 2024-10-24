@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    box-sizing: border-box;
+    margin-right: 0 !important;
+}
+
+ul,
+li {
+    overflow-x: hidden;
+}
+
+section {
+    width: 100%;
+}
+
+.content {
+    margin: 1rem;
+    display: grid;
+    grid-template-columns: 70% 1fr;
+    grid-gap: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.right {
+    background-color: #2b323A;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    height: 100vh;
+}
+
+.bottom {
+    box-shadow: 0.1rem 0.1em 1rem rgba(0, 0, 0, 0.3);
+    background-color: white;
+}
+
+.btnLeft {
+    background-color: #E3E3E3;
+}
+
+.btnRight {
+    background-color: #17988f;
+}
+
+.btnLeft:hover,
+.btnRight:hover {
+    background-color: #0d5752;
+    transition: 100ms;
+}
+
+.btnLeft:hover {
+    color: white !important;
+}
+
+
+.modulosContainer {
+    background-color: #E3E3E3;
+    padding: 1rem;
+    border-radius: 3px;
+    border: 1px solid #cfcfcf;
+}
+
+.progress-container {
+    width: 100%;
+    height: 1.5rem;
+    background-color: lightgray;
+    border-radius: 5px;
+}
+
+.progress {
+    display: flex;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.bar {
+    height: 100%;
+}
+
+.green {
+    background-color: rgba(0, 255, 0, 1);
+}
+
+ul,
+.navbar-nav,
+.collapse {
+    min-height: 100% !important;
+}
+
+.navbar .dropdown-menu{
+    z-index: 1050 !important;
+}
+
+.fixed-end .sidenav {
+    z-index: 500 !important;
+    overflow-y: hidden;
+}
+
+.navOverflow {
+    overflow-y: hidden !important;
+}

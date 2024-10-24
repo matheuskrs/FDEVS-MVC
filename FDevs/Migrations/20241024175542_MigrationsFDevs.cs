@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FDevs.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class MigrationsFDevs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -215,7 +215,6 @@ namespace FDevs.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Foto = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    DataConclusao = table.Column<DateOnly>(type: "date", nullable: true),
                     TrilhaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -510,7 +509,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "a19761e2-06e4-456a-b8bb-9c4f73d34ff2", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEFigYpaSxszUiD7u9KZeCu9AG2+9yue40NKvU8HqGB2TyV/UIWJu/O1IEhpbVrJwnw==", null, false, "60a3e801-06c2-41d2-9289-3e1bab1e8126", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "c225f9b5-806e-4cc3-adef-57dc53762e32", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEFkCvQPj+LIDHQdB1rmG0oxDXkhqhWM+1+w3fXH2ndCfFYE/OW1vrD5mZnF7teTKKQ==", null, false, "0367575a-460f-4ef1-8648-9cfb5a767208", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Trilha",
@@ -519,11 +518,11 @@ namespace FDevs.Migrations
 
             migrationBuilder.InsertData(
                 table: "Curso",
-                columns: new[] { "Id", "DataConclusao", "Foto", "Nome", "TrilhaId" },
+                columns: new[] { "Id", "Foto", "Nome", "TrilhaId" },
                 values: new object[,]
                 {
-                    { 1, null, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png", "Lógica de programação", 1 },
-                    { 2, null, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png", "Banco de Dados", 1 }
+                    { 1, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/18.png", "Lógica de programação", 1 },
+                    { 2, "https://bipper-treinamentos-qa.s3.amazonaws.com/BipperDocs/Capas/19.png", "Banco de Dados", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -625,8 +624,8 @@ namespace FDevs.Migrations
                 columns: new[] { "Id", "Correta", "QuestaoId", "Texto" },
                 values: new object[,]
                 {
-                    { 1, true, 1, "É um meio de armazenar dados" },
-                    { 2, false, 1, "É um bloco de código que pode ser chamado várias vezes" },
+                    { 1, false, 1, "É um meio de armazenar dados" },
+                    { 2, true, 1, "É um bloco de código que pode ser chamado várias vezes" },
                     { 3, false, 2, "Um é repetido infinitamente, e o outro até que um valor seja verdadeiro" },
                     { 4, true, 2, "O loop while se repete até que um valor seja verdadeiro, e o loop for até que a iteração seja concluída uma certa quantidade de vezes." },
                     { 5, false, 3, "É uma sequência de comandos" },
@@ -657,7 +656,7 @@ namespace FDevs.Migrations
                 values: new object[,]
                 {
                     { 1, 1, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
-                    { 2, 3, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 4, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
                     { 3, 5, 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
                 });
 

@@ -86,6 +86,7 @@ public class VideosController : Controller
             }
 
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O vídeo {video.Titulo} foi criado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         return View(video);
@@ -119,6 +120,7 @@ public class VideosController : Controller
         {
             _context.Update(video);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"O vídeo {video.Titulo} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,4 +1,4 @@
-@model FDevs.Models.Prova
+@model FDevs.Models.Estado
 @{
     ViewData["Title"] = "Estado de conclusão";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -21,14 +21,17 @@
                         <div class="col-9 mb-3">
                             <div class="input-group input-group-outline mb-1">
                                 <label asp-for="Nome" for="floatingInput" class="form-label"></label>
-                                <input asp-for="Nome" class="form-control" rows="5">
+                                <input asp-for="Nome" class="form-control" rows="5" >
                             </div>
                             <span asp-validation-for="Nome" class="text-danger text-sm"></span>
                         </div>
-                        <div class="pb-3">
-                            <input type="submit" value="Criar" class="btn btn-success me-3" />
-                            <a asp-action="Index" class="btn btn-success">Cancelar</a>
+                        <div class="col-3 align-items-center d-flex mb-3">
+                            <input type="color" asp-for="Cor"  />
                         </div>
+                    </div>
+                    <div class="pb-3">
+                        <input type="submit" value="Criar" class="btn btn-success me-3" />
+                        <a asp-action="Index" class="btn btn-success">Cancelar</a>
                     </div>
                 </form>
             </div>

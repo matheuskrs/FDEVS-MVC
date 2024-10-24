@@ -59,13 +59,14 @@ public class TrilhasController : Controller
             }
             _context.Add(trilha);
             await _context.SaveChangesAsync();
+            TempData["Success"] = $"A trilha '{trilha.Nome}' foi criada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
         {
             var erros = ModelState.Values.SelectMany(t => t.Errors);
         }
-        return View(trilha);
+        return View("Index");
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -80,6 +81,7 @@ public class TrilhasController : Controller
 
     public async Task<IActionResult> EditConfirmed(int id, Trilha trilha, IFormFile Arquivo)
     {
+        var trilhaExistente = await _context.Trilhas.AsNoTracking().SingleOrDefaultAsync(t => t.Id == trilha.Id);
         if (id != trilha.Id)
         {
             return NotFound();
@@ -103,10 +105,14 @@ public class TrilhasController : Controller
                 }
                 trilha.Foto = "\\img\\Trilhas\\" + fileName;
             }
+            else
+            {
+                trilha.Foto = trilhaExistente.Foto;
+            }
+
             _context.Update(trilha);
             await _context.SaveChangesAsync();
-
-
+            TempData["Success"] = $"A trilha '{trilha.Nome}' foi alterada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
