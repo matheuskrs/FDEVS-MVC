@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FDevs.Migrations
 {
     /// <inheritdoc />
-    public partial class MigrationsFDevs : Migration
+    public partial class FDEVS : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -509,7 +509,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "c225f9b5-806e-4cc3-adef-57dc53762e32", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEFkCvQPj+LIDHQdB1rmG0oxDXkhqhWM+1+w3fXH2ndCfFYE/OW1vrD5mZnF7teTKKQ==", null, false, "0367575a-460f-4ef1-8648-9cfb5a767208", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "65f7a167-7b3b-4e30-8f43-78d9572d8a4d", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHBXINYLElzYoNLXnXi45ODHbUsCPGzhRyNuYigE1YDxiOghsYNCcXfRVqlu2Tch/g==", null, false, "90cacd38-5427-4d97-8abe-826f3abbc6c9", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Trilha",
@@ -546,10 +546,8 @@ namespace FDevs.Migrations
                 values: new object[,]
                 {
                     { 1, 1, "Módulo 1 - Iniciante", null },
-                    { 2, 1, "Módulo 2 - Intermediário", null },
-                    { 3, 2, "Módulo 1 - Iniciante", null },
-                    { 4, 2, "Módulo 2 - Intermediário", null },
-                    { 5, 2, "Módulo 3 - Extras", null }
+                    { 2, 2, "Módulo 1 - Iniciante", null },
+                    { 3, 2, "Módulo 2 - Intermediário", null }
                 });
 
             migrationBuilder.InsertData(
@@ -594,11 +592,9 @@ namespace FDevs.Migrations
                 columns: new[] { "EstadoId", "ModuloId", "UsuarioId" },
                 values: new object[,]
                 {
-                    { 2, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
-                    { 2, 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
-                    { 2, 4, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
-                    { 2, 5, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
-                    { 3, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
+                    { 1, 1, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 2, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" },
+                    { 2, 3, "ddf093a6-6cb5-4ff7-9a64-83da34aee005" }
                 });
 
             migrationBuilder.InsertData(
@@ -613,10 +609,10 @@ namespace FDevs.Migrations
                     { 5, 1, "Introdução ao Scratch", "https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM" },
                     { 6, 1, "Exercícios de Algoritmo", "https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB" },
                     { 7, 1, "Estruturas Condicionais 1", "https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub" },
-                    { 8, 3, "SQL Server - Instalando no seu computador", "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD" },
-                    { 9, 3, "Orientações", "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk" },
-                    { 10, 3, "Conceitos Essenciais e Modelagem", "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc" },
-                    { 11, 4, "Relacionamento entre tabelas", "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3" }
+                    { 8, 2, "SQL Server - Instalando no seu computador", "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD" },
+                    { 9, 2, "Orientações", "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk" },
+                    { 10, 2, "Conceitos Essenciais e Modelagem", "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc" },
+                    { 11, 3, "Relacionamento entre tabelas", "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3" }
                 });
 
             migrationBuilder.InsertData(

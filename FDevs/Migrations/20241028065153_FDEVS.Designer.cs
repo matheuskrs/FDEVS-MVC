@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDevs.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241024175542_MigrationsFDevs")]
-    partial class MigrationsFDevs
+    [Migration("20241028065153_FDEVS")]
+    partial class FDEVS
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,26 +218,14 @@ namespace FDevs.Migrations
                         new
                         {
                             Id = 2,
-                            CursoId = 1,
-                            Nome = "Módulo 2 - Intermediário"
-                        },
-                        new
-                        {
-                            Id = 3,
                             CursoId = 2,
                             Nome = "Módulo 1 - Iniciante"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 3,
                             CursoId = 2,
                             Nome = "Módulo 2 - Intermediário"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CursoId = 2,
-                            Nome = "Módulo 3 - Extras"
                         });
                 });
 
@@ -530,13 +518,13 @@ namespace FDevs.Migrations
                         new
                         {
                             UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
-                            EstadoId = 2,
+                            EstadoId = 1,
                             ModuloId = 1
                         },
                         new
                         {
                             UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
-                            EstadoId = 3,
+                            EstadoId = 2,
                             ModuloId = 2
                         },
                         new
@@ -544,18 +532,6 @@ namespace FDevs.Migrations
                             UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             EstadoId = 2,
                             ModuloId = 3
-                        },
-                        new
-                        {
-                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
-                            EstadoId = 2,
-                            ModuloId = 4
-                        },
-                        new
-                        {
-                            UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
-                            EstadoId = 2,
-                            ModuloId = 5
                         });
                 });
 
@@ -730,28 +706,28 @@ namespace FDevs.Migrations
                         new
                         {
                             Id = 8,
-                            ModuloId = 3,
+                            ModuloId = 2,
                             Titulo = "SQL Server - Instalando no seu computador",
                             URL = "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD"
                         },
                         new
                         {
                             Id = 9,
-                            ModuloId = 3,
+                            ModuloId = 2,
                             Titulo = "Orientações",
                             URL = "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk"
                         },
                         new
                         {
                             Id = 10,
-                            ModuloId = 3,
+                            ModuloId = 2,
                             Titulo = "Conceitos Essenciais e Modelagem",
                             URL = "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc"
                         },
                         new
                         {
                             Id = 11,
-                            ModuloId = 4,
+                            ModuloId = 3,
                             Titulo = "Relacionamento entre tabelas",
                             URL = "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3"
                         });
@@ -898,15 +874,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c225f9b5-806e-4cc3-adef-57dc53762e32",
+                            ConcurrencyStamp = "65f7a167-7b3b-4e30-8f43-78d9572d8a4d",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFkCvQPj+LIDHQdB1rmG0oxDXkhqhWM+1+w3fXH2ndCfFYE/OW1vrD5mZnF7teTKKQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHBXINYLElzYoNLXnXi45ODHbUsCPGzhRyNuYigE1YDxiOghsYNCcXfRVqlu2Tch/g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0367575a-460f-4ef1-8648-9cfb5a767208",
+                            SecurityStamp = "90cacd38-5427-4d97-8abe-826f3abbc6c9",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
@@ -1024,7 +1000,7 @@ namespace FDevs.Migrations
             modelBuilder.Entity("FDevs.Models.Curso", b =>
                 {
                     b.HasOne("FDevs.Models.Trilha", "Trilha")
-                        .WithMany()
+                        .WithMany("Cursos")
                         .HasForeignKey("TrilhaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1302,6 +1278,11 @@ namespace FDevs.Migrations
                     b.Navigation("Alternativas");
 
                     b.Navigation("Respostas");
+                });
+
+            modelBuilder.Entity("FDevs.Models.Trilha", b =>
+                {
+                    b.Navigation("Cursos");
                 });
 
             modelBuilder.Entity("FDevs.Models.Usuario", b =>

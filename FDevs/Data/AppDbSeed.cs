@@ -118,10 +118,8 @@ public class AppDbSeed
         List<Modulo> modulos = new()
         {
             new Modulo { Id = 1, Nome = "Módulo 1 - Iniciante", CursoId = 1 },
-            new Modulo { Id = 2, Nome = "Módulo 2 - Intermediário", CursoId = 1 },
-            new Modulo { Id = 3, Nome = "Módulo 1 - Iniciante", CursoId = 2 },
-            new Modulo { Id = 4, Nome = "Módulo 2 - Intermediário", CursoId = 2 },
-            new Modulo { Id = 5, Nome = "Módulo 3 - Extras", CursoId = 2 }
+            new Modulo { Id = 2, Nome = "Módulo 1 - Iniciante", CursoId = 2 },
+            new Modulo { Id = 3, Nome = "Módulo 2 - Intermediário", CursoId = 2 }
         };
         builder.Entity<Modulo>().HasData(modulos);
         #endregion
@@ -136,10 +134,10 @@ public class AppDbSeed
             new Video { Id = 5, Titulo = "Introdução ao Scratch", URL = "https://www.youtube.com/embed/GrPkuk1ezyo?si=QoDgOp2ZVSgM_CTM", ModuloId = 1 },
             new Video { Id = 6, Titulo = "Exercícios de Algoritmo", URL = "https://www.youtube.com/embed/v2nCgGSVCeE?si=_-lFdQVYxv_1uJVB", ModuloId = 1 },
             new Video { Id = 7, Titulo = "Estruturas Condicionais 1", URL = "https://www.youtube.com/embed/_g05aHdBAEY?si=YHLhKkoo8Cnaieub", ModuloId = 1 },
-            new Video { Id = 8, Titulo = "SQL Server - Instalando no seu computador", URL = "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD", ModuloId = 3 },
-            new Video { Id = 9, Titulo = "Orientações", URL = "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk", ModuloId = 3 },
-            new Video { Id = 10, Titulo = "Conceitos Essenciais e Modelagem", URL = "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc", ModuloId = 3 },
-            new Video { Id = 11, Titulo = "Relacionamento entre tabelas", URL = "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3", ModuloId = 4 }
+            new Video { Id = 8, Titulo = "SQL Server - Instalando no seu computador", URL = "https://www.youtube.com/embed/OKqpZ6zbZwQ?si=PR8tj46glLT1VUyD", ModuloId = 2 },
+            new Video { Id = 9, Titulo = "Orientações", URL = "https://www.youtube.com/embed/qEitmEuXG1I?si=71gXL6ykXdoTHoxk", ModuloId = 2 },
+            new Video { Id = 10, Titulo = "Conceitos Essenciais e Modelagem", URL = "https://www.youtube.com/embed/N_0ujgVRrdI?si=kmYxFk0v6jv0SXSc", ModuloId = 2 },
+            new Video { Id = 11, Titulo = "Relacionamento entre tabelas", URL = "https://www.youtube.com/embed/HmFUrlQcCJ0?si=-E4k0khkUdH9ABS3", ModuloId = 3 }
         };
         builder.Entity<Video>().HasData(videos);
         #endregion
@@ -196,12 +194,10 @@ public class AppDbSeed
         #endregion
 
         #region Populate UsuarioEstadoModulo
-        List<UsuarioEstadoModulo>usuarioEstadoModulos = new(){
-            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 1, EstadoId = 2 },
-            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 2, EstadoId = 3 },
+        List<UsuarioEstadoModulo> usuarioEstadoModulos = new(){
+            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 1, EstadoId = 1 },
+            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 2, EstadoId = 2 },
             new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 3, EstadoId = 2 },
-            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 4, EstadoId = 2 },
-            new UsuarioEstadoModulo { UsuarioId = "ddf093a6-6cb5-4ff7-9a64-83da34aee005", ModuloId = 5, EstadoId = 2 }
         };
         builder.Entity<UsuarioEstadoModulo>().HasData(usuarioEstadoModulos);
         #endregion
