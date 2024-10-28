@@ -108,9 +108,24 @@ public class QuestoesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
+        var questao = await _context.Questoes
+            .Include(q => q.Alternativas)
+            .SingleOrDefaultAsync(q => q.Id == id);
         if (questao == null)
             return NotFound();
+
+        var permitirExcluir = true;
+
+        var alternativasDaQuestao = questao.Alternativas.Any();
+
+        if (alternativasDaQuestao)
+            permitirExcluir = false;
+
+        if (!permitirExcluir)
+        {
+            TempData["Warning"] = $"A questão não pode ser excluída pois já existem registros na tabela: \"{(alternativasDaQuestao ? "ALTERNATIVAS" : "")}\"associados a ele!";
+            return RedirectToAction(nameof(Index));
+        }
 
         _context.Remove(questao);
         await _context.SaveChangesAsync();

@@ -76,7 +76,13 @@ public class UsuarioCursosController : Controller
                 .Include(c => c.UsuarioEstadoCursos)
                 .FirstOrDefaultAsync(c => c.Id == usuarioCurso.CursoId);
 
+            var cursoExistente = await _context.UsuarioCursos.SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioCurso.UsuarioId && uc.CursoId == usuarioCurso.CursoId);
 
+            if (cursoExistente != null)
+            {
+                TempData["Warning"] = $"Esse usuário não pode ser relacionado a este curso, pois já existem registros na tabela: \"UsuarioCursos\" iguais associados a ele!";
+                return RedirectToAction(nameof(Index));
+            }
 
             foreach (var video in videos)
             {

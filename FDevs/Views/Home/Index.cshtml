@@ -53,15 +53,17 @@
                     qtdVideos = 0;
                     qtdVideosConcluidos = 0;
                     var estadoCurso = Model.UsuarioEstadoCursos
-                    .Where(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId)
-                    .FirstOrDefault();
+                        .Where(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId)
+                        .FirstOrDefault();
+                    var primeiroVideo = Model.Videos
+                        .FirstOrDefault(v => v.Modulo.CursoId == usuarioCurso.CursoId).Id;
                     @foreach (var modulo in usuarioCurso.Curso.Modulos)
                     {
                         @foreach (var video in modulo.Videos)
                         {
                             qtdVideos += 1;
                             var usuarioEstadoVideo = Model.UsuarioEstadoVideos
-                            .FirstOrDefault(uev => uev.VideoId == video.Id && uev.UsuarioId == ViewBag.User.UsuarioId);
+                                .FirstOrDefault(uev => uev.VideoId == video.Id && uev.UsuarioId == ViewBag.User.UsuarioId);
                             if (usuarioEstadoVideo.EstadoId == 2)
                             {
                                 qtdVideosConcluidos += 1;
@@ -69,6 +71,7 @@
                         }
                     }
                     progressoCurso = Math.Round((qtdVideosConcluidos / qtdVideos) * 100);
+                    
                     <div class="item curso">
                         <div class="card m-3" style="width: 15rem;">
                             <img src="@usuarioCurso.Curso.Foto" class="card-img-top" width=237 height=140 alt="...">
@@ -90,7 +93,7 @@
                                 <h6 class="card-title mt-2 text-nowrap">@usuarioCurso.Curso.Nome</h6>
                             </div>
                             <hr class="itemHr">
-                            <a asp-action="Details" asp-route-id="@usuarioCurso.Curso.Id"
+                            <a asp-action="Details" asp-route-id="@usuarioCurso.Curso.Id" asp-route-videoid="@primeiroVideo"
                                 class="col-12 btn startBtn">Começar </a>
                         </div>
                     </div>

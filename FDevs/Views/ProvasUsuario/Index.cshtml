@@ -26,10 +26,11 @@
                             <div class="row">
                                 @foreach (var alternativa in Model.QuestaoAtual.Alternativas)
                                 {
-                                    <div class="form-check">
-                                        <input class="form-check-input" asp-for="Resposta.AlternativaId" type="radio"
+                                    <div class="form-check" >
+                                        <input class="form-check-input "  type="radio"
                                             name="Resposta.AlternativaId" id="alternativa_@alternativa.Id"
-                                            value="@alternativa.Id" />
+                                            value="@alternativa.Id" @(Model.Resposta != null && Model.Resposta.AlternativaId == alternativa.Id ? "checked" : "") />
+
                                         <label class="form-check-label" for="alternativa_@alternativa.Id">
                                             @alternativa.Texto
                                         </label>

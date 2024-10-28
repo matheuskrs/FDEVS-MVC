@@ -112,6 +112,14 @@ public class AlternativasController : Controller
         if (alternativa == null)
             return NotFound();
 
+        var respostas = await _context.Respostas.AnyAsync(r => r.AlternativaId == id);
+
+        if (respostas)
+        {
+            TempData["Warning"] = $"A alternativa não pode ser excluída pois já existem registros na tabela: \"RESPOSTAS\" associados a ela!";
+            return RedirectToAction(nameof(Index));
+        }
+
         _context.Remove(alternativa);
         await _context.SaveChangesAsync();
 

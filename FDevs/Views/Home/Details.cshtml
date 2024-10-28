@@ -20,11 +20,10 @@
                 {
                     qtdConcluido += 1;
                 }
-                <iframe id="player-@video.Id" frameborder="0" allowfullscreen class="my-3 video" data-video-id="@video.Id"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" title="@video.Titulo" width="100%" height="470"
-                    src="@video.URL&amp;showinfo=0&amp;ecver=2&amp;enablejsapi=1&amp;origin=https%3A%2F%2Ffdevs.upper.net.br&amp;widgetid=1">
-                </iframe>
+
+                <div id="player-container">
+                    <div id="player"></div>
+                </div>
             }
         }
     </section>
@@ -76,12 +75,14 @@
 
                                 <li class="nav-item">
                                     <form action="@Url.Action("UpdateProgress", "Home", new { id = video.Id })" method="post">
-                                        <button type="submit" class='nav-link btn text-white btn-filter w-100'>
+                                        <button type="submit"
+                                            class='nav-link btn text-white btn-filter w-100 @(video.Id == Model.SelectedVideoId ? "selected" : "")'>
                                             <div class="row w-100">
                                                 <div class="text-white col-12 d-flex align-items-center">
-                                                    <span class="nav-link-text">@video.Titulo</span>
+                                                    <span
+                                                        class="nav-link-text @(video.Id == Model.SelectedVideoId ? "text-dark fw-bold" : "")">@video.Titulo</span>
                                                 </div>
-                                                <a href="#" class="ms'-3 col-12 btn-sm text-dark text-bold tags"
+                                                <a href="#" class="ms-3 col-12 btn-sm text-dark text-bold tags"
                                                     style="background-color:@estadoUsuarioVideo.Estado.Cor"></a>
                                             </div>
                                         </button>
@@ -168,20 +169,58 @@
 
 @section Scripts {
     <script>
-        function filter(videoId, clickedButton) {
-            document.querySelectorAll('.video').forEach(card => {
-                card.style.display = "flex";
-                if (card.getAttribute('data-video-id') != videoId & videoId != '') {
-                    card.style.display = "none";
+        let player;
+        let updateProgressUrl = "@Url.Action("UpdateProgressToComplete", "Home", new { id = Model.VideoAtual.Id })";
+
+
+        function onYouTubeIframeAPIReady() {
+            console.log("API Carregada!");
+
+            player = new YT.Player("player", {
+                height: 470,
+                videoId: "",
+                playerVars: {
+                    controls: 1,
+                    playersinline: 1,
+                    autoplay: 1,
+                },
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange
                 }
             });
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            var selectedVideoId = @Model.SelectedVideoId;
-            if (selectedVideoId) {
-                filter(selectedVideoId);
+        function onPlayerReady(event) {
+            const url = '@Model.VideoAtual.URL';
+            const videoId = YouTubeGetID(url);
+            changeVideo(videoId);
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                window.location.href = updateProgressUrl;
             }
-        });
+        }
+
+        function YouTubeGetID(url) {
+            let ID = "";
+            url = url.replace(/(>|<)/gi, "").split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+            if (url[2] !== undefined) {
+                ID = url[2].split(/[^0-9a-z_\-]/i)[0];
+            } else {
+                ID = url;
+            }
+            return ID;
+        }
+
+        function changeVideo(videoId) {
+            console.log("Mudando o vídeo para o vídeo de Id:", videoId);
+            if (player && player.cueVideoById) {
+                player.cueVideoById({ videoId: videoId });
+                player.playVideo();
+            }
+        }
+
     </script>
 }

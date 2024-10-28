@@ -104,9 +104,24 @@ public class ProvasController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
+        var prova = await _context.Provas
+            .Include(p => p.Questoes)
+            .SingleOrDefaultAsync(p => p.Id == id);
         if (prova == null)
             return NotFound();
+
+        var permitirExcluir = true;
+
+        var questoesDaProva = prova.Questoes.Any();
+
+        if (questoesDaProva)
+            permitirExcluir = false;
+
+        if (!permitirExcluir)
+        {
+            TempData["Warning"] = $"A Prova \"{prova.Nome}\" não pode ser excluída pois já existem registros na tabela: \"{(questoesDaProva ? "QUESTÕES" : "")}\" associados a ela!";
+            return RedirectToAction(nameof(Index));
+        }
 
         _context.Remove(prova);
         await _context.SaveChangesAsync();

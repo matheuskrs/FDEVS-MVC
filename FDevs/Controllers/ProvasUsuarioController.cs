@@ -95,6 +95,8 @@ public class ProvasUsuarioController : Controller
             .OrderByDescending(q => q.Id)
             .FirstOrDefault(q => q.Id < questaoAtualId);
 
+        var resposta = await _context.Respostas.FirstOrDefaultAsync(r => r.QuestaoId == questaoAtualId);
+
         var provaVM = new ProvaVM
         {
             QuestaoId = questaoAtualId,
@@ -103,6 +105,7 @@ public class ProvasUsuarioController : Controller
             ProximaQuestao = proximaQuestao,
             QuestaoAnterior = questaoAnterior,
             QuestaoAtual = questaoAtual,
+            Resposta = resposta,
             Prova = prova
         };
         return View(provaVM);

@@ -133,9 +133,19 @@ public class TrilhasController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
+        var trilha = await _context.Trilhas
+            .Include(t => t.Cursos)
+            .SingleOrDefaultAsync(t => t.Id == id);
         if (trilha == null)
             return NotFound();
+
+        var cursosDaTrilha = trilha.Cursos.Any();
+        if (cursosDaTrilha)
+        {
+            TempData["Warning"] = $"A trilha \"{trilha.Nome}\" não pode ser excluída, pois já existem registros na tabela: \"CURSOS\" associados a ele!";
+            return RedirectToAction(nameof(Index));
+        }
+
 
         _context.Remove(trilha);
         await _context.SaveChangesAsync();

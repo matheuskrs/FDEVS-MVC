@@ -103,6 +103,24 @@ public class EstadosController : Controller
         if (estado == null)
             return NotFound();
 
+        var permitirExcluir = true;
+
+        var usuarioEstadoCurso = await _context.UsuarioEstadoCursos
+            .AnyAsync(uec => uec.EstadoId == id);
+        var usuarioEstadoModulo = await _context.UsuarioEstadoModulos
+            .AnyAsync(uem => uem.EstadoId == id);
+        var usuarioEstadoVideo = await _context.UsuarioEstadoVideos
+            .AnyAsync(uev => uev.EstadoId == id);
+
+        if (usuarioEstadoCurso || usuarioEstadoModulo || usuarioEstadoVideo)
+            permitirExcluir = false;
+
+        if (!permitirExcluir)
+        {
+            TempData["Warning"] = $"O estado \"{estado.Nome}\" não pode ser excluído pois já existem registros na(s) tabela(s): \"{(usuarioEstadoCurso ? "UsuarioEstadoCursos" : "")}  {(usuarioEstadoModulo ? "UsuarioEstadoModulos" : "")} {(usuarioEstadoVideo ? "UsuarioEstadoVideos" : "")}\" associados a ele!";
+            return RedirectToAction(nameof(Index));
+        }
+
         _context.Remove(estado);
         await _context.SaveChangesAsync();
 

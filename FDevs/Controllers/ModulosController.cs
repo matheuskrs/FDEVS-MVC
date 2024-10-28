@@ -127,6 +127,20 @@ public class ModulosController : Controller
         if (modulo == null)
             return NotFound();
 
+        var permitirExcluir = true;
+
+        var videosDoModulo = modulo.Videos.Any();
+        if (videosDoModulo)
+            permitirExcluir = false;
+
+        if (!permitirExcluir)
+        {
+            TempData["Warning"] = $"O módulo \"{modulo.Nome}\" não pode ser excluído pois já existem registros na tabela: \"{(videosDoModulo ? "VÍDEOS" : "")}\" associados a ele!";
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
         foreach (var video in modulo.Videos)
         {
             var usuariosEstadoVideo = await _context.UsuarioEstadoVideos

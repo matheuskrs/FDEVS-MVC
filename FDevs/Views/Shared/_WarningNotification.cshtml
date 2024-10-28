@@ -12,12 +12,13 @@
     <div class="toast-body">
       <span class="font-weight-bold text-dark">
         <div asp-validation-summary="ModelOnly"></div>
+        @TempData["Warning"]
       </span>
     </div>
   </div>
 </div>
 
-@if (ViewData.ModelState.Where(e => e.Key == string.Empty).Count() > 0)
+@if (ViewData.ModelState.Where(e => e.Key == string.Empty).Count() > 0 || TempData["Warning"] != null)
 {
   <script>
     var myToastEl = document.getElementById('warningToast');

@@ -154,6 +154,7 @@ public class VideosController : Controller
         {
             _context.Remove(estado);
         }
+
         _context.Remove(video);
         await _context.SaveChangesAsync();
 

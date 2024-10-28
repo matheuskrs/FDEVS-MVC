@@ -141,9 +141,27 @@ public class CursosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var curso = await _context.Cursos.SingleOrDefaultAsync(c => c.Id == id);
+        var curso = await _context.Cursos
+            .Include(c => c.Modulos)
+            .SingleOrDefaultAsync(c => c.Id == id);
         if (curso == null)
             return NotFound();
+        var permitirExcluir = true;
+
+        var usuarioCursos = await _context.UsuarioCursos
+            .AnyAsync(uc => uc.CursoId == id);
+
+        var modulosCurso = curso.Modulos.Any();
+
+        if(usuarioCursos || modulosCurso)
+            permitirExcluir = false;
+        
+
+        if (!permitirExcluir)
+        {
+            TempData["Warning"] = $"O curso \"{curso.Nome}\" não pode ser excluído pois já existem registros na(s) tabela(s): \"{(usuarioCursos ? "USUÁRIOS" : "" )}  {(modulosCurso ? "MÓDULOS" : "")}\" associados a ele!";
+            return RedirectToAction(nameof(Index));
+        }
 
         _context.Remove(curso);
         await _context.SaveChangesAsync();
