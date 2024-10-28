@@ -34,14 +34,13 @@
 
 
     <section class="fixed-end d-flex justify-content-end m-5 p-0">
-        <aside class="sidenav navbar navbar-vertical right navbar-expand-xs w-100 border-radius-xl mt-5 mb-0 ms-0"
-            id="sidenav-main" style="min-width: 400px;">
+        <aside class="navbar navbar-vertical right navbar-expand-xs border-radius-xl mt-6 mb-0 ms-0" id="sidenav-main">
             <hr class="horizontal light mt-0 mb-3">
             <div class="collapse navbar-collapse navOverflow" id="sidenav-collapse-main">
-                <div class="row ms-1">
-                    <span class="col-3 m-0 px-1 text-white">Andamento:</span>
-                    <div class="d-flex col-8 justify-content-start h-fit-content m-0 p-0">
-                        <div class="progress-container p-0 w-80 ">
+                <div class="row my-1 d-flex justify-content-center">
+                    <span class="col-12 text-center px-1 text-white">Andamento:</span>
+                    <div class="d-flex col-9  justify-content-start h-fit-content m-0 p-0">
+                        <div class="progress-container  p-0 w-90 ">
                             <div class="progress p-0">
                                 <div class="bar green d-flex justify-content-center align-items-center text-bold fs-7"
                                     style="width:@progressoVerde%;">
@@ -55,7 +54,7 @@
                 <ul class="navbar-nav ">
                     @foreach (var modulo in Model.CursoAtual.Modulos)
                     {
-                        <li class='nav-item ' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
+                        <li class='nav-item' data-bs-toggle="collapse" href="#modulo-@modulo.Id" role="button"
                             aria-expanded="false" aria-controls="modulo-@modulo.Id">
                             <a class='nav-link text-white dropdown-toggle' href="#" type="button" id="dropdownMenuButton2"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -128,7 +127,7 @@
         </aside>
     </section>
     <section class="bottom rounded">
-        <div class="container text-white">
+        <div class="container">
             <div class="row p-4">
                 <div class="col text-center">
                     @if (Model.VideoAnterior != null && Model.VideoAtual.Modulo.Curso.Id ==
@@ -168,6 +167,7 @@
 }
 
 @section Scripts {
+    <script async src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
         let updateProgressUrl = "@Url.Action("UpdateProgressToComplete", "Home", new { id = Model.VideoAtual.Id })";
@@ -178,11 +178,10 @@
 
             player = new YT.Player("player", {
                 height: 470,
-                videoId: "",
                 playerVars: {
                     controls: 1,
+                    autoplay: true,
                     playersinline: 1,
-                    autoplay: 1,
                 },
                 events: {
                     onReady: onPlayerReady,
@@ -195,6 +194,7 @@
             const url = '@Model.VideoAtual.URL';
             const videoId = YouTubeGetID(url);
             changeVideo(videoId);
+
         }
 
         function onPlayerStateChange(event) {
@@ -220,6 +220,7 @@
                 player.cueVideoById({ videoId: videoId });
                 player.playVideo();
             }
+            console.log(player.autoplay);
         }
 
     </script>
