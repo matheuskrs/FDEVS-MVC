@@ -36,8 +36,7 @@ public class ProvasUsuarioController : Controller
             .SingleOrDefaultAsync(p => p.Id == id);
 
         var respostas = await _context.Respostas
-            .Where(r => r.UsuarioId == currentUser.UsuarioId)
-            .Where(r => r.Questao.ProvaId == id)
+            .Where(r => r.UsuarioId == currentUser.UsuarioId && r.Questao.ProvaId == id)
             .Include(r => r.Questao)
             .Include(r => r.Alternativa)
             .ToListAsync();
@@ -95,7 +94,7 @@ public class ProvasUsuarioController : Controller
             .OrderByDescending(q => q.Id)
             .FirstOrDefault(q => q.Id < questaoAtualId);
 
-        var resposta = await _context.Respostas.FirstOrDefaultAsync(r => r.QuestaoId == questaoAtualId);
+        var resposta = await _context.Respostas.FirstOrDefaultAsync(r => r.QuestaoId == questaoAtualId && r.UsuarioId == currentUser.UsuarioId);
 
         var provaVM = new ProvaVM
         {
