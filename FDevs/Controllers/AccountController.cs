@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FDevs.ViewModels;
-using FDevs.Services;
 using FDevs.Data;
+using FDevs.Services.UsuarioService;
 
 namespace FDevs.Controllers;
 

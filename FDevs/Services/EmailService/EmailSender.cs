@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 
-namespace FDevs.Services;
+namespace FDevs.Services.EmailService;
 
 public class EmailSender : IEmailSender
 {

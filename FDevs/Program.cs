@@ -37,7 +37,10 @@
 
 //SQL
 using FDevs.Data;
-using FDevs.Services;
+using FDevs.Services.EmailService;
+using FDevs.Services.EstadoService;
+using FDevs.Services.UsuarioService;
+using FDevs.Services.VideoService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,6 +61,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
 
 // Registrar os serviços necessários.
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
+builder.Services.AddTransient<IVideoService, VideoService>();
+builder.Services.AddTransient<IEstadoService, EstadoService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();

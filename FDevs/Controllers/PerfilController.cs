@@ -1,6 +1,6 @@
 using FDevs.Data;
 using FDevs.Models;
-using FDevs.Services;
+using FDevs.Services.UsuarioService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

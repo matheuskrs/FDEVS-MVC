@@ -1,7 +1,7 @@
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
-namespace FDevs.Services;
+namespace FDevs.Services.UsuarioService;
 
 public interface IUsuarioService
 {

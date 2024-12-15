@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FDevs.Migrations
 {
     /// <inheritdoc />
-    public partial class FDEVS : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -491,9 +491,9 @@ namespace FDevs.Migrations
                 columns: new[] { "Id", "Cor", "Nome" },
                 values: new object[,]
                 {
-                    { 1, "rgba(255, 255, 0, 1)", "Em andamento" },
-                    { 2, "rgba(0, 255, 0, 1)", "Concluído" },
-                    { 3, "rgba(255, 0, 0, 1)", "Não iniciado" }
+                    { 1, "rgb(255, 255, 0)", "Em andamento" },
+                    { 2, "rgb(0, 255, 0)", "Concluído" },
+                    { 3, "rgb(255, 0, 0)", "Não iniciado" }
                 });
 
             migrationBuilder.InsertData(
@@ -509,7 +509,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "65f7a167-7b3b-4e30-8f43-78d9572d8a4d", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEHBXINYLElzYoNLXnXi45ODHbUsCPGzhRyNuYigE1YDxiOghsYNCcXfRVqlu2Tch/g==", null, false, "90cacd38-5427-4d97-8abe-826f3abbc6c9", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "e48d5210-6f3e-4b8c-bd51-6331a64f8b5c", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEESItDmHoaZv9bFXUnx/LeLxOAPGpDnOfsbP7kqFeIi12ousWOjied9HTe8/4u49uA==", null, false, "019ca51d-56b5-49aa-b307-08f697f324e5", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Trilha",

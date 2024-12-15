@@ -79,12 +79,13 @@ public class AppDbSeed
         };
         builder.Entity<IdentityUserRole<string>>().HasData(userRoles);
         #endregion
+
         #region Populate Estado
         List<Estado> estados = new()
         {
-            new Estado { Id = 1, Nome = "Em andamento", Cor = "rgba(255, 255, 0, 1)" }, // Amarelo
-            new Estado { Id = 2, Nome = "Concluído", Cor = "rgba(0, 255, 0, 1)" },    // Verde
-            new Estado { Id = 3, Nome = "Não iniciado", Cor = "rgba(255, 0, 0, 1)" }  // Vermelho
+            new Estado { Id = 1, Nome = "Em andamento", Cor = "rgb(255, 255, 0)" }, // Amarelo
+            new Estado { Id = 2, Nome = "Concluído", Cor = "rgb(0, 255, 0)" },    // Verde
+            new Estado { Id = 3, Nome = "Não iniciado", Cor = "rgb(255, 0, 0)" }  // Vermelho
         };
         builder.Entity<Estado>().HasData(estados);
         #endregion

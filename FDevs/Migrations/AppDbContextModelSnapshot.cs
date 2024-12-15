@@ -161,19 +161,19 @@ namespace FDevs.Migrations
                         new
                         {
                             Id = 1,
-                            Cor = "rgba(255, 255, 0, 1)",
+                            Cor = "rgb(255, 255, 0)",
                             Nome = "Em andamento"
                         },
                         new
                         {
                             Id = 2,
-                            Cor = "rgba(0, 255, 0, 1)",
+                            Cor = "rgb(0, 255, 0)",
                             Nome = "Concluído"
                         },
                         new
                         {
                             Id = 3,
-                            Cor = "rgba(255, 0, 0, 1)",
+                            Cor = "rgb(255, 0, 0)",
                             Nome = "Não iniciado"
                         });
                 });
@@ -871,15 +871,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "65f7a167-7b3b-4e30-8f43-78d9572d8a4d",
+                            ConcurrencyStamp = "e48d5210-6f3e-4b8c-bd51-6331a64f8b5c",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHBXINYLElzYoNLXnXi45ODHbUsCPGzhRyNuYigE1YDxiOghsYNCcXfRVqlu2Tch/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEESItDmHoaZv9bFXUnx/LeLxOAPGpDnOfsbP7kqFeIi12ousWOjied9HTe8/4u49uA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "90cacd38-5427-4d97-8abe-826f3abbc6c9",
+                            SecurityStamp = "019ca51d-56b5-49aa-b307-08f697f324e5",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });

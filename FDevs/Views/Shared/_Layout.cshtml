@@ -1,4 +1,4 @@
-﻿@inject FDevs.Services.IUsuarioService userService
+﻿@inject FDevs.Services.UsuarioService.IUsuarioService userService
 @{
     var usuario = await userService.GetUsuarioLogado();
 }

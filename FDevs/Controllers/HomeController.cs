@@ -5,7 +5,7 @@ using FDevs.Models;
 using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FDevs.Services;
+using FDevs.Services.UsuarioService;
 
 namespace FDevs.Controllers;
 

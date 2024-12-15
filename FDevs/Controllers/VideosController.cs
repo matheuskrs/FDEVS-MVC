@@ -1,5 +1,6 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.VideoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,30 +13,25 @@ public class VideosController : Controller
 {
     private readonly ILogger<VideosController> _logger;
     private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _host;
+    private readonly IVideoService _service;
 
-    public VideosController(ILogger<VideosController> logger, AppDbContext context, IWebHostEnvironment host)
+    public VideosController(ILogger<VideosController> logger, AppDbContext context, IVideoService service)
     {
         _logger = logger;
         _context = context;
-        _host = host;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var videos = await _context.Videos
-            .Include(v => v.Modulo)
-            .ThenInclude(m => m.Curso)
-            .OrderBy(v => v.Modulo.Curso.Nome)
-            .ToListAsync();
-
+        var videos = await _service.GetVideosAsync();
         return View(videos);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
+        var video = await _service.GetVideoByIdAsync(id);
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
         return View(video);
@@ -44,12 +40,6 @@ public class VideosController : Controller
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-        var videos = await _context.Videos
-            .Include(v => v.Modulo)
-            .ThenInclude(m => m.Curso)
-            .OrderBy(v => v.Modulo.Curso.Nome)
-            .ToListAsync();
-
         var modulos = await _context.Modulos
             .Include(m => m.Curso)
             .OrderBy(m => m.Curso.Nome)
@@ -67,8 +57,8 @@ public class VideosController : Controller
         {
             var modulo = await _context.Modulos.FindAsync(video.ModuloId);
 
-            _context.Add(video);
-            await _context.SaveChangesAsync();
+            await _service.Create(video);
+
             var usuariosCurso = await _context.UsuarioCursos
                 .Include(uc => uc.Curso)
                 .ThenInclude(c => c.Modulos)
@@ -94,32 +84,18 @@ public class VideosController : Controller
 
     public async Task<IActionResult> Edit(int id)
     {
-        var videos = await _context.Videos
-            .Include(v => v.Modulo)
-            .ThenInclude(m => m.Curso)
-            .OrderBy(v => v.Modulo.Curso.Nome)
-            .ToListAsync();
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
-        if (_context.Videos == null)
-        {
-            return NotFound();
-        }
-        var video = await _context.Videos.SingleOrDefaultAsync(m => m.Id == id);
+
+        var video = await _service.GetVideoByIdAsync(id);
         return View(video);
     }
 
-    public async Task<IActionResult> EditConfirmed(int id, Video video)
+    public async Task<IActionResult> EditConfirmed(Video video)
     {
-        if (id != video.Id)
-        {
-            return NotFound();
-        }
-
         if (ModelState.IsValid)
         {
-            _context.Update(video);
-            await _context.SaveChangesAsync();
+            await _service.Update(video);
             TempData["Success"] = $"O vídeo {video.Titulo} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
@@ -131,7 +107,7 @@ public class VideosController : Controller
     {
         ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
         ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
-        var video = await _context.Videos.SingleOrDefaultAsync(m => m.Id == id);
+        var video = await _service.GetVideoByIdAsync(id);
         if (video == null)
         {
             return NotFound();
@@ -143,9 +119,9 @@ public class VideosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
-        if (video == null)
-            return NotFound();
+        var video = await _service.GetVideoByIdAsync(id);
+        if (video == null) return NotFound();
+
         var usuariosEstadoVideo = await _context.UsuarioEstadoVideos
             .Where(uev => uev.VideoId == video.Id)
             .ToListAsync();
@@ -155,9 +131,7 @@ public class VideosController : Controller
             _context.Remove(estado);
         }
 
-        _context.Remove(video);
-        await _context.SaveChangesAsync();
-
+        await _service.Delete(id);
         TempData["Success"] = $"O vídeo '{video.Titulo}' foi excluído com sucesso!";
         return RedirectToAction(nameof(Index));
     }

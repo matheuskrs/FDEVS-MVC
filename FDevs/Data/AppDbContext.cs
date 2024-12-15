@@ -65,5 +65,4 @@ public class AppDbContext : IdentityDbContext
         #endregion
 
     }
-
 }

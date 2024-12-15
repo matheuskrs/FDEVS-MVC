@@ -1,5 +1,6 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.EstadoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,25 +12,25 @@ public class EstadosController : Controller
 {
     private readonly ILogger<EstadosController> _logger;
     private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _host;
+    private readonly IEstadoService _service;
 
-    public EstadosController(ILogger<EstadosController> logger, AppDbContext context, IWebHostEnvironment host)
+    public EstadosController(ILogger<EstadosController> logger, AppDbContext context, IEstadoService service)
     {
         _logger = logger;
         _context = context;
-        _host = host;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var estados = await _context.Estados.ToListAsync();
+        var estados = await _service.GetEstadosAsync();
         return View(estados);
     }
 
     public async Task<IActionResult> Details(int id)
     {
-        var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
+        var estado = await _service.GetEstadoByIdAsync(id);
         return View(estado);
     }
 
@@ -45,39 +46,24 @@ public class EstadosController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(estado);
-            await _context.SaveChangesAsync();
+            await _service.Create(estado);
             TempData["Success"] = $"O estado {estado.Nome} foi criado com sucesso!";
             return RedirectToAction(nameof(Index));
-        }
-        if (!ModelState.IsValid)
-        {
-            var erros = ModelState.Values.SelectMany(e => e.Errors);
         }
         return View(estado);
     }
 
     public async Task<IActionResult> Edit(int id)
     {
-        if (_context.Estados == null)
-        {
-            return NotFound();
-        }
-        var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
+        var estado = await _service.GetEstadoByIdAsync(id);
         return View(estado);
     }
 
-    public async Task<IActionResult> EditConfirmed(int id, Estado estado)
+    public async Task<IActionResult> EditConfirmed(Estado estado)
     {
-        if (id != estado.Id)
-        {
-            return NotFound();
-        }
-
         if (ModelState.IsValid)
         {
-            _context.Update(estado);
-            await _context.SaveChangesAsync();
+            await _service.Update(estado);
             TempData["Success"] = $"O estado {estado.Nome} foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
@@ -87,11 +73,7 @@ public class EstadosController : Controller
 
     public async Task<IActionResult> Delete(int id)
     {
-        var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
-        if (estado == null)
-        {
-            return NotFound();
-        }
+        var estado = await _service.GetEstadoByIdAsync(id);
         return View(estado);
     }
 
@@ -99,9 +81,8 @@ public class EstadosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> DeleteConfirmed(int id)
     {
-        var estado = await _context.Estados.SingleOrDefaultAsync(e => e.Id == id);
-        if (estado == null)
-            return NotFound();
+        var estado = await _service.GetEstadoByIdAsync(id);
+        if (estado == null) return NotFound();
 
         var permitirExcluir = true;
 
@@ -121,9 +102,7 @@ public class EstadosController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        _context.Remove(estado);
-        await _context.SaveChangesAsync();
-
+        await _service.Delete(estado.Id);
         TempData["Success"] = $"O estado '{estado.Nome}' foi excluído com sucesso!";
         return RedirectToAction(nameof(Index));
     }

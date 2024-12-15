@@ -5,12 +5,9 @@ using FDevs.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using FDevs.Helpers;
 using FDevs.Models;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text;
-using System.Text.Encodings.Web;
+using FDevs.Services.EmailService;
 
-
-namespace FDevs.Services;
+namespace FDevs.Services.UsuarioService;
 
 public class UsuarioService : IUsuarioService
 {

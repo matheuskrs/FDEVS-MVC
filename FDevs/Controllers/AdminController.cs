@@ -1,4 +1,4 @@
-using FDevs.Services;
+using FDevs.Services.UsuarioService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
