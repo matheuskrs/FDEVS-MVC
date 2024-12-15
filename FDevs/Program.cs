@@ -37,6 +37,7 @@
 
 //SQL
 using FDevs.Data;
+using FDevs.Services.CursoService;
 using FDevs.Services.EmailService;
 using FDevs.Services.EstadoService;
 using FDevs.Services.UsuarioService;
@@ -63,6 +64,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
 builder.Services.AddTransient<IVideoService, VideoService>();
 builder.Services.AddTransient<IEstadoService, EstadoService>();
+builder.Services.AddTransient<ICursoService, CursoService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();
