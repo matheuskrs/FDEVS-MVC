@@ -1,19 +1,23 @@
 using System.Net.Mail;
 
-namespace FDevs.Helpers;
-
-public static class Helper
+namespace FDevs.Helpers
 {
-    public static bool IsValidEmail(string email)
+
+
+
+    public static class Helper
     {
-        try
+        public static bool IsValidEmail(string email)
         {
-            MailAddress m = new(email);
-            return true;
-        }
-        catch (FormatException)
-        {
-            return false;
+            try
+            {
+                MailAddress m = new(email);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
     }
 }

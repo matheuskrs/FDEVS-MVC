@@ -3,26 +3,30 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace FDevs.Controllers;
-
-[Authorize(Roles = "Administrador")]
-public class AdminController : Controller
+namespace FDevs.Controllers
 {
-    private readonly ILogger<AdminController> _logger;
-    private readonly IUsuarioService _userService;
 
-    public AdminController(ILogger<AdminController> logger, IUsuarioService userService)
+
+
+    [Authorize(Roles = "Administrador")]
+    public class AdminController : Controller
     {
-        _userService = userService;
-        _logger = logger;
+        private readonly ILogger<AdminController> _logger;
+        private readonly IUsuarioService _userService;
+
+        public AdminController(ILogger<AdminController> logger, IUsuarioService userService)
+        {
+            _userService = userService;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var currentUser = await _userService.GetUsuarioLogado();
+            ViewBag.User = currentUser;
+            return View();
+        }
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var currentUser = await _userService.GetUsuarioLogado();
-        ViewBag.User = currentUser;
-        return View();
-    }
 }
-

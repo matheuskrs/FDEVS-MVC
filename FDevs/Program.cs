@@ -37,9 +37,12 @@
 
 //SQL
 using FDevs.Data;
+using FDevs.Services.ArquivoService;
 using FDevs.Services.CursoService;
 using FDevs.Services.EmailService;
 using FDevs.Services.EstadoService;
+using FDevs.Services.ExclusaoService;
+using FDevs.Services.ModuloService;
 using FDevs.Services.UsuarioService;
 using FDevs.Services.VideoService;
 using Microsoft.AspNetCore.Identity;
@@ -61,7 +64,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
 .AddDefaultTokenProviders();
 
 // Registrar os serviços necessários.
+builder.Services.AddTransient<IArquivoService, ArquivoService>();
+builder.Services.AddTransient<IExclusaoService, ExclusaoService>();
 builder.Services.AddTransient<IUsuarioService, UsuarioService>();
+builder.Services.AddTransient<IModuloService, ModuloService>();
 builder.Services.AddTransient<IVideoService, VideoService>();
 builder.Services.AddTransient<IEstadoService, EstadoService>();
 builder.Services.AddTransient<ICursoService, CursoService>();

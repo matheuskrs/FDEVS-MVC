@@ -1,13 +1,16 @@
 using FDevs.Models;
 
-namespace FDevs.ViewModels;
-
-public class HomeVM
+namespace FDevs.ViewModels
 {
-    public List<UsuarioCurso> Cursos { get; set; }
-    public List<Trilha> Trilhas { get; set; }
-    public List<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
-    public List<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
-    public List<Estado> Estados { get; set; }
-    public List<Video> Videos { get; set; } 
+
+
+    public class HomeVM
+    {
+        public List<UsuarioCurso> Cursos { get; set; }
+        public List<Trilha> Trilhas { get; set; }
+        public List<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
+        public List<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
+        public List<Estado> Estados { get; set; }
+        public List<Video> Videos { get; set; }
+    }
 }

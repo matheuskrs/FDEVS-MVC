@@ -1,173 +1,149 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.ArquivoService;
 using FDevs.Services.CursoService;
+using FDevs.Services.ExclusaoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace FDevs.Controllers;
-
-[Authorize(Roles = "Administrador")]
-public class CursosController : Controller
+namespace FDevs.Controllers
 {
-    private readonly ILogger<CursosController> _logger;
-    private readonly AppDbContext _context;
-    private readonly ICursoService _service;
-    private readonly IWebHostEnvironment _host;
 
 
-    public CursosController(ILogger<CursosController> logger, AppDbContext context, ICursoService service, IWebHostEnvironment host)
+
+    [Authorize(Roles = "Administrador")]
+    public class CursosController : Controller
     {
-        _logger = logger;
-        _context = context;
-        _service = service;
-        _host = host;
-    }
+        private readonly ILogger<CursosController> _logger;
+        private readonly AppDbContext _context;
+        private readonly ICursoService _service;
+        private readonly IArquivoService _arquivoService;
+        private readonly IExclusaoService _deleteService;
+        private readonly IWebHostEnvironment _host;
 
-    [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var cursos = await _service.GetCursosAsync();
-        return View(cursos);
-    }
 
-    public async Task<IActionResult> Details(int id)
-    {
-        ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
-        var curso = await _service.GetCursoByIdAsync(id);
-        return View(curso);
-    }
-
-    [HttpGet]
-    public IActionResult Create()
-    {
-        ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Curso curso, IFormFile Arquivo)
-    {
-        if (ModelState.IsValid)
+        public CursosController(ILogger<CursosController> logger, AppDbContext context, ICursoService service, IArquivoService arquivoService, IExclusaoService deleteService, IWebHostEnvironment host)
         {
-            if (Arquivo != null)
+            _logger = logger;
+            _context = context;
+            _service = service;
+            _arquivoService = arquivoService;
+            _deleteService = deleteService;
+            _host = host;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var cursos = await _service.GetCursosAsync();
+            return View(cursos);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
+            var curso = await _service.GetCursoByIdAsync(id);
+            return View(curso);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Curso curso, IFormFile Arquivo)
+        {
+            if (!ModelState.IsValid) return View(curso);
+
+            try
             {
-                string fileName = curso.Id + Path.GetExtension(Arquivo.FileName);
-                string caminho = Path.Combine(_host.WebRootPath, "img\\Cursos");
-                string novoArquivo = Path.Combine(caminho, fileName);
-                using (var stream = new FileStream(novoArquivo, FileMode.Create))
+                if (Arquivo != null)
                 {
-                    Arquivo.CopyTo(stream);
+                    string fileName = curso.Id + Path.GetExtension(Arquivo.FileName);
+                    string caminho = "img\\Cursos";
+                    curso.Foto = await _arquivoService.SalvarArquivoAsync(Arquivo, caminho, fileName);
                 }
-                curso.Foto = "\\img\\Cursos\\" + fileName;
-                await _context.SaveChangesAsync();
+
+                await _service.Create(curso);
+                TempData["Success"] = $"O curso '{curso.Nome}' foi criado com sucesso!";
+                return RedirectToAction(nameof(Index));
             }
-
-            await _service.Create(curso);
-            TempData["Success"] = $"O curso {curso.Nome} foi criado com sucesso!";
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro, o curso não foi criado, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
-        if (!ModelState.IsValid)
+
+        public async Task<IActionResult> Edit(int id)
         {
-            var erros = ModelState.Values.SelectMany(v => v.Errors);
+            ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
+            if (_context.Cursos == null) return RedirectToAction("Index");
+            var curso = await _service.GetCursoByIdAsync(id);
+            return View(curso);
         }
-        return View(curso);
-    }
 
-    public async Task<IActionResult> Edit(int id)
-    {
-        ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
-        if (_context.Cursos == null)
+        public async Task<IActionResult> EditConfirmed(int id, Curso curso, IFormFile Arquivo)
         {
-            return NotFound();
-        }
-        var curso = await _service.GetCursoByIdAsync(id);
-        return View(curso);
-    }
+            var cursoExistente = await _service.GetCursoAsNoTracking(curso.Id);
+            ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome", curso.TrilhaId);
 
-    public async Task<IActionResult> EditConfirmed(int id, Curso curso, IFormFile Arquivo)
-    {
-        var cursoExistente = await _service.GetCursoAsNoTracking(curso.Id);
-        ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome", curso.TrilhaId);
-        if (id != curso.Id)
-        {
-            return NotFound();
-        }
+            if (id != curso.Id) return RedirectToAction("Index");
 
-        if (ModelState.IsValid)
-        { 
+            if (!ModelState.IsValid) return View(curso);
+
             if (Arquivo != null)
             {
                 string fileName = curso.Id + Path.GetExtension(Arquivo.FileName);
-                string caminho = Path.Combine(_host.WebRootPath, "img\\Cursos");
-                if (!Directory.Exists(caminho))
-                {
-                    Directory.CreateDirectory(caminho);
-                }
-                string novoArquivo = Path.Combine(caminho, fileName);
-                using (var stream = new FileStream(novoArquivo, FileMode.Create))
-                {
-                    Arquivo.CopyTo(stream);
-                }
-                curso.Foto = "\\img\\Cursos\\" + fileName;
+                string caminho = "img\\Cursos";
+                curso.Foto = await _arquivoService.SalvarArquivoAsync(Arquivo, caminho, fileName);
             }
             else
             {
                 curso.Foto = cursoExistente.Foto;
             }
+
             await _service.Update(curso);
-            TempData["Success"] = $"O curso {curso.Nome} foi alterado com sucesso!";
+            TempData["Success"] = $"O curso '{curso.Nome}' foi alterado com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
-        return View(curso);
-    }
-
-    public async Task<IActionResult> Delete(int id)
-    {
-        var curso = await _service.GetCursoByIdAsync(id);
-        ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
-        if (curso == null)
+        public async Task<IActionResult> Delete(int id)
         {
-            return NotFound();
+            var curso = await _service.GetCursoByIdAsync(id);
+            if (curso == null) return RedirectToAction("Index");
+            ViewData["TrilhaId"] = new SelectList(_context.Trilhas, "Id", "Nome");
+            return View(curso);
         }
-        return View(curso);
-    }
 
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> DeleteConfirmed(int id)
-    {
-        var curso = await _service.GetCursoByIdAsync(id);
-        if (curso == null) return NotFound();
-        var permitirExcluir = true;
-
-        var usuarioCursos = await _context.UsuarioCursos
-            .AnyAsync(uc => uc.CursoId == id);
-
-        var modulosCurso = curso.Modulos.Any();
-
-        if(usuarioCursos || modulosCurso)
-            permitirExcluir = false;
-        
-
-        if (!permitirExcluir)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            TempData["Warning"] = $"O curso \"{curso.Nome}\" não pode ser excluído pois já existem registros na(s) tabela(s): \"{(usuarioCursos ? "USUÁRIOS" : "" )}  {(modulosCurso ? "MÓDULOS" : "")}\" associados a ele!";
+            Curso curso = await _service.GetCursoByIdAsync(id);
+            string mensagemErro = _deleteService.PermitirExcluirCurso(curso);
+
+            if (mensagemErro != null)
+            {
+                TempData["Warning"] = mensagemErro;
+                return RedirectToAction(nameof(Index));
+            }
+
+            await _service.Delete(curso.Id);
+            TempData["Success"] = $"O curso '{curso.Nome}' foi excluído com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
-        await _service.Delete(curso.Id);
-
-        TempData["Success"] = $"O curso '{curso.Nome}' foi excluído com sucesso!";
-        return RedirectToAction(nameof(Index));
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View("Error!");
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View("Error!");
+        }
     }
 }

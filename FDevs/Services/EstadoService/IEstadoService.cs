@@ -1,12 +1,16 @@
 ﻿using FDevs.Models;
 
-namespace FDevs.Services.EstadoService;
-public interface IEstadoService
+namespace FDevs.Services.EstadoService
 {
-    Task<List<Estado>> GetEstadosAsync();
-    Task<Estado> GetEstadoByIdAsync(int id);
-    Task<Estado> Create(Estado estado);
-    Task<Estado> Update(Estado estado);
-    Task<bool> Delete(int id);
-}
 
+    public interface IEstadoService
+    {
+        Task<List<Estado>> GetEstadosAsync();
+        Task<Estado> GetEstadoByIdAsync(int id);
+        Task<Estado> Create(Estado estado);
+        Task<Estado> Update(Estado estado);
+        Task<bool> Delete(int id);
+    }
+
+
+}

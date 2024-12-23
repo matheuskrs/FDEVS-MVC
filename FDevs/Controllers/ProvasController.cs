@@ -5,134 +5,138 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace FDevs.Controllers;
-
-[Authorize(Roles = "Administrador")]
-public class ProvasController : Controller
+namespace FDevs.Controllers
 {
-    private readonly ILogger<ProvasController> _logger;
-    private readonly AppDbContext _context;
-    private readonly IWebHostEnvironment _host;
 
-    public ProvasController(ILogger<ProvasController> logger, AppDbContext context, IWebHostEnvironment host)
-    {
-        _logger = logger;
-        _context = context;
-        _host = host;
-    }
 
-    [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var provas = await _context.Provas.Include(p => p.Curso).ToListAsync();
-        return View(provas);
-    }
 
-    public async Task<IActionResult> Details(int id)
+    [Authorize(Roles = "Administrador")]
+    public class ProvasController : Controller
     {
-        var prova = await _context.Provas.Include(p => p.Curso).SingleOrDefaultAsync(p => p.Id == id);
-        ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-        return View(prova);
-    }
+        private readonly ILogger<ProvasController> _logger;
+        private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _host;
 
-    [HttpGet]
-    public IActionResult Create()
-    {
-        ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Prova prova)
-    {
-        if (ModelState.IsValid)
+        public ProvasController(ILogger<ProvasController> logger, AppDbContext context, IWebHostEnvironment host)
         {
-            _context.Add(prova);
+            _logger = logger;
+            _context = context;
+            _host = host;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var provas = await _context.Provas.Include(p => p.Curso).ToListAsync();
+            return View(provas);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var prova = await _context.Provas.Include(p => p.Curso).SingleOrDefaultAsync(p => p.Id == id);
+            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            return View(prova);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Prova prova)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(prova);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"A prova {prova.Nome} foi criada com sucesso!";
+                return RedirectToAction(nameof(Index));
+            }
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.SelectMany(p => p.Errors);
+            }
+            return View(prova);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            if (_context.Provas == null)
+            {
+                return NotFound();
+            }
+            var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
+            return View(prova);
+        }
+
+        public async Task<IActionResult> EditConfirmed(int id, Prova prova)
+        {
+            if (id != prova.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(prova);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"A Prova {prova.Nome} foi alterada com sucesso!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(prova);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
+            if (prova == null)
+            {
+                return NotFound();
+            }
+            return View(prova);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            var prova = await _context.Provas
+                .Include(p => p.Questoes)
+                .SingleOrDefaultAsync(p => p.Id == id);
+            if (prova == null)
+                return NotFound();
+
+            var permitirExcluir = true;
+
+            var questoesDaProva = prova.Questoes.Any();
+
+            if (questoesDaProva)
+                permitirExcluir = false;
+
+            if (!permitirExcluir)
+            {
+                TempData["Warning"] = $"A Prova \"{prova.Nome}\" não pode ser excluída pois já existem registros na tabela: \"{(questoesDaProva ? "QUESTÕES" : "")}\" associados a ela!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Remove(prova);
             await _context.SaveChangesAsync();
-            TempData["Success"] = $"A prova {prova.Nome} foi criada com sucesso!";
-            return RedirectToAction(nameof(Index));
-        }
-        if (!ModelState.IsValid)
-        {
-            var erros = ModelState.Values.SelectMany(p => p.Errors);
-        }
-        return View(prova);
-    }
 
-    public async Task<IActionResult> Edit(int id)
-    {
-        ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-        if (_context.Provas == null)
-        {
-            return NotFound();
-        }
-        var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
-        return View(prova);
-    }
-
-    public async Task<IActionResult> EditConfirmed(int id, Prova prova)
-    {
-        if (id != prova.Id)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            _context.Update(prova);
-            await _context.SaveChangesAsync();
-            TempData["Success"] = $"A Prova {prova.Nome} foi alterada com sucesso!";
+            TempData["Success"] = $"A Prova '{prova.Nome}' foi excluída com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
-        return View(prova);
-    }
-
-    public async Task<IActionResult> Delete(int id)
-    {
-        ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-        var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
-        if (prova == null)
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            return NotFound();
+            return View("Error!");
         }
-        return View(prova);
-    }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<ActionResult> DeleteConfirmed(int id)
-    {
-        var prova = await _context.Provas
-            .Include(p => p.Questoes)
-            .SingleOrDefaultAsync(p => p.Id == id);
-        if (prova == null)
-            return NotFound();
-
-        var permitirExcluir = true;
-
-        var questoesDaProva = prova.Questoes.Any();
-
-        if (questoesDaProva)
-            permitirExcluir = false;
-
-        if (!permitirExcluir)
-        {
-            TempData["Warning"] = $"A Prova \"{prova.Nome}\" não pode ser excluída pois já existem registros na tabela: \"{(questoesDaProva ? "QUESTÕES" : "")}\" associados a ela!";
-            return RedirectToAction(nameof(Index));
-        }
-
-        _context.Remove(prova);
-        await _context.SaveChangesAsync();
-
-        TempData["Success"] = $"A Prova '{prova.Nome}' foi excluída com sucesso!";
-        return RedirectToAction(nameof(Index));
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View("Error!");
     }
 }

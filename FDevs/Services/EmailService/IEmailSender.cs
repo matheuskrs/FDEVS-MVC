@@ -1,6 +1,9 @@
-namespace FDevs.Services.EmailService;
-
-public interface IEmailSender
+namespace FDevs.Services.EmailService
 {
-    Task SendEmailAsync(string email, string subject, string htmlMessage);
+
+
+    public interface IEmailSender
+    {
+        Task SendEmailAsync(string email, string subject, string htmlMessage);
+    }
 }

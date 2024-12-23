@@ -1,8 +1,12 @@
-namespace FDevs.Models;
-
-public class ErrorViewModel
+namespace FDevs.Models
 {
-    public string RequestId { get; set; }
 
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+
+    public class ErrorViewModel
+    {
+        public string RequestId { get; set; }
+
+        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    }
 }
