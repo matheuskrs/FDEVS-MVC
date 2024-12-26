@@ -1,5 +1,7 @@
-using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.ExclusaoService;
+using FDevs.Services.ProvaService;
+using FDevs.Services.QuestaoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,43 +9,42 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
     [Authorize(Roles = "Administrador")]
     public class QuestoesController : Controller
     {
-        private readonly ILogger<QuestoesController> _logger;
-        private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
+        private readonly IQuestaoService _service;
+        private readonly IProvaService _provaService;
+        private readonly IExclusaoService _deleteService;
 
-        public QuestoesController(ILogger<QuestoesController> logger, AppDbContext context, IWebHostEnvironment host)
+        public QuestoesController(IQuestaoService service, IProvaService provaService, IExclusaoService deleteService)
         {
-            _logger = logger;
-            _context = context;
-            _host = host;
-
+            _service = service;
+            _provaService = provaService;
+            _deleteService = deleteService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
-            var questoes = await _context.Questoes.Include(q => q.Prova).ToListAsync();
+            ViewData["ProvaId"] = new SelectList(await _provaService.GetProvasAsync(), "Id", "Nome");
+            List<Questao> questoes = await _service.GetQuestoesAsync();
             return View(questoes);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
-            var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
+            Questao questao = await _service.GetQuestaoByIdAsync(id);
+            if (questao == null) return RedirectToAction("Index");
+            ViewData["ProvaId"] = new SelectList(await _provaService.GetProvasAsync(), "Id", "Nome");
+
+
             return View(questao);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-
-            ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
+            ViewData["ProvaId"] = new SelectList(await _provaService.GetProvasAsync(), "Id", "Nome");
             return View();
         }
 
@@ -51,58 +52,49 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Questao questao)
         {
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(questao);
+            try
             {
-                _context.Add(questao);
-                await _context.SaveChangesAsync();
+                await _service.Create(questao);
                 TempData["Success"] = $"A questão {questao.Texto} foi criada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            if (!ModelState.IsValid)
+            catch (Exception ex)
             {
-                var erros = ModelState.Values.SelectMany(q => q.Errors);
+                TempData["Warning"] = $"Ocorreu um erro ao criar a sua questão, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
             }
-            return View(questao);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["ProvaId"] = new SelectList(_context.Provas, "Id", "Nome");
-            if (_context.Questoes == null)
-            {
-                return NotFound();
-            }
-            var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
+            Questao questao = await _service.GetQuestaoByIdAsync(id);
+            if (questao == null) return RedirectToAction("Index");
+            ViewData["ProvaId"] = new SelectList(await _provaService.GetProvasAsync(), "Id", "Nome");
             return View(questao);
         }
 
-        public async Task<IActionResult> EditConfirmed(int id, Questao questao)
+        public async Task<IActionResult> EditConfirmed(Questao questao)
         {
-            if (id != questao.Id)
+            if (!ModelState.IsValid) return View(questao);
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                _context.Update(questao);
-                await _context.SaveChangesAsync();
+                await _service.Update(questao);
                 TempData["Success"] = $"A questão foi alterada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-
-            return View(questao);
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao alterar a questão, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            ViewData["ProvaId"] = new SelectList(_context.Cursos, "Id", "Nome");
-            var questao = await _context.Questoes.SingleOrDefaultAsync(q => q.Id == id);
-            if (questao == null)
-            {
-                return NotFound();
-            }
+            Questao questao = await _service.GetQuestaoByIdAsync(id);
+            if (questao == null) return RedirectToAction("Index");
+            ViewData["ProvaId"] = new SelectList(await _provaService.GetProvasAsync(), "Id", "Nome");
             return View(questao);
         }
 
@@ -110,30 +102,27 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var questao = await _context.Questoes
-                .Include(q => q.Alternativas)
-                .SingleOrDefaultAsync(q => q.Id == id);
-            if (questao == null)
-                return NotFound();
+            Questao questao = await _service.GetQuestaoByIdAsync(id);
+            if (questao == null) return RedirectToAction("Index");
 
-            var permitirExcluir = true;
+            string mensagemErro = _deleteService.PermitirExcluirQuestao(questao);
 
-            var alternativasDaQuestao = questao.Alternativas.Any();
-
-            if (alternativasDaQuestao)
-                permitirExcluir = false;
-
-            if (!permitirExcluir)
+            if (mensagemErro != null)
             {
-                TempData["Warning"] = $"A questão não pode ser excluída pois já existem registros na tabela: \"{(alternativasDaQuestao ? "ALTERNATIVAS" : "")}\"associados a ele!";
-                return RedirectToAction(nameof(Index));
+                TempData["Warning"] = mensagemErro;
+                return RedirectToAction("Index");
             }
-
-            _context.Remove(questao);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"A questão '{questao.Texto}' foi excluída com sucesso!";
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _service.Delete(id);
+                TempData["Success"] = $"A questão \"{questao.Texto}\" foi excluída com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Não foi possível excluir a questão, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

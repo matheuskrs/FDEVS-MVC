@@ -23,6 +23,6 @@ namespace FDevs.Models
         public int QuestaoId { get; set; }
         [ForeignKey("QuestaoId")]
         public Questao Questao { get; set; }
-
+        public ICollection<Resposta> Respostas { get; set; }
     }
 }

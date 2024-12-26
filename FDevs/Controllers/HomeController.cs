@@ -6,24 +6,55 @@ using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FDevs.Services.UsuarioService;
+using FDevs.Services.CursoService;
+using FDevs.Services.UsuarioCursoService;
+using FDevs.Services.TrilhaService;
+using FDevs.Services.EstadoCursoService;
+using FDevs.Services.EstadoModuloService;
+using FDevs.Services.EstadoVideoService;
+using FDevs.Services.ProgressoService;
+using FDevs.Services.EstadoService;
+using FDevs.Services.VideoService;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
         private readonly IUsuarioService _userService;
+        private readonly ICursoService _cursoService;
+        private readonly IUsuarioCursoService _usuarioCursoService;
+        private readonly ITrilhaService _trilhaService;
+        private readonly IEstadoVideoService _estadoVideo;
+        private readonly IEstadoCursoService _estadoCurso;
+        private readonly IProgressoService _progressoService;
+        private readonly IEstadoService _estadoService;
+        private readonly IVideoService _videoService;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context, IUsuarioService userService)
+        public HomeController(
+            AppDbContext context, 
+            IUsuarioService userService, 
+            ICursoService cursoService,
+            IUsuarioCursoService usuarioCursoService,
+            ITrilhaService trilhaService,
+            IEstadoCursoService estadoCurso,
+            IEstadoVideoService estadoVideo,
+            IProgressoService progressoService,
+            IEstadoService estadoService,
+            IVideoService videoService
+            )
         {
-            _logger = logger;
             _context = context;
             _userService = userService;
+            _cursoService = cursoService;
+            _usuarioCursoService = usuarioCursoService;
+            _trilhaService = trilhaService;
+            _estadoVideo = estadoVideo;
+            _estadoCurso = estadoCurso;
+            _progressoService = progressoService;
+            _estadoService = estadoService;
+            _videoService = videoService;
         }
 
         public async Task<IActionResult> Index()
@@ -31,29 +62,16 @@ namespace FDevs.Controllers
             var currentUser = await _userService.GetUsuarioLogado();
             var currentUserId = currentUser.UsuarioId;
             ViewBag.User = currentUser;
+            var progresso = await _progressoService.ObterProgressoAsync(currentUserId);
 
             HomeVM home = new()
             {
-                Cursos = await _context.UsuarioCursos
-                    .Include(uc => uc.Curso)
-                    .ThenInclude(c => c.Modulos)
-                    .ThenInclude(m => m.Videos)
-                    .Where(uc => uc.UsuarioId == currentUserId)
-                    .ToListAsync(),
-
-                Trilhas = await _context.Trilhas
-                .Where(t => _context.Cursos
-                    .Any(c => c.TrilhaId == t.Id &&
-                              _context.UsuarioCursos.Any(uc => uc.CursoId == c.Id && uc.UsuarioId == currentUserId)))
-                .ToListAsync(),
-                UsuarioEstadoVideos = await _context.UsuarioEstadoVideos
-                    .Where(uec => uec.UsuarioId == currentUserId)
-                    .ToListAsync(),
-                UsuarioEstadoCursos = await _context.UsuarioEstadoCursos
-                    .Where(uec => uec.UsuarioId == currentUserId)
-                    .ToListAsync(),
-                Estados = await _context.Estados.ToListAsync(),
-                Videos = await _context.Videos.ToListAsync()
+                Cursos = await _usuarioCursoService.GetCursosPorUsuarioAsync(currentUserId),
+                Trilhas = await _trilhaService.GetTrilhasPorUsuarioAsync(currentUserId),
+                UsuarioEstadoVideos = progresso.UsuarioEstadoVideos,
+                UsuarioEstadoCursos = progresso.UsuarioEstadoCursos,
+                Estados = await _estadoService.GetEstadosAsync(),
+                Videos = await _videoService.GetVideosAsync()
             };
             return View(home);
         }
@@ -64,50 +82,36 @@ namespace FDevs.Controllers
             var currentUserId = currentUser.UsuarioId;
             ViewBag.User = currentUser;
 
-            var curso = await _context.Cursos
-                .Include(c => c.Provas)
-                .SingleOrDefaultAsync(c => c.Id == id);
+            Curso curso = await _cursoService.GetCursoByIdAsync(id);
 
-            var modulos = await _context.Modulos
-                .Include(m => m.Videos)
-                .Where(m => m.CursoId == id)
-                .ToListAsync();
+            List<Modulo> modulos = curso.Modulos.ToList();
 
-            var videos = await _context.Videos
-                .Where(v => modulos.Select(m => m.Id).Contains(v.ModuloId))
-                .ToListAsync();
+            List<Video> videos = await _videoService.GetVideosByCursoIdAsync(id);
 
             if (!videos.Any()) return RedirectToAction("Index");
             int selectedVideoId = videoId ?? videos.FirstOrDefault().Id;
-            var videoAtual = videos.SingleOrDefault(v => v.Id == selectedVideoId);
             var prova = curso.Provas.SingleOrDefault();
             int? questaoAtualId = prova?.Questoes?.FirstOrDefault()?.Id;
 
+            var videoAtual = await _videoService.GetVideoByIdAsync(selectedVideoId);
+            var videoAnterior = await _videoService.GetVideoAnteriorAsync(selectedVideoId);
+            var proximoVideo = await _videoService.GetProximoVideoAsync(selectedVideoId);
+            var usuarioEstadoVideo = await _estadoVideo.GetUsuarioEstadoVideosByIdAsync(currentUserId, videoAtual.Id);
+            await _progressoService.UpdateProgressoVideoParaAndamentoAsync(usuarioEstadoVideo);
+            List<UsuarioEstadoVideo> usuarioEstadoVideos = await _estadoVideo.GetUsuarioEstadoVideosAsync(); // cria dentro dessa função uma chamada pra atualizar o estado do modulo (e consequentemente o estado do curso).
 
             DetailsVM details = new DetailsVM
             {
                 CursoAtual = curso,
                 VideoAtual = videoAtual,
-                VideoAnterior = await _context.Videos
-                    .Include(a => a.Modulo)
-                    .ThenInclude(m => m.Curso)
-                    .OrderByDescending(a => a.Id)
-                    .FirstOrDefaultAsync(a => a.Id < selectedVideoId),
-                ProximoVideo = await _context.Videos
-                    .Include(p => p.Modulo)
-                    .ThenInclude(m => m.Curso)
-                    .OrderBy(v => v.Id)
-                    .FirstOrDefaultAsync(v => v.Id > selectedVideoId),
+                VideoAnterior = videoAnterior,
+                ProximoVideo = proximoVideo,
                 Modulos = modulos,
                 Videos = videos,
                 SelectedVideoId = selectedVideoId,
                 QuestaoId = questaoAtualId,
-                UsuarioEstadoVideos = await _context.UsuarioEstadoVideos
-                    .Include(uec => uec.Estado)
-                    .Include(uec => uec.Video)
-                    .ToListAsync(),
+                UsuarioEstadoVideos = usuarioEstadoVideos,
             };
-
             return View(details);
         }
 
@@ -124,21 +128,8 @@ namespace FDevs.Controllers
             var usuarioEstadoVideo = await _context.UsuarioEstadoVideos
                 .SingleOrDefaultAsync(uev => uev.VideoId == id && uev.UsuarioId == usuarioId);
 
-            if (usuarioEstadoVideo.EstadoId == 3)
-            {
-                _context.Remove(usuarioEstadoVideo);
-                await _context.SaveChangesAsync();
+            if(usuarioEstadoVideo.EstadoId == 1) return RedirectToAction("Details", new { id = video.Modulo.CursoId, videoId = video.Id });
 
-                var novoUsuarioEstadoVideo = new UsuarioEstadoVideo
-                {
-                    UsuarioId = usuarioId,
-                    VideoId = id,
-                    EstadoId = 1
-                };
-
-                _context.Add(novoUsuarioEstadoVideo);
-                await _context.SaveChangesAsync();
-            }
 
             var modulo = video.Modulo;
             var videosDoModulo = await _context.Videos
@@ -155,7 +146,7 @@ namespace FDevs.Controllers
             var usuarioEstadoModulo = await _context.UsuarioEstadoModulos
                 .FirstOrDefaultAsync(uem => uem.ModuloId == modulo.Id && uem.UsuarioId == usuarioId);
 
-            if (usuarioEstadoModulo.EstadoId == 3)
+            if (usuarioEstadoModulo.EstadoId == 3) // lembra que toda vez que atualiza o video, tem que atualizar o modulo tbm.
             {
                 _context.Remove(usuarioEstadoModulo);
                 await _context.SaveChangesAsync();

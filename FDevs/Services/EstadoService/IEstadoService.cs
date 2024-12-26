@@ -2,7 +2,6 @@
 
 namespace FDevs.Services.EstadoService
 {
-
     public interface IEstadoService
     {
         Task<List<Estado>> GetEstadosAsync();
@@ -11,6 +10,4 @@ namespace FDevs.Services.EstadoService
         Task<Estado> Update(Estado estado);
         Task<bool> Delete(int id);
     }
-
-
 }

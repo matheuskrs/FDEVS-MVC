@@ -6,21 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class AcertosController : Controller
     {
-        private readonly ILogger<AcertosController> _logger;
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
 
-        public AcertosController(ILogger<AcertosController> logger, AppDbContext context, IWebHostEnvironment host)
+        public AcertosController(AppDbContext context)
         {
-            _logger = logger;
             _context = context;
-            _host = host;
         }
 
         [HttpGet]

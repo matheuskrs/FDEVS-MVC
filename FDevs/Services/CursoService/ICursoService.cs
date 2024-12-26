@@ -2,8 +2,6 @@
 
 namespace FDevs.Services.CursoService
 {
-
-
     public interface ICursoService
     {
         Task<List<Curso>> GetCursosAsync();
@@ -13,5 +11,4 @@ namespace FDevs.Services.CursoService
         Task<Curso> Update(Curso curso);
         Task<bool> Delete(int id);
     }
-
 }

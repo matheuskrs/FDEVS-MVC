@@ -1,38 +1,37 @@
-using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.ArquivoService;
+using FDevs.Services.ExclusaoService;
+using FDevs.Services.TrilhaService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class TrilhasController : Controller
     {
-        private readonly ILogger<TrilhasController> _logger;
-        private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
+        private readonly ITrilhaService _service;
+        private readonly IExclusaoService _deleteService;
+        private readonly IArquivoService _arquivoService;
 
-        public TrilhasController(ILogger<TrilhasController> logger, AppDbContext context, IWebHostEnvironment host)
+        public TrilhasController(ITrilhaService service, IExclusaoService deleteService, IArquivoService arquivoService)
         {
-            _logger = logger;
-            _context = context;
-            _host = host;
+            _service = service;
+            _deleteService = deleteService;
+            _arquivoService = arquivoService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var trilhas = await _context.Trilhas.ToListAsync();
+            List<Trilha> trilhas = await _service.GetTrilhasAsync();
             return View(trilhas);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
+            Trilha trilha = await _service.GetTrilhaByIdAsync(id);
+            if (trilha == null) return RedirectToAction("Index");
             return View(trilha);
         }
 
@@ -46,89 +45,72 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Trilha trilha, IFormFile Arquivo)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(trilha);
+            try
             {
                 if (Arquivo != null)
                 {
                     string fileName = trilha.Id + Path.GetExtension(Arquivo.FileName);
-                    string caminho = Path.Combine(_host.WebRootPath, "img\\Trilhas");
-                    string novoArquivo = Path.Combine(caminho, fileName);
-                    using (var stream = new FileStream(novoArquivo, FileMode.Create))
-                    {
-                        Arquivo.CopyTo(stream);
-                    }
-                    trilha.Foto = "\\img\\Trilhas\\" + fileName;
-                    await _context.SaveChangesAsync();
+                    string caminho = "img\\Trilhas";
+                    trilha.Foto = await _arquivoService.SalvarArquivoAsync(Arquivo, caminho, fileName);
                 }
-                _context.Add(trilha);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = $"A trilha '{trilha.Nome}' foi criada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    trilha.Foto = "\\img\\Trilhas\\sem-foto.png";
+                }
+                await _service.Create(trilha);
+                TempData["Success"] = $"A trilha \"{trilha.Nome}\" foi criada com sucesso!";
+                return RedirectToAction("Index");
             }
-            if (!ModelState.IsValid)
+            catch (Exception ex)
             {
-                var erros = ModelState.Values.SelectMany(t => t.Errors);
+                TempData["Warning"] = $"Ocorreu um erro ao criar a trilha, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
             }
-            return View("Index");
         }
+
 
         public async Task<IActionResult> Edit(int id)
         {
-            if (_context.Trilhas == null)
-            {
-                return NotFound();
-            }
-            var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
+            Trilha trilha = await _service.GetTrilhaByIdAsync(id);
+            if (trilha == null) return RedirectToAction("Index");
             return View(trilha);
         }
 
-        public async Task<IActionResult> EditConfirmed(int id, Trilha trilha, IFormFile Arquivo)
+        public async Task<IActionResult> EditConfirmed(Trilha trilha, IFormFile Arquivo)
         {
-            var trilhaExistente = await _context.Trilhas.AsNoTracking().SingleOrDefaultAsync(t => t.Id == trilha.Id);
-            if (id != trilha.Id)
-            {
-                return NotFound();
-            }
+            Trilha trilhaExistente = await _service.GetTrilhaAsNoTracking(trilha.Id);
 
-            if (ModelState.IsValid)
-            {
+            if (!ModelState.IsValid) return View(trilha);
 
+            try
+            {
                 if (Arquivo != null)
                 {
                     string fileName = trilha.Id + Path.GetExtension(Arquivo.FileName);
-                    string caminho = Path.Combine(_host.WebRootPath, "img\\Trilhas");
-                    if (!Directory.Exists(caminho))
-                    {
-                        Directory.CreateDirectory(caminho);
-                    }
-                    string novoArquivo = Path.Combine(caminho, fileName);
-                    using (var stream = new FileStream(novoArquivo, FileMode.Create))
-                    {
-                        Arquivo.CopyTo(stream);
-                    }
-                    trilha.Foto = "\\img\\Trilhas\\" + fileName;
+                    string caminho = "img\\Trilhas";
+                    trilha.Foto = await _arquivoService.SalvarArquivoAsync(Arquivo, caminho, fileName);
                 }
                 else
                 {
                     trilha.Foto = trilhaExistente.Foto;
                 }
 
-                _context.Update(trilha);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = $"A trilha '{trilha.Nome}' foi alterada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                await _service.Update(trilha);
+                TempData["Success"] = $"A trilha \"{trilha.Nome}\" foi alterada com sucesso!";
+                return RedirectToAction("Index");
             }
-
-            return View(trilha);
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao alterar a trilha, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var trilha = await _context.Trilhas.SingleOrDefaultAsync(t => t.Id == id);
-            if (trilha == null)
-            {
-                return NotFound();
-            }
+            var trilha = await _service.GetTrilhaByIdAsync(id);
+            if (trilha == null) return RedirectToAction("Index");
             return View(trilha);
         }
 
@@ -136,25 +118,27 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var trilha = await _context.Trilhas
-                .Include(t => t.Cursos)
-                .SingleOrDefaultAsync(t => t.Id == id);
-            if (trilha == null)
-                return NotFound();
+            Trilha trilha = await _service.GetTrilhaByIdAsync(id);
+            if (trilha == null) return NoContent();
 
-            var cursosDaTrilha = trilha.Cursos.Any();
-            if (cursosDaTrilha)
+            string mensagemErro = _deleteService.PermitirExcluirTrilha(trilha);
+
+            if (mensagemErro != null)
             {
-                TempData["Warning"] = $"A trilha \"{trilha.Nome}\" não pode ser excluída, pois já existem registros na tabela: \"CURSOS\" associados a ele!";
-                return RedirectToAction(nameof(Index));
+                TempData["Warning"] = mensagemErro;
+                return RedirectToAction("Index");
             }
-
-
-            _context.Remove(trilha);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"A trilha '{trilha.Nome}' foi excluída com sucesso!";
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _service.Delete(id);
+                TempData["Success"] = $"A trilha \"{trilha.Nome}\" foi excluída com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao deletar a trilha, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

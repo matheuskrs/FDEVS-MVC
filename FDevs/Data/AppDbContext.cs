@@ -25,6 +25,8 @@ namespace FDevs.Data
         public DbSet<UsuarioEstadoModulo> UsuarioEstadoModulos { get; set; }
         public DbSet<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
         public DbSet<Video> Videos { get; set; }
+        public DbSet<Progresso> Progressos { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +42,7 @@ namespace FDevs.Data
                     .ToList()
                     .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
             }
+            modelBuilder.Entity<Progresso>().HasNoKey(); // DTO de progresso
 
             #region Configuração do Muitos para Muitos - UsuarioCurso
             // Definindo Chave Primária
@@ -64,7 +67,6 @@ namespace FDevs.Data
             modelBuilder.Entity<UsuarioEstadoCurso>()
                 .HasKey(uec => new { uec.UsuarioId, uec.EstadoId, uec.CursoId });
             #endregion
-
         }
     }
 }

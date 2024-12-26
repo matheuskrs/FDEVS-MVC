@@ -1,5 +1,8 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.CursoService;
+using FDevs.Services.ExclusaoService;
+using FDevs.Services.ProvaService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,41 +10,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class ProvasController : Controller
     {
-        private readonly ILogger<ProvasController> _logger;
-        private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
+        private readonly IProvaService _service;
+        private readonly ICursoService _cursoService;
+        private readonly IExclusaoService _deleteService;
 
-        public ProvasController(ILogger<ProvasController> logger, AppDbContext context, IWebHostEnvironment host)
+        public ProvasController(IProvaService service, ICursoService cursoService, IExclusaoService deleteService)
         {
-            _logger = logger;
-            _context = context;
-            _host = host;
+            _service = service;
+            _cursoService = cursoService;
+            _deleteService = deleteService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var provas = await _context.Provas.Include(p => p.Curso).ToListAsync();
+            List<Prova> provas = await _service.GetProvasAsync();
             return View(provas);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var prova = await _context.Provas.Include(p => p.Curso).SingleOrDefaultAsync(p => p.Id == id);
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            Prova prova = await _service.GetProvaByIdAsync(id);
+            if (prova == null) return RedirectToAction("Index");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View(prova);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View();
         }
 
@@ -49,57 +50,51 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Prova prova)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(prova);
+            try
             {
-                _context.Add(prova);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = $"A prova {prova.Nome} foi criada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                await _service.Create(prova);
+                TempData["Success"] = $"A prova \"{prova.Nome}\" foi criada com sucesso!";
+                return RedirectToAction("Index");
             }
-            if (!ModelState.IsValid)
+            catch (Exception ex)
             {
-                var erros = ModelState.Values.SelectMany(p => p.Errors);
+                TempData["Warning"] = $"Ocorreu um erro ao tentar criar a prova, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
             }
-            return View(prova);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-            if (_context.Provas == null)
-            {
-                return NotFound();
-            }
-            var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
+            Prova prova = await _service.GetProvaByIdAsync(id);
+            if (prova == null) return RedirectToAction("Index");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View(prova);
         }
 
         public async Task<IActionResult> EditConfirmed(int id, Prova prova)
         {
-            if (id != prova.Id)
+            if (!ModelState.IsValid) return View(prova);
+            try
             {
-                return NotFound();
+                await _service.Update(prova);
+                TempData["Success"] = $"A prova \"{prova.Nome}\" foi alterada com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao tentar atualizar a prova, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
             }
 
-            if (ModelState.IsValid)
-            {
-                _context.Update(prova);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = $"A Prova {prova.Nome} foi alterada com sucesso!";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(prova);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-            var prova = await _context.Provas.SingleOrDefaultAsync(p => p.Id == id);
-            if (prova == null)
-            {
-                return NotFound();
-            }
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
+            Prova prova = await _service.GetProvaByIdAsync(id);
+            if (prova == null) return RedirectToAction("Index");
+
             return View(prova);
         }
 
@@ -107,30 +102,26 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var prova = await _context.Provas
-                .Include(p => p.Questoes)
-                .SingleOrDefaultAsync(p => p.Id == id);
-            if (prova == null)
-                return NotFound();
+            var prova = await _service.GetProvaByIdAsync(id);
+            if (prova == null) return RedirectToAction("Index");
 
-            var permitirExcluir = true;
-
-            var questoesDaProva = prova.Questoes.Any();
-
-            if (questoesDaProva)
-                permitirExcluir = false;
-
-            if (!permitirExcluir)
+            var mensagemErro = _deleteService.PermitirExcluirProva(prova);
+            if (mensagemErro != null)
             {
-                TempData["Warning"] = $"A Prova \"{prova.Nome}\" não pode ser excluída pois já existem registros na tabela: \"{(questoesDaProva ? "QUESTÕES" : "")}\" associados a ela!";
-                return RedirectToAction(nameof(Index));
+                TempData["Warning"] = mensagemErro;
+                return RedirectToAction("Index");
             }
-
-            _context.Remove(prova);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"A Prova '{prova.Nome}' foi excluída com sucesso!";
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _service.Delete(id);
+                TempData["Success"] = $"A Prova \"{prova.Nome}\" foi excluída com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"A Prova não pode ser excluída, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,54 +1,53 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.EstadoService;
+using FDevs.Services.ModuloService;
 using FDevs.Services.VideoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class VideosController : Controller
     {
-        private readonly ILogger<VideosController> _logger;
         private readonly AppDbContext _context;
         private readonly IVideoService _service;
+        private readonly IModuloService _moduloService;
+        private readonly IEstadoService _estadoService;
 
-        public VideosController(ILogger<VideosController> logger, AppDbContext context, IVideoService service)
+        public VideosController(AppDbContext context, IVideoService service, IModuloService moduloService, IEstadoService estadoService)
         {
-            _logger = logger;
             _context = context;
             _service = service;
+            _moduloService = moduloService;
+            _estadoService = estadoService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var videos = await _service.GetVideosAsync();
+            List<Video> videos = await _service.GetVideosAsync();
             return View(videos);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var video = await _service.GetVideoByIdAsync(id);
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
+            Video video = await _service.GetVideoByIdAsync(id);
+            if (video == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["ModuloId"] = new SelectList(await _moduloService.GetModulosAsync(), "Id", "Nome");
             return View(video);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var modulos = await _context.Modulos
-                .Include(m => m.Curso)
-                .OrderBy(m => m.Curso.Nome)
-                .ToListAsync();
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["ModuloId"] = new SelectList(await _moduloService.GetModulosAsync(), "Id", "Nome");
             return View();
         }
 
@@ -57,7 +56,7 @@ namespace FDevs.Controllers
         public async Task<IActionResult> Create(Video video)
         {
             if (!ModelState.IsValid) return View(video);
-            var modulo = await _context.Modulos.FindAsync(video.ModuloId);
+            Modulo modulo = await _context.Modulos.FirstOrDefaultAsync(m => m.Id == video.ModuloId);
 
             await _service.Create(video);
 
@@ -78,41 +77,36 @@ namespace FDevs.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["Success"] = $"O vídeo '{video.Titulo}' foi criado com sucesso!";
-            return RedirectToAction(nameof(Index));
-
+            TempData["Success"] = $"O vídeo \"{video.Titulo}\" foi criado com sucesso!";
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
+            Video video = await _service.GetVideoByIdAsync(id);
+            if (video == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["ModuloId"] = new SelectList(await _moduloService.GetModulosAsync(), "Id", "Nome");
 
-            var video = await _service.GetVideoByIdAsync(id);
+
             return View(video);
         }
 
         public async Task<IActionResult> EditConfirmed(Video video)
         {
-            if (ModelState.IsValid)
-            {
-                await _service.Update(video);
-                TempData["Success"] = $"O vídeo '{video.Titulo}' foi alterado com sucesso!";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(video);
+            if (!ModelState.IsValid) return View(video);
+            await _service.Update(video);
+            TempData["Success"] = $"O vídeo \"{video.Titulo}\" foi alterado com sucesso!";
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["ModuloId"] = new SelectList(_context.Modulos, "Id", "Nome");
             var video = await _service.GetVideoByIdAsync(id);
-            if (video == null)
-            {
-                return NotFound();
-            }
+            if (video == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["ModuloId"] = new SelectList(await _moduloService.GetModulosAsync(), "Id", "Nome");
+            
             return View(video);
         }
 
@@ -120,8 +114,8 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var video = await _service.GetVideoByIdAsync(id);
-            if (video == null) return NotFound();
+            Video video = await _service.GetVideoByIdAsync(id);
+            if (video == null) return RedirectToAction("Index");
 
             var usuariosEstadoVideo = await _context.UsuarioEstadoVideos
                 .Where(uev => uev.VideoId == video.Id)
@@ -133,8 +127,8 @@ namespace FDevs.Controllers
             }
 
             await _service.Delete(id);
-            TempData["Success"] = $"O vídeo '{video.Titulo}' foi excluído com sucesso!";
-            return RedirectToAction(nameof(Index));
+            TempData["Success"] = $"O vídeo \"{video.Titulo}\" foi excluído com sucesso!";
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

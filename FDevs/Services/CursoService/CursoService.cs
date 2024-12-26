@@ -21,6 +21,8 @@ namespace FDevs.Services.CursoService
             var cursos = await _context.Cursos
                 .Include(c => c.Modulos)
                 .Include(c => c.Trilha)
+                .Include(c => c.Provas)
+                .Include(c => c.UsuarioEstadoCursos)
                 .ToListAsync();
             return cursos;
         }
@@ -30,8 +32,9 @@ namespace FDevs.Services.CursoService
             var curso = await _context.Cursos
                 .Include(c => c.Modulos)
                 .Include(c => c.Trilha)
+                .Include(c => c.Provas)
                 .Include(c => c.UsuarioEstadoCursos)
-                .SingleOrDefaultAsync(v => v.Id == id);
+                .SingleOrDefaultAsync(c => c.Id == id);
             return curso;
         }
 

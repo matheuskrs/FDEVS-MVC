@@ -1,7 +1,10 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.CursoService;
+using FDevs.Services.EstadoService;
 using FDevs.Services.ExclusaoService;
 using FDevs.Services.ModuloService;
+using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,25 +12,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class ModulosController : Controller
     {
         private readonly ILogger<ModulosController> _logger;
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
         private readonly IModuloService _service;
         private readonly IExclusaoService _deleteService;
+        private readonly ICursoService _cursoService;
+        private readonly IEstadoService _estadoService;
 
-        public ModulosController(ILogger<ModulosController> logger, AppDbContext context, IWebHostEnvironment host, IModuloService service, IExclusaoService deleteService)
+        public ModulosController(ILogger<ModulosController> logger, AppDbContext context, IModuloService service, IExclusaoService deleteService, ICursoService cursoService, IEstadoService estadoService)
         {
             _logger = logger;
             _context = context;
-            _host = host;
             _service = service;
             _deleteService = deleteService;
+            _cursoService = cursoService;
+            _estadoService = estadoService;
         }
 
         [HttpGet]
@@ -40,16 +42,17 @@ namespace FDevs.Controllers
         public async Task<IActionResult> Details(int id)
         {
             Modulo modulo = await _service.GetModuloByIdAsync(id);
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            if (modulo == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View(modulo);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View();
         }
 
@@ -76,35 +79,35 @@ namespace FDevs.Controllers
                 _context.Add(usuarioEstadoModulo);
             }
             TempData["Success"] = $"O módulo {modulo.Nome} foi criado com sucesso!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            if (_context.Modulos == null) return NoContent();
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
-
             Modulo modulo = await _service.GetModuloByIdAsync(id);
+            if (modulo == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
+
             return View(modulo);
         }
 
-        public async Task<IActionResult> EditConfirmed(int id, Modulo modulo)
+        public async Task<IActionResult> EditConfirmed(Modulo modulo)
         {
-            if (id != modulo.Id) return NotFound();
+            if (modulo == null) return RedirectToAction("Index");
 
             if (!ModelState.IsValid) return View(modulo);
             await _service.Update(modulo);
             TempData["Success"] = $"O módulo {modulo.Nome} foi alterado com sucesso!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            ViewData["EstadoId"] = new SelectList(_context.Estados, "Id", "Nome");
-            ViewData["CursoId"] = new SelectList(_context.Cursos, "Id", "Nome");
             Modulo modulo = await _service.GetModuloByIdAsync(id);
             if (modulo == null) return RedirectToAction("Index");
+            ViewData["EstadoId"] = new SelectList(await _estadoService.GetEstadosAsync(), "Id", "Nome");
+            ViewData["CursoId"] = new SelectList(await _cursoService.GetCursosAsync(), "Id", "Nome");
             return View(modulo);
         }
 
@@ -113,12 +116,13 @@ namespace FDevs.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Modulo modulo = await _service.GetModuloByIdAsync(id);
+            if (modulo == null) return RedirectToAction("Index");
 
             string mensagemErro = _deleteService.PermitirExcluirModulo(modulo);
             if (mensagemErro != null)
             {
                 TempData["Warning"] = mensagemErro;
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             foreach (var video in modulo.Videos)
@@ -144,7 +148,7 @@ namespace FDevs.Controllers
 
             await _service.Delete(id);
             TempData["Success"] = $"O módulo '{modulo.Nome}' foi excluído com sucesso!";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

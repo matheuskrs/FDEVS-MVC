@@ -1,5 +1,6 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.RespostaService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,53 +8,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Controllers
 {
-
-
-
     [Authorize(Roles = "Administrador")]
     public class RespostasController : Controller
     {
-        private readonly ILogger<RespostasController> _logger;
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _host;
+        private readonly IRespostaService _service;
 
-        public RespostasController(ILogger<RespostasController> logger, AppDbContext context, IWebHostEnvironment host)
+        public RespostasController(AppDbContext context, IRespostaService service)
         {
-            _logger = logger;
             _context = context;
-            _host = host;
-
+            _service = service;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var respostas = await _context.Respostas
-                .Include(r => r.Usuario)
-                .Include(r => r.Questao)
-                .ThenInclude(q => q.Prova)
-                .Include(r => r.Alternativa)
-                .ToListAsync();
+            List<Resposta> respostas = await _service.GetRespostasAsync();
             return View(respostas);
         }
 
         public async Task<IActionResult> Details(int id)
         {
+            Resposta resposta = await _service.GetRespostaByIdAsync(id);
+            if (resposta == null) return RedirectToAction("Index");
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "Nome");
             ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
             ViewData["AlternativaId"] = new SelectList(_context.Alternativas, "Id", "Texto");
-            var resposta = await _context.Respostas.SingleOrDefaultAsync(r => r.Id == id);
             return View(resposta);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            if (_context.Respostas == null)
-            {
-                return NotFound();
-            }
-            var resposta = await _context.Respostas
-                .SingleOrDefaultAsync(r => r.Id == id);
+            Resposta resposta = await _service.GetRespostaByIdAsync(id);
+            if (resposta == null) return RedirectToAction("Index");
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "Nome");
             ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
             ViewData["AlternativaId"] = new SelectList(_context.Alternativas.Where(a => a.QuestaoId == resposta.QuestaoId), "Id", "Texto");
@@ -62,37 +49,30 @@ namespace FDevs.Controllers
 
         public async Task<IActionResult> EditConfirmed(int id, Resposta resposta)
         {
-            if (id != resposta.Id)
-            {
-                return NotFound();
-            }
+            if (id != resposta.Id) return RedirectToAction("Index");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(resposta);
+            try
             {
-                _context.Update(resposta);
-                await _context.SaveChangesAsync();
-                resposta = await _context.Respostas
-                    .Include(r => r.Usuario)
-                    .SingleOrDefaultAsync(
-                        r => r.UsuarioId == resposta.UsuarioId &&
-                        r.QuestaoId == resposta.QuestaoId
-                    );
+                await _service.Update(resposta);
+                resposta = await _service.GetRespostaByIdAsync(id);
                 TempData["Success"] = $"A resposta de {resposta.Usuario.Nome} foi alterada com sucesso!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            return View("Edit", resposta);
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao tentar alterar a resposta, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
         {
+            Resposta resposta = await _service.GetRespostaByIdAsync(id);
+            if (resposta == null) return RedirectToAction("Index");
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "UsuarioId", "Nome");
             ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
             ViewData["AlternativaId"] = new SelectList(_context.Alternativas, "Id", "Texto");
-            var resposta = await _context.Respostas.SingleOrDefaultAsync(r => r.Id == id);
-            if (resposta == null)
-            {
-                return NotFound();
-            }
             return View(resposta);
         }
 
@@ -100,15 +80,20 @@ namespace FDevs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var resposta = await _context.Respostas.SingleOrDefaultAsync(r => r.Id == id);
-            if (resposta == null)
-                return NotFound();
-
-            _context.Remove(resposta);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"A Resposta foi excluída com sucesso!";
-            return RedirectToAction(nameof(Index));
+            Resposta resposta = await _service.GetRespostaByIdAsync(id);
+            if (resposta == null) return RedirectToAction("Index");
+            try
+            {
+                _context.Remove(resposta);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"A resposta foi excluída com sucesso!";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Warning"] = $"Ocorreu um erro ao excluir a resposta, tente novamente. Detalhes do erro: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

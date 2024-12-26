@@ -28,7 +28,7 @@ namespace FDevs.Services.EstadoService
                 .Include(e => e.UsuarioEstadoCursos)
                 .Include(e => e.UsuarioEstadoVideos)
                 .Include(e => e.UsuarioEstadoModulos)
-                .SingleOrDefaultAsync(v => v.Id == id);
+                .SingleOrDefaultAsync(e => e.Id == id);
             return estado;
         }
 
@@ -39,23 +39,20 @@ namespace FDevs.Services.EstadoService
             return estado;
         }
 
-        public async Task<bool> Delete(int id)
-        {
-            var estado = await GetEstadoByIdAsync(id);
-            if (estado == null) return false;
-            _context.Remove(estado);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-
         public async Task<Estado> Update(Estado estado)
         {
             _context.Update(estado);
             await _context.SaveChangesAsync();
             return estado;
         }
+
+        public async Task<bool> Delete(int id)
+        {
+            Estado estado = await GetEstadoByIdAsync(id);
+            if (estado == null) return false;
+            _context.Remove(estado);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
-
-
 }

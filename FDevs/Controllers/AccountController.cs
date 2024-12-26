@@ -5,9 +5,6 @@ using FDevs.Services.UsuarioService;
 
 namespace FDevs.Controllers
 {
-
-
-
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;

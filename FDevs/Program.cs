@@ -37,12 +37,22 @@
 
 //SQL
 using FDevs.Data;
+using FDevs.Services.AlternativaService;
 using FDevs.Services.ArquivoService;
 using FDevs.Services.CursoService;
 using FDevs.Services.EmailService;
+using FDevs.Services.EstadoCursoService;
+using FDevs.Services.EstadoModuloService;
 using FDevs.Services.EstadoService;
+using FDevs.Services.EstadoVideoService;
 using FDevs.Services.ExclusaoService;
 using FDevs.Services.ModuloService;
+using FDevs.Services.ProgressoService;
+using FDevs.Services.ProvaService;
+using FDevs.Services.QuestaoService;
+using FDevs.Services.RespostaService;
+using FDevs.Services.TrilhaService;
+using FDevs.Services.UsuarioCursoService;
 using FDevs.Services.UsuarioService;
 using FDevs.Services.VideoService;
 using Microsoft.AspNetCore.Identity;
@@ -71,6 +81,16 @@ builder.Services.AddTransient<IModuloService, ModuloService>();
 builder.Services.AddTransient<IVideoService, VideoService>();
 builder.Services.AddTransient<IEstadoService, EstadoService>();
 builder.Services.AddTransient<ICursoService, CursoService>();
+builder.Services.AddTransient<ITrilhaService, TrilhaService>();
+builder.Services.AddTransient<IProvaService, ProvaService>();
+builder.Services.AddTransient<IAlternativaService, AlternativaService>();
+builder.Services.AddTransient<IQuestaoService, QuestaoService>();
+builder.Services.AddTransient<IRespostaService, RespostaService>();
+builder.Services.AddTransient<IEstadoCursoService, EstadoCursoService>();
+builder.Services.AddTransient<IEstadoVideoService, EstadoVideoService>();
+builder.Services.AddTransient<IEstadoModuloService, EstadoModuloService>();
+builder.Services.AddTransient<IUsuarioCursoService, UsuarioCursoService>();
+builder.Services.AddTransient<IProgressoService, ProgressoService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddControllersWithViews();

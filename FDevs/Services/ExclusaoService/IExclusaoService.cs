@@ -1,5 +1,4 @@
 ﻿using FDevs.Models;
-using FDevs.Services.CursoService;
 
 namespace FDevs.Services.ExclusaoService
 {
@@ -8,5 +7,9 @@ namespace FDevs.Services.ExclusaoService
         string PermitirExcluirCurso(Curso curso);
         string PermitirExcluirEstado(Estado estado);
         string PermitirExcluirModulo(Modulo modulo);
+        string PermitirExcluirTrilha(Trilha trilha);
+        string PermitirExcluirProva(Prova prova);
+        string PermitirExcluirAlternativa(Alternativa alternativa);
+        string PermitirExcluirQuestao(Questao questao);
     }
 }
