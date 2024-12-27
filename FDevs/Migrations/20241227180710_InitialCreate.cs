@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FDevs.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,6 +64,22 @@ namespace FDevs.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_IdentityUser", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Progresso",
+                columns: table => new
+                {
+                    QtdCursos = table.Column<int>(type: "int", nullable: true),
+                    QtdAndamento = table.Column<int>(type: "int", nullable: true),
+                    QtdConcluido = table.Column<int>(type: "int", nullable: true),
+                    QtdNaoIniciado = table.Column<int>(type: "int", nullable: true),
+                    ProgressoVermelho = table.Column<double>(type: "float", nullable: true),
+                    ProgressoAmarelo = table.Column<double>(type: "float", nullable: true),
+                    ProgressoVerde = table.Column<double>(type: "float", nullable: true)
+                },
+                constraints: table =>
+                {
                 });
 
             migrationBuilder.CreateTable(
@@ -509,7 +525,7 @@ namespace FDevs.Migrations
             migrationBuilder.InsertData(
                 table: "IdentityUser",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "e48d5210-6f3e-4b8c-bd51-6331a64f8b5c", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEESItDmHoaZv9bFXUnx/LeLxOAPGpDnOfsbP7kqFeIi12ousWOjied9HTe8/4u49uA==", null, false, "019ca51d-56b5-49aa-b307-08f697f324e5", false, "Admin" });
+                values: new object[] { "ddf093a6-6cb5-4ff7-9a64-83da34aee005", 0, "223c2b3a-d332-4ca8-9384-0f4cf378d170", "admin@fdevs.com", true, false, null, "ADMIN@FDEVS.COM", "ADMIN", "AQAAAAIAAYagAAAAEAyqNvUqLjOWxtG+HhCh+5AYP40QZYchKBDoadjTzzEno4nBwBl4RqmKan3SkmwNrA==", null, false, "d1f34fcb-4112-4b15-be7e-2b6090b373b1", false, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Trilha",
@@ -798,6 +814,9 @@ namespace FDevs.Migrations
 
             migrationBuilder.DropTable(
                 name: "IdentityUserToken<string>");
+
+            migrationBuilder.DropTable(
+                name: "Progresso");
 
             migrationBuilder.DropTable(
                 name: "Resposta");

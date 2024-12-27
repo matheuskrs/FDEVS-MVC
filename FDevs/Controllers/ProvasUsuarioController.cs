@@ -178,7 +178,7 @@ namespace FDevs.Controllers
                     return RedirectToAction("Index", "ProvasUsuario", new { id = resposta.Questao.ProvaId, questaoId = proximaQuestao.Id });
                 }
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Respostas", new { id = resposta.Questao.ProvaId});
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

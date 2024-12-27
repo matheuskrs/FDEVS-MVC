@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FDevs.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241212144753_initialCreate")]
-    partial class initialCreate
+    [Migration("20241227180710_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,6 +227,32 @@ namespace FDevs.Migrations
                             CursoId = 2,
                             Nome = "Módulo 2 - Intermediário"
                         });
+                });
+
+            modelBuilder.Entity("FDevs.Models.Progresso", b =>
+                {
+                    b.Property<double?>("ProgressoAmarelo")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ProgressoVerde")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("ProgressoVermelho")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("QtdAndamento")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QtdConcluido")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QtdCursos")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QtdNaoIniciado")
+                        .HasColumnType("int");
+
+                    b.ToTable("Progresso");
                 });
 
             modelBuilder.Entity("FDevs.Models.Prova", b =>
@@ -874,15 +900,15 @@ namespace FDevs.Migrations
                         {
                             Id = "ddf093a6-6cb5-4ff7-9a64-83da34aee005",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e48d5210-6f3e-4b8c-bd51-6331a64f8b5c",
+                            ConcurrencyStamp = "223c2b3a-d332-4ca8-9384-0f4cf378d170",
                             Email = "admin@fdevs.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@FDEVS.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEESItDmHoaZv9bFXUnx/LeLxOAPGpDnOfsbP7kqFeIi12ousWOjied9HTe8/4u49uA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAyqNvUqLjOWxtG+HhCh+5AYP40QZYchKBDoadjTzzEno4nBwBl4RqmKan3SkmwNrA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "019ca51d-56b5-49aa-b307-08f697f324e5",
+                            SecurityStamp = "d1f34fcb-4112-4b15-be7e-2b6090b373b1",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         });
@@ -1048,7 +1074,7 @@ namespace FDevs.Migrations
             modelBuilder.Entity("FDevs.Models.Resposta", b =>
                 {
                     b.HasOne("FDevs.Models.Alternativa", "Alternativa")
-                        .WithMany()
+                        .WithMany("Respostas")
                         .HasForeignKey("AlternativaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1132,7 +1158,7 @@ namespace FDevs.Migrations
             modelBuilder.Entity("FDevs.Models.UsuarioEstadoModulo", b =>
                 {
                     b.HasOne("FDevs.Models.Estado", "Estado")
-                        .WithMany()
+                        .WithMany("UsuarioEstadoModulos")
                         .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1245,6 +1271,11 @@ namespace FDevs.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FDevs.Models.Alternativa", b =>
+                {
+                    b.Navigation("Respostas");
+                });
+
             modelBuilder.Entity("FDevs.Models.Curso", b =>
                 {
                     b.Navigation("Modulos");
@@ -1257,6 +1288,8 @@ namespace FDevs.Migrations
             modelBuilder.Entity("FDevs.Models.Estado", b =>
                 {
                     b.Navigation("UsuarioEstadoCursos");
+
+                    b.Navigation("UsuarioEstadoModulos");
 
                     b.Navigation("UsuarioEstadoVideos");
                 });

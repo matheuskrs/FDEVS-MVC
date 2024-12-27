@@ -1,5 +1,6 @@
 ﻿using FDevs.Data;
 using FDevs.Models;
+using FDevs.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace FDevs.Services.EstadoCursoService
@@ -18,7 +19,7 @@ namespace FDevs.Services.EstadoCursoService
             return usuarioEstadoCursos;
         }
 
-        public async Task<UsuarioEstadoCurso> GetUsuarioEstadoCursoByIdAsync(string usuarioId, int estadoId, int cursoId)
+        public async Task<UsuarioEstadoCurso> GetUsuarioEstadoCursoByIdAsync(string usuarioId, int cursoId)
         {
             UsuarioEstadoCurso usuarioEstadoCurso = await _context.UsuarioEstadoCursos
             .Include(uem => uem.Usuario)
@@ -26,7 +27,6 @@ namespace FDevs.Services.EstadoCursoService
             .Include(uem => uem.Curso)
             .FirstOrDefaultAsync(uem =>
                 uem.UsuarioId == usuarioId &&
-                uem.EstadoId == estadoId &&
                 uem.CursoId == cursoId);
 
             return usuarioEstadoCurso;
@@ -42,6 +42,41 @@ namespace FDevs.Services.EstadoCursoService
                 .ToListAsync();
 
             return usuarioEstadoCursos;
+        }
+
+        public async Task<UsuarioEstadoCurso> AtualizarEstadoCurso(UsuarioEstadoCurso usuarioEstadoAntigo)
+        {
+            if (usuarioEstadoAntigo.EstadoId != 3) return null;
+            _context.Remove(usuarioEstadoAntigo);
+            await _context.SaveChangesAsync();
+
+            var novoUsuarioEstadoCurso = new UsuarioEstadoCurso
+            {
+                UsuarioId = usuarioEstadoAntigo.UsuarioId,
+                CursoId = usuarioEstadoAntigo.CursoId,
+                EstadoId = 1
+            };
+
+            _context.Add(novoUsuarioEstadoCurso);
+            await _context.SaveChangesAsync();
+            return novoUsuarioEstadoCurso;
+        }
+
+        public async Task<UsuarioEstadoCurso> AtualizarEstadoCursoParaConcluido(UsuarioEstadoCurso usuarioEstadoAntigo)
+        {
+            _context.Remove(usuarioEstadoAntigo);
+            await _context.SaveChangesAsync();
+
+            var novoUsuarioEstadoCurso = new UsuarioEstadoCurso
+            {
+                UsuarioId = usuarioEstadoAntigo.UsuarioId,
+                CursoId = usuarioEstadoAntigo.CursoId,
+                EstadoId = 2
+            };
+
+            _context.Add(novoUsuarioEstadoCurso);
+            await _context.SaveChangesAsync();
+            return novoUsuarioEstadoCurso;
         }
     }
 }

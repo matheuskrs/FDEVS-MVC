@@ -47,5 +47,56 @@ namespace FDevs.Services.EstadoVideoService
 
             return usuarioEstadoVideos;
         }
+
+
+        public async Task<int> ObterQuantidadeVideosConcluidos(string usuarioId, Video video)
+        {
+            return await _context.UsuarioEstadoVideos
+                    .Where(uev => uev.UsuarioId == usuarioId
+                        && uev.EstadoId == 2
+                        && _context.Videos.Any(v => v.Id == uev.VideoId && v.ModuloId == video.ModuloId))
+                    .CountAsync();
+        }
+
+        public async Task<int> ObterQuantidadeVideos(Video video)
+        {
+            return await _context.Videos
+                .Where(v => v.ModuloId == video.ModuloId)
+                .CountAsync();
+        }
+
+        public async Task<bool> AtualizarEstadoVideoParaAndamentoAsync(UsuarioEstadoVideo estadoVideo)
+        {
+            if (estadoVideo.EstadoId != 3) return false;
+
+            var novoUsuarioEstadoVideo = new UsuarioEstadoVideo
+            {
+                UsuarioId = estadoVideo.UsuarioId,
+                VideoId = estadoVideo.VideoId,
+                EstadoId = 1
+            };
+            _context.Remove(estadoVideo);
+            await _context.SaveChangesAsync();
+            _context.Add(novoUsuarioEstadoVideo);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> AtualizarEstadoVideoParaConcluidoAsync(UsuarioEstadoVideo estadoVideo)
+        {
+            _context.Remove(estadoVideo);
+            await _context.SaveChangesAsync();
+
+            var novoUsuarioEstadoVideo = new UsuarioEstadoVideo
+            {
+                UsuarioId = estadoVideo.UsuarioId,
+                VideoId = estadoVideo.VideoId,
+                EstadoId = 2
+            };
+
+            _context.Add(novoUsuarioEstadoVideo);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

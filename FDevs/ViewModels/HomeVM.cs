@@ -8,8 +8,7 @@ namespace FDevs.ViewModels
     {
         public List<UsuarioCurso> Cursos { get; set; }
         public List<Trilha> Trilhas { get; set; }
-        public List<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
-        public List<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
+        public Progresso Progresso { get; set; }
         public List<Estado> Estados { get; set; }
         public List<Video> Videos { get; set; }
     }

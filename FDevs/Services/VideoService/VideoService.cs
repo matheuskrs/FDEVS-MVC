@@ -26,7 +26,9 @@ namespace FDevs.Services.VideoService
 
         public async Task<Video> GetVideoByIdAsync(int id)
         {
-            var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
+            var video = await _context.Videos
+                .Include(v => v.Modulo)
+                .SingleOrDefaultAsync(v => v.Id == id);
             return video;
         }
         public async Task<List<Video>> GetVideosByCursoIdAsync(int cursoId)
@@ -73,12 +75,20 @@ namespace FDevs.Services.VideoService
 
         public async Task<Video> GetProximoVideoAsync(int id)
         {
-            var video = await _context.Videos
-                    .Include(p => p.Modulo)
-                    .ThenInclude(m => m.Curso)
-                    .OrderBy(v => v.Id)
-                    .FirstOrDefaultAsync(v => v.Id > id);
-            return video;
+            var videoAtual = await _context.Videos
+                .Include(v => v.Modulo)
+                .ThenInclude(m => m.Curso)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            var cursoId = videoAtual.Modulo.CursoId;
+
+            var proximoVideo = await _context.Videos
+                .Include(v => v.Modulo)
+                .ThenInclude(m => m.Curso)
+                .Where(v => v.Modulo.CursoId == cursoId)
+                .OrderBy(v => v.Id)
+                .FirstOrDefaultAsync(v => v.Id > id);
+            return proximoVideo;
         }
     }
 

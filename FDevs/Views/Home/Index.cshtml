@@ -1,41 +1,10 @@
 ﻿@model FDevs.ViewModels.HomeVM
 @{
     ViewData["Title"] = "FDevs 2024";
-    float qtdCursos = 0;
-    float qtdVideos = 0;
-    float qtdVideosConcluidos = 0;
-    float qtdAndamento = 0;
-    float qtdConcluido = 0;
-    float qtdNaoIniciado = 0;
-}
-@foreach (var usuarioCurso in Model.Cursos)
-{
-    qtdCursos += 1;
-    var estadoCurso = Model.UsuarioEstadoCursos
-    .SingleOrDefault(uec => uec.CursoId == usuarioCurso.Curso.Id);
-    if (estadoCurso.EstadoId == 1)
-    {
-        qtdAndamento += 1;
-    }
-    else if (estadoCurso.EstadoId == 2)
-    {
-        qtdConcluido += 1;
-    }
-    else if (estadoCurso.EstadoId == 3)
-    {
-        qtdNaoIniciado += 1;
-    }
-}
-@{
-    var progressoVermelho = Math.Round((qtdNaoIniciado / qtdCursos) * 100);
-    var progressoAmarelo = Math.Round((qtdAndamento / qtdCursos) * 100);
-    var progressoVerde = 100 - (progressoAmarelo + progressoVermelho);
-    var progressoCurso = 0.0;
 }
 
 <div class="d-flex justify-content-center">
-
-    <div class="container ">
+    <div class="container">
         <section class="left" id="cursos">
             <div class="d-flex container justify-content-center p-0 m-0 pt-4">
                 <ul class="row optionsRow w-100 m-0 p-0">
@@ -50,41 +19,38 @@
             <div class="owl-carousel owl-theme d-flex flex-nowrap">
                 @foreach (var usuarioCurso in Model.Cursos)
                 {
-                    qtdVideos = 0;
-                    qtdVideosConcluidos = 0;
-                    var estadoCurso = Model.UsuarioEstadoCursos
-                    .Where(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId)
-                    .FirstOrDefault();
+                    var qtdVideos = 0;
+                    var qtdVideosConcluidos = 0;
+                    var estadoCurso = Model.Progresso.UsuarioEstadoCursos
+                    .FirstOrDefault(uec => uec.CursoId == usuarioCurso.CursoId && uec.UsuarioId == ViewBag.User.UsuarioId);
                     var primeiroVideo = Model.Videos
                     .FirstOrDefault(v => v.Modulo?.CursoId == usuarioCurso.CursoId)?.Id;
+
                     @foreach (var modulo in usuarioCurso.Curso.Modulos)
                     {
                         @foreach (var video in modulo.Videos)
                         {
-                            qtdVideos += 1;
-                            var usuarioEstadoVideo = Model.UsuarioEstadoVideos
+                            qtdVideos++;
+                            var usuarioEstadoVideo = Model.Progresso.UsuarioEstadoVideos
                             .FirstOrDefault(uev => uev.VideoId == video.Id && uev.UsuarioId == ViewBag.User.UsuarioId);
-                            if (usuarioEstadoVideo.EstadoId == 2)
+                            if (usuarioEstadoVideo?.EstadoId == 2)
                             {
-                                qtdVideosConcluidos += 1;
+                                qtdVideosConcluidos++;
                             }
                         }
                     }
-                    progressoCurso = Math.Round((qtdVideosConcluidos / qtdVideos) * 100);
+
+                    var progressoCurso = qtdVideos > 0 ? Math.Round((double)qtdVideosConcluidos / qtdVideos * 100) : 0;
 
                     <div class="item curso">
                         <div class="card m-3" style="width: 15rem;">
                             <img src="@usuarioCurso.Curso.Foto" class="card-img-top" width=237 height=140 alt="...">
-                            <div class="progress-modulo-container p-0 w-100 ">
+                            <div class="progress-modulo-container p-0 w-100">
                                 <div class="progress-modulo p-0">
                                     <div class="bar d-flex justify-content-center align-items-center text-bold fs-6"
-                                         style="width:@progressoCurso%; background-color:#17988f">
-                                        <span class="text-white">@(progressoCurso > 0 ? $"{progressoCurso}%" : "")</span>
+                                         style="width:@(progressoCurso > 0 ? progressoCurso : 10)%; background-color:@(progressoCurso > 0 ? "#17988f" : "transparent")">
+                                        <span class="@(progressoCurso > 0 ? "text-white" : "text-dark")">@(progressoCurso > 0 ? $"{progressoCurso}%" : "0%")</span>
                                     </div>
-                                    @if (!(progressoCurso > 0))
-                                    {
-                                        <span class="ps-1 text-bold">0%</span>
-                                    }
                                 </div>
                             </div>
                             <div class="card-body d-flex justify-content-start row">
@@ -94,83 +60,79 @@
                             </div>
                             <hr class="itemHr">
                             <a asp-action="Details" asp-route-id="@usuarioCurso.Curso.Id" asp-route-videoid="@primeiroVideo"
-                               class="col-12 btn startBtn">Começar </a>
+                               class="col-12 btn startBtn">Começar</a>
                         </div>
                     </div>
                 }
             </div>
         </section>
+
         <section class="right d-flex">
             <div class="row">
                 <div class="container-fluid">
                     <div class="align-center w-100 py-4 mb-4" style="border-bottom: 2px solid gainsboro;">
-                        <span class="p-4 w-100 fs-5">
-                            Meu progresso
-                        </span>
+                        <span class="p-4 w-100 fs-5">Meu progresso</span>
                     </div>
                     <div>
                         <div class="justify-content-center row m-0 p-0">
                             <span class="col-12 text-center">Inscrito em</span>
-                            <p class="col-12 text-bold text-center fs-2 m-0">@qtdCursos</p>
+                            <p class="col-12 text-bold text-center fs-2 m-0">@Model.Progresso.QtdCursos</p>
                             <span class="col-12 text-center mb-3">cursos</span>
                         </div>
                     </div>
                 </div>
                 <div class="container-fluid mx-3">
-                    @if (qtdCursos > 0)
+                    @if (Model.Progresso.QtdCursos > 0)
                     {
-                        <div class="progress-container p-0 w-90 ">
+                        <div class="progress-container p-0 w-90">
                             <div class="progress p-0">
                                 <div class="bar green d-flex justify-content-center align-items-center text-bold fs-6"
-                                     style="width:@progressoVerde%;">
-                                    @(progressoVerde > 0 ? $"{Math.Round((qtdConcluido / qtdCursos) * 100)}%" : "")
+                                     style="width:@Model.Progresso.ProgressoVerde%;">
+                                    @(Model.Progresso.ProgressoVerde > 0 ? $"{Math.Round((double)Model.Progresso.QtdConcluido / (double)Model.Progresso.QtdCursos * 100)}%" : "")
                                 </div>
                                 <div class="bar yellow d-flex justify-content-center align-items-center text-bold fs-6"
-                                     style="width:@progressoAmarelo%;">
-                                    @(progressoAmarelo > 0 ? $"{progressoAmarelo}%" : "")
+                                     style="width:@Model.Progresso.ProgressoAmarelo%;">
+                                    @(Model.Progresso.ProgressoAmarelo > 0 ? $"{Model.Progresso.ProgressoAmarelo}%" : "")
                                 </div>
                                 <div class="bar red d-flex justify-content-center align-items-center text-bold fs-6 text-white"
-                                     style="width:@progressoVermelho%;">
-                                    @(progressoVermelho > 0 ? $"{progressoVermelho}%" : "")
+                                     style="width:@Model.Progresso.ProgressoVermelho%;">
+                                    @(Model.Progresso.ProgressoVermelho > 0 ? $"{Model.Progresso.ProgressoVermelho}%" : "")
                                 </div>
                             </div>
                         </div>
                     }
-
                 </div>
                 <div class="d-flex p-4">
                     @foreach (var estado in Model.Estados)
                     {
                         <span class="stateText fw-bold mx-1 align-items-center d-flex">
-                            <i class='bx bxs-checkbox-minus fs-3 m-0 ' style="color:@estado.Cor"></i>
+                            <i class='bx bxs-checkbox-minus fs-3 m-0' style="color:@estado.Cor"></i>
                             @estado.Nome
                         </span>
                     }
                 </div>
             </div>
         </section>
-        <section class="bottom" id="trilhas">
-                <div class="align-center d-flex w-100" style="border-bottom: 2px solid gainsboro;">
-                    <span class="p-4 w-100 fs-5">
-                        Trilhas
-                    </span>
-                </div>
-                <div class="owl-carousel owl-theme d-flex flex-nowrap mx-1">
-                    @foreach (Trilha trilha in Model.Trilhas)
-                    {
-                        <div class="item ">
-                            <div class="card m-3" style="width: 15rem;">
-                                <img src="@trilha.Foto" class="card-img-top" width=237 height=140 alt="...">
 
-                                <div class="card-body d-flex justify-content-start row">
-                                    <h6 class="card-title col-12 mt-2">@trilha.Nome</h6>
-                                </div>
-                                <hr class="itemHr">
-                                <a href="#" class="col-12 btn startBtn">Começar </a>
+        <section class="bottom" id="trilhas">
+            <div class="align-center d-flex w-100" style="border-bottom: 2px solid gainsboro;">
+                <span class="p-4 w-100 fs-5">Trilhas</span>
+            </div>
+            <div class="owl-carousel owl-theme d-flex flex-nowrap mx-1">
+                @foreach (var trilha in Model.Trilhas)
+                {
+                    <div class="item">
+                        <div class="card m-3" style="width: 15rem;">
+                            <img src="@trilha.Foto" class="card-img-top" width=237 height=140 alt="...">
+                            <div class="card-body d-flex justify-content-start row">
+                                <h6 class="card-title col-12 mt-2">@trilha.Nome</h6>
                             </div>
+                            <hr class="itemHr">
+                            <a href="#" class="col-12 btn startBtn">Começar</a>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
+            </div>
         </section>
     </div>
 </div>

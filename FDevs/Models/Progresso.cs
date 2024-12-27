@@ -2,8 +2,15 @@
 {
     public class Progresso
     {
-        public List<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
-        public List<UsuarioEstadoModulo> UsuarioEstadoModulos { get; set; }
-        public List<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
+        public int? QtdCursos { get; set; }
+        public int? QtdAndamento { get; set; }
+        public int? QtdConcluido { get; set; }
+        public int? QtdNaoIniciado { get; set; }
+        public double? ProgressoVermelho { get; set; }
+        public double? ProgressoAmarelo { get; set; }
+        public double? ProgressoVerde { get; set; }
+        public IEnumerable<UsuarioEstadoVideo> UsuarioEstadoVideos { get; set; }
+        public IEnumerable<UsuarioEstadoModulo> UsuarioEstadoModulos { get; set; }
+        public IEnumerable<UsuarioEstadoCurso> UsuarioEstadoCursos { get; set; }
     }
 }
