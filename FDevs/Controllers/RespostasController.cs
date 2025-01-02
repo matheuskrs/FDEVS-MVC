@@ -56,7 +56,7 @@ namespace FDevs.Controllers
             {
                 await _service.Update(resposta);
                 resposta = await _service.GetRespostaByIdAsync(id);
-                TempData["Success"] = $"A resposta de {resposta.Usuario.Nome} foi alterada com sucesso!";
+                TempData["Success"] = $"A resposta de \"{resposta.Usuario.Nome}\" foi alterada com sucesso!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

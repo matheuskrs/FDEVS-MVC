@@ -1,5 +1,6 @@
 using FDevs.Data;
 using FDevs.Models;
+using FDevs.Services.UsuarioCursoService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,20 +16,22 @@ namespace FDevs.Controllers
     {
         private readonly ILogger<UsuarioCursosController> _logger;
         private readonly AppDbContext _context;
+        private readonly IUsuarioCursoService _usuarioCursoService;
 
-        public UsuarioCursosController(ILogger<UsuarioCursosController> logger, AppDbContext context)
+        public UsuarioCursosController(
+            ILogger<UsuarioCursosController> logger,
+            AppDbContext context,
+            IUsuarioCursoService usuarioCursoService)
         {
             _logger = logger;
             _context = context;
+            _usuarioCursoService = usuarioCursoService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var usuarioCursos = await _context.UsuarioCursos
-                .Include(uc => uc.Usuario)
-                .Include(uc => uc.Curso)
-                .ToListAsync();
+            var usuarioCursos = await _usuarioCursoService.GetUsuarioCursosAsync();
             return View(usuarioCursos);
         }
 
@@ -36,10 +39,7 @@ namespace FDevs.Controllers
         {
             ViewData["CursoId"] = new SelectList(_context.Cursos.ToList(), "Id", "Nome");
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios.ToList(), "UsuarioId", "Nome");
-            var usuarioCurso = await _context.UsuarioCursos
-                .Include(uc => uc.Usuario)
-                .Include(uc => uc.Curso)
-                .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
+            var usuarioCurso = await _usuarioCursoService.GetCursoPorUsuarioCursoAsync(usuarioId, cursoId);
             if (usuarioCurso == null)
                 return NotFound();
 
@@ -122,7 +122,7 @@ namespace FDevs.Controllers
                     .Include(uc => uc.Usuario)
                     .Include(uc => uc.Curso)
                     .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioCurso.UsuarioId && uc.CursoId == usuarioCurso.CursoId);
-                TempData["Success"] = $"A relação entre '{usuarioCurso.Usuario.Nome}' e '{usuarioCurso.Curso.Nome}' foi criada com sucesso!";
+                TempData["Success"] = $"A relação entre \"{usuarioCurso.Usuario.Nome}\" e \"{usuarioCurso.Curso.Nome}\" foi criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(usuarioCurso);
@@ -191,7 +191,7 @@ namespace FDevs.Controllers
             _context.Remove(usuarioCurso);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = $"O relacionamento entre '{usuarioCurso.Usuario.Nome}' e o curso '{usuarioCurso.Curso.Nome}' foi excluído com sucesso!";
+            TempData["Success"] = $"O relacionamento entre \"{usuarioCurso.Usuario.Nome}\" e o curso \"{usuarioCurso.Curso.Nome}\" foi excluído com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

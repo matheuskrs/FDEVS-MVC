@@ -10,13 +10,11 @@ namespace FDevs.Controllers
     [Authorize(Roles = "Administrador")]
     public class EstadosController : Controller
     {
-        private readonly ILogger<EstadosController> _logger;
         private readonly IEstadoService _service;
         private readonly IExclusaoService _deleteService;
 
-        public EstadosController(ILogger<EstadosController> logger, IEstadoService service, IExclusaoService deleteService)
+        public EstadosController(IEstadoService service, IExclusaoService deleteService)
         {
-            _logger = logger;
             _service = service;
             _deleteService = deleteService;
         }
@@ -73,7 +71,7 @@ namespace FDevs.Controllers
             try
             {
                 await _service.Update(estado);
-                TempData["Success"] = $"O estado '{estado.Nome}' foi alterado com sucesso!";
+                TempData["Success"] = $"O estado \"{estado.Nome}\" foi alterado com sucesso!";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -81,9 +79,6 @@ namespace FDevs.Controllers
                 TempData["Warning"] = $"Ocorreu um erro ao tentar alterar o estado, tente novamente. Detalhes do erro: {ex.Message}";
                 return RedirectToAction("Index");
             }
-
-
-
         }
 
         public async Task<IActionResult> Delete(int id)

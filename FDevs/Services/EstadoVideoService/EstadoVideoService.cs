@@ -1,6 +1,8 @@
 ﻿using FDevs.Data;
 using FDevs.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Runtime.CompilerServices;
 
 namespace FDevs.Services.EstadoVideoService
 {
@@ -12,6 +14,17 @@ namespace FDevs.Services.EstadoVideoService
         {
             _context = context;
         }
+
+
+        public async Task<List<UsuarioEstadoVideo>> GetUsuarioEstadoVideosByVideoId(int videoId)
+        {
+            var usuarioEstadoVideos = await _context.UsuarioEstadoVideos
+                .Where(uev => uev.VideoId == videoId)
+                .ToListAsync();
+
+            return usuarioEstadoVideos;
+        }
+
 
         public async Task<List<UsuarioEstadoVideo>> GetUsuarioEstadoVideosAsync()
         {
@@ -95,6 +108,20 @@ namespace FDevs.Services.EstadoVideoService
             };
 
             _context.Add(novoUsuarioEstadoVideo);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<UsuarioEstadoVideo> CreateUsuarioEstadoVideo(UsuarioEstadoVideo novoUsuarioEstadoVideo)
+        {
+            _context.Add(novoUsuarioEstadoVideo);
+            await _context.SaveChangesAsync();
+            return novoUsuarioEstadoVideo;
+        }
+
+        public async Task<bool> Delete(UsuarioEstadoVideo usuarioEstadoVideo)
+        {
+            _context.Remove(usuarioEstadoVideo);
             await _context.SaveChangesAsync();
             return true;
         }

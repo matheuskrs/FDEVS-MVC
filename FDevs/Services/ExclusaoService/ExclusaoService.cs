@@ -19,9 +19,9 @@ namespace FDevs.Services.ExclusaoService
         public string PermitirExcluirEstado(Estado estado)
         {
             if (estado == null) return "Não foi possível encontrar o estado.";
-            var usuarioEstadoCurso = estado.UsuarioEstadoCursos != null && estado.UsuarioEstadoVideos.Any();
+            var usuarioEstadoCurso = estado.UsuarioEstadoCursos != null && estado.UsuarioEstadoCursos.Any();
             var usuarioEstadoModulo = estado.UsuarioEstadoModulos != null && estado.UsuarioEstadoModulos.Any();
-            var usuarioEstadoVideo = estado.UsuarioEstadoVideos != null && estado.UsuarioEstadoCursos.Any();
+            var usuarioEstadoVideo = estado.UsuarioEstadoVideos != null && estado.UsuarioEstadoVideos.Any();
 
 
             if (usuarioEstadoCurso || usuarioEstadoModulo || usuarioEstadoVideo)

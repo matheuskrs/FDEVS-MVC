@@ -24,10 +24,32 @@ namespace FDevs.Services.UsuarioCursoService
             return cursos;
         }
 
+        public async Task<List<UsuarioCurso>> GetCursosPorCursoId(int cursoId)
+        {
+            var cursos = await _context.UsuarioCursos
+                .Include(uc => uc.Curso)
+                .ThenInclude(c => c.Modulos)
+                .Where(uc => uc.CursoId == cursoId)
+                .ToListAsync();
+            return cursos;
+        }
+
         public async Task<List<UsuarioCurso>> GetUsuarioCursosAsync()
         {
-            var usuarioCursos = await _context.UsuarioCursos.ToListAsync();
+            var usuarioCursos = await _context.UsuarioCursos
+                .Include(uc => uc.Usuario)
+                .Include(uc => uc.Curso)
+                .ToListAsync();
             return usuarioCursos;
+        }
+
+        public async Task<UsuarioCurso> GetCursoPorUsuarioCursoAsync(string usuarioId, int cursoId)
+        {
+            var usuarioCurso = await _context.UsuarioCursos
+                .Include(uc => uc.Usuario)
+                .Include(uc => uc.Curso)
+                .SingleOrDefaultAsync(uc => uc.UsuarioId == usuarioId && uc.CursoId == cursoId);
+            return usuarioCurso;
         }
     }
 }

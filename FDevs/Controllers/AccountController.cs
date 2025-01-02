@@ -7,20 +7,11 @@ namespace FDevs.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ILogger<AccountController> _logger;
         private readonly IUsuarioService _usuarioService;
-        private readonly AppDbContext _context;
 
-        public AccountController(
-            ILogger<AccountController> logger,
-            IUsuarioService usuarioService,
-            AppDbContext context
-        )
+        public AccountController(IUsuarioService usuarioService)
         {
-            //Url.Action
-            _logger = logger;
             _usuarioService = usuarioService;
-            _context = context;
         }
 
         [HttpGet]

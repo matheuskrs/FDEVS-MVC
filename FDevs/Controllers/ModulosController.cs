@@ -4,6 +4,7 @@ using FDevs.Services.CursoService;
 using FDevs.Services.EstadoService;
 using FDevs.Services.ExclusaoService;
 using FDevs.Services.ModuloService;
+using FDevs.Services.UsuarioCursoService;
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,21 +16,21 @@ namespace FDevs.Controllers
     [Authorize(Roles = "Administrador")]
     public class ModulosController : Controller
     {
-        private readonly ILogger<ModulosController> _logger;
-        private readonly AppDbContext _context;
         private readonly IModuloService _service;
         private readonly IExclusaoService _deleteService;
         private readonly ICursoService _cursoService;
         private readonly IEstadoService _estadoService;
+        private readonly IUsuarioCursoService _usuarioCursoService;
+        private readonly AppDbContext _context;
 
-        public ModulosController(ILogger<ModulosController> logger, AppDbContext context, IModuloService service, IExclusaoService deleteService, ICursoService cursoService, IEstadoService estadoService)
+        public ModulosController(IModuloService service, IExclusaoService deleteService, ICursoService cursoService, IEstadoService estadoService, IUsuarioCursoService usuarioCursoService, AppDbContext context)
         {
-            _logger = logger;
-            _context = context;
             _service = service;
             _deleteService = deleteService;
             _cursoService = cursoService;
             _estadoService = estadoService;
+            _usuarioCursoService = usuarioCursoService;
+            _context = context;
         }
 
         [HttpGet]
@@ -62,9 +63,7 @@ namespace FDevs.Controllers
         {
             if (!ModelState.IsValid) return View(modulo);
 
-            var usuariosCurso = await _context.UsuarioCursos
-                .Where(uc => uc.CursoId == modulo.CursoId)
-                .ToListAsync();
+            var usuariosCurso = await _usuarioCursoService.GetCursosPorCursoId(modulo.CursoId);
 
             await _service.Create(modulo); // Tem que criar o módulo antes de passar o Id no foreach abaixo, porque antes disso ele não existe no contexto.
 

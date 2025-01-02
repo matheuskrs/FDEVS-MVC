@@ -12,14 +12,12 @@ namespace FDevs.Controllers
     [Authorize(Roles = "Administrador")]
     public class AlternativasController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly IAlternativaService _service;
         private readonly IExclusaoService _deleteService;
         private readonly IQuestaoService _questaoService;
 
-        public AlternativasController(AppDbContext context, IAlternativaService service, IExclusaoService deleteService, IQuestaoService questaoService)
+        public AlternativasController(IAlternativaService service, IExclusaoService deleteService, IQuestaoService questaoService)
         {
-            _context = context;
             _service = service;
             _deleteService = deleteService;
             _questaoService = questaoService;
@@ -28,7 +26,7 @@ namespace FDevs.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
+            ViewData["QuestaoId"] = new SelectList(await _questaoService.GetQuestoesAsync(), "Id", "Texto");
             List<Alternativa> alternativas = await _service.GetAlternativasAsync();
             return View(alternativas);
         }
@@ -37,14 +35,14 @@ namespace FDevs.Controllers
         {
             Alternativa alternativa = await _service.GetAlternativaByIdAsync(id);
             if (alternativa == null) return RedirectToAction("Index");
-            ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
+            ViewData["QuestaoId"] = new SelectList(await _questaoService.GetQuestoesAsync(), "Id", "Texto");
             return View(alternativa);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
+            ViewData["QuestaoId"] = new SelectList(await _questaoService.GetQuestoesAsync(), "Id", "Texto");
             return View();
         }
 
@@ -70,7 +68,7 @@ namespace FDevs.Controllers
         {
             Alternativa alternativa = await _service.GetAlternativaByIdAsync(id);
             if (alternativa == null) return RedirectToAction("Index");
-            ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
+            ViewData["QuestaoId"] = new SelectList(await _questaoService.GetQuestoesAsync(), "Id", "Texto");
             return View(alternativa);
         }
 
@@ -92,7 +90,7 @@ namespace FDevs.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            ViewData["QuestaoId"] = new SelectList(_context.Questoes, "Id", "Texto");
+            ViewData["QuestaoId"] = new SelectList(await _questaoService.GetQuestoesAsync(), "Id", "Texto");
             Alternativa alternativa = await _service.GetAlternativaByIdAsync(id);
             if (alternativa == null) return RedirectToAction("Index");
             return View(alternativa);

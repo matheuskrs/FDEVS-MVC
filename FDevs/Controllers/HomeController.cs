@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using FDevs.Data;
 using FDevs.Models;
-using Microsoft.EntityFrameworkCore;
 using FDevs.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FDevs.Services.UsuarioService;
@@ -21,7 +19,6 @@ namespace FDevs.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly IUsuarioService _userService;
         private readonly ICursoService _cursoService;
         private readonly IUsuarioCursoService _usuarioCursoService;
@@ -34,7 +31,6 @@ namespace FDevs.Controllers
         private readonly IVideoService _videoService;
 
         public HomeController(
-            AppDbContext context,
             IUsuarioService userService,
             ICursoService cursoService,
             IUsuarioCursoService usuarioCursoService,
@@ -47,7 +43,6 @@ namespace FDevs.Controllers
             IVideoService videoService
             )
         {
-            _context = context;
             _userService = userService;
             _cursoService = cursoService;
             _usuarioCursoService = usuarioCursoService;
@@ -105,9 +100,9 @@ namespace FDevs.Controllers
             var videoAnterior = await _videoService.GetVideoAnteriorAsync(selectedVideoId);
             var proximoVideo = await _videoService.GetProximoVideoAsync(selectedVideoId);
             var usuarioEstadoVideo = await _estadoVideoService.GetUsuarioEstadoVideosByIdAsync(usuarioId, videoAtual.Id);
-            await _estadoVideoService.AtualizarEstadoVideoParaAndamentoAsync(usuarioEstadoVideo);// cria dentro dessa função uma chamada pra atualizar o estado do modulo (e consequentemente o estado do curso).
+            await _estadoVideoService.AtualizarEstadoVideoParaAndamentoAsync(usuarioEstadoVideo);
             var usuarioEstadoModulo = await _estadoModuloService.GetUsuarioEstadoModuloByIdAsync(usuarioId, videoAtual.ModuloId);
-            await _estadoModuloService.AtualizarEstadoModulo(usuarioEstadoModulo); // retorna modulo atualizado
+            await _estadoModuloService.AtualizarEstadoModulo(usuarioEstadoModulo);
             var usuarioEstadoCurso = await _estadoCursoService.GetUsuarioEstadoCursoByIdAsync(usuarioId, id);
             await _estadoCursoService.AtualizarEstadoCurso(usuarioEstadoCurso);
 
